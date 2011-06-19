@@ -14,13 +14,13 @@
 __versioninfo__ = (0, 3, 0)
 __version__ = '.'.join(str(n) for n in __versioninfo__)
 
-__all__ = ('World', 'Entity', 'System', 'Renderer')
+__all__ = ('BaseWorld', 'Entity', 'System', 'Renderer')
 
 import grease.component
 import grease.geometry
 import grease.collision
 from grease.entity import Entity
-from grease.world import World
+from grease.world import BaseWorld
 
 import abc
 
@@ -49,7 +49,6 @@ class System(object):
 		:param dt: Time since last step invocation
 		:type dt: float
 		"""
-
 
 class Renderer(object):
 	"""Grease renderer abstract base class. Renderers define the presentation
