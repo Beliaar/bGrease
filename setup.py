@@ -16,43 +16,45 @@ def read(fname):
 # Ideally they would just live there, but inflexibility in
 # distutils wrt packaging data makes this necessary
 for i in range(1, 4):
-	shutil.copyfile(
-		os.path.join(srcdir, 'examples', 'blasteroids%s.py' % i),
-		os.path.join(srcdir, 'doc', 'tutorial', 'blasteroids%s.py' % i))
+    shutil.copyfile(
+        os.path.join(srcdir, 'examples', 'blasteroids%s.py' % i),
+        os.path.join(srcdir, 'doc', 'tutorial', 'blasteroids%s.py' % i))
 
 setup(
-	name='grease',
+    name='grease',
     version='0.3', # *** REMEMBER TO UPDATE __init__.py ***
-	description='Grease: The highly extensible game engine framework for Python',
-	long_description=read('README.txt'),
-	author='Casey Duncan',
-	author_email='casey.duncan@gmail.com',
-	# url='',
-	license='MIT',
+    description='Grease: The highly extensible game engine framework for Python',
+    long_description=read('README.txt'),
+    author='Casey Duncan',
+    author_email='casey.duncan@gmail.com',
+    # url='',
+    license='MIT',
     classifiers = [
         'Development Status :: 3 - Alpha',
         'Topic :: Multimedia :: Graphics',
-		'Topic :: Games/Entertainment',
-		'Topic :: Software Development :: Libraries :: Application Frameworks',
+        'Topic :: Games/Entertainment',
+        'Topic :: Software Development :: Libraries :: Application Frameworks',
         'License :: OSI Approved :: MIT License',
-		'Intended Audience :: Developers',
-		'Programming Language :: Python :: 2.6',
+        'Intended Audience :: Developers',
+        'Programming Language :: Python :: 2.6',
         'Operating System :: MacOS :: MacOS X',
         'Operating System :: Microsoft :: Windows',
         'Operating System :: POSIX',
-    ],
+        ],
 
     package_dir={'grease': 'grease', 
-	             'grease.controller': 'grease/controller',
-	             'grease.component': 'grease/component',
-	             'grease.renderer': 'grease/renderer',
-				 'grease.test': 'test',
-	             'grease.examples': 'examples'},
-	package_data={'grease.examples': ['font/*', 'sfx/*']},
+                 'grease.controller': 'grease/controller',
+                 'grease.component': 'grease/component',
+                 'grease.renderer': 'grease/renderer',
+                 'grease.impl': 'grease/impl',
+                 'grease.test': 'test',
+                 'grease.examples': 'examples'},
+    package_data={'grease.examples': ['font/*', 'sfx/*']},
     packages=['grease', 
-	          'grease.controller', 
-	          'grease.component', 
-			  'grease.renderer', 
-			  'grease.test',
-			  'grease.examples'],
+              'grease.controller', 
+              'grease.component', 
+              'grease.renderer', 
+              'grease.impl',
+              'grease.test',
+              'grease.examples'],
 )
