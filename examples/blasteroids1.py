@@ -17,6 +17,7 @@ import random
 import pyglet
 import grease
 from grease import component, controller, renderer
+import grease.impl
 
 
 class Asteroid(grease.Entity):
@@ -37,7 +38,7 @@ class Asteroid(grease.Entity):
         self.renderable.color = "#aaa"
 
 
-class GameWorld(grease.World):
+class GameWorld(grease.impl.World):
 
     def configure(self):
         """Configure the game world's components, systems and renderers"""

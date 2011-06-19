@@ -19,8 +19,10 @@ import itertools
 import pyglet
 from pyglet.window import key
 import grease
-from grease import component, controller, geometry, collision, renderer, mode
-from grease.controls import KeyControls
+from grease import component, controller, geometry, collision, renderer
+import grease.impl
+from grease.impl import mode
+from grease.impl.controls import KeyControls
 
 ## Utility functions ##
 
@@ -460,7 +462,7 @@ class TitleScreenControls(KeyControls):
             Game('Player Two')))
 
 
-class BaseWorld(grease.World):
+class BaseWorld(grease.impl.World):
 
     def configure(self):
         """Configure the game world's components, systems and renderers"""
@@ -534,7 +536,7 @@ class Game(BaseWorld):
     
     def activate(self, manager):
         """Start paused in multiplayer"""
-        grease.World.activate(self, manager)
+        BaseWorld.activate(self, manager)
         if self.is_multiplayer:
             self.running = False
 

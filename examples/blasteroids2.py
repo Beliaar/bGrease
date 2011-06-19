@@ -17,8 +17,9 @@ import random
 import pyglet
 import grease
 from grease import component, controller, renderer, geometry, collision
+import grease.impl
 from pyglet.window import key
-from grease.controls import KeyControls
+from grease.impl.controls import KeyControls
 
 
 class BlasteroidsEntity(grease.Entity):
@@ -240,7 +241,7 @@ class GameSystem(KeyControls):
             self.player_ship.gun.firing = False
 
 
-class GameWorld(grease.World):
+class GameWorld(grease.impl.World):
 
     def configure(self):
         """Configure the game world's components, systems and renderers"""
