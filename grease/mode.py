@@ -35,7 +35,6 @@ For example usage see: :ref:`the mode section of the tutorial <tut-mode-section>
 __version__ = '$Id$'
 
 import abc
-import pyglet
 
 
 class BaseManager(object):
@@ -50,11 +49,6 @@ class BaseManager(object):
 	modes = ()
 	"""The mode stack sequence. The last mode in the stack is
 	the current active mode. Read-only.
-	"""
-
-	event_dispatcher = None
-	""":class:`pyglet.event.EventDispatcher` object that the
-	active mode receive events from.
 	"""
 
 	@property
@@ -72,6 +66,21 @@ class BaseManager(object):
 		:param mode: The :class:`Mode` object just popped from the manager
 		"""
 	
+	def activate_mode(self, mode):
+		"""Perform actions to activate a node
+		
+		:param mode: The :class: 'Mode' object to activate
+		"""
+		mode.activate(self)
+
+	def deactivate_mode(self, mode):
+		"""Perform actions to deactivate a node
+		
+		:param mode: The :class: 'Mode' object to deactivate
+		"""
+		mode.deactivate(self)
+
+		
 	def push_mode(self, mode):
 		"""Push a mode to the top of the mode stack and make it active
 		
@@ -79,11 +88,9 @@ class BaseManager(object):
 		"""
 		current = self.current_mode
 		if current is not None:
-			current.deactivate(self)
-			self.event_dispatcher.remove_handlers(current)
+			self.deactivate_mode(current)
 		self.modes.append(mode)
-		self.event_dispatcher.push_handlers(mode)
-		mode.activate(self)
+		self.activate_mode(mode)
 	
 	def pop_mode(self):
 		"""Pop the current mode off the top of the stack and deactivate it.
@@ -96,8 +103,7 @@ class BaseManager(object):
 		self.event_dispatcher.remove_handlers(mode)
 		current = self.current_mode
 		if current is not None:
-			self.event_dispatcher.push_handlers(current)
-			current.activate(self)
+			self.activate_mode(current)
 		else:
 			self.on_last_mode_pop(mode)
 		return mode
@@ -111,11 +117,9 @@ class BaseManager(object):
 		:param mode: The :class:`Mode` object that was deactivated and replaced.
 		"""
 		old_mode = self.modes.pop()
-		old_mode.deactivate(self)
-		self.event_dispatcher.remove_handlers(old_mode)
+		self.deactivate_mode(old_mode)
 		self.modes.append(mode)
-		self.event_dispatcher.push_handlers(mode)
-		mode.activate(self)
+		self.activate_mode(mode)
 		return old_mode
 	
 	def remove_mode(self, mode):
@@ -133,80 +137,23 @@ class BaseManager(object):
 			except ValueError:
 				pass
 
-
-class Manager(BaseManager):
-	"""A basic mode manager that wraps a single
-	:class:`pyglet.event.EventDispatcher` object for use by its modes.
-	"""
-
-	def __init__(self, event_dispatcher):
-		self.modes = []
-		self.event_dispatcher = event_dispatcher
-
-
-class ManagerWindow(BaseManager, pyglet.window.Window):
-	"""An integrated mode manager and pyglet window for convenience.
-	The window is the event dispatcher used by modes pushed to
-	this manager.
-
-	Constructor arguments are identical to :class:`pyglet.window.Window`
-	"""
-	
-	def __init__(self, *args, **kw):
-		super(ManagerWindow, self).__init__(*args, **kw)
-		self.modes = []
-		self.event_dispatcher = self
-
-	def on_key_press(self, symbol, modifiers):
-		"""Default :meth:`on_key_press handler`, pops the current mode on ``ESC``"""
-		if symbol == pyglet.window.key.ESCAPE:
-			self.pop_mode()
-
-	def on_last_mode_pop(self, mode):
-		"""Hook executed when the last mode is popped from the manager.
-		When the last mode is popped from a window, an :meth:`on_close` event
-		is dispatched.
-
-		:param mode: The :class:`Mode` object just popped from the manager
-		"""
-		self.dispatch_event('on_close')
-
-
-class Mode(object):
+class BaseMode(object):
 	"""Application mode abstract base class
 
 	Subclasses must implement the :meth:`step` method
 	
 	:param step_rate: The rate of :meth:`step()` calls per second. 
-
-	:param master_clock: The :class:`pyglet.clock.Clock` interface used
-		as the master clock that ticks the world's clock. This 
-		defaults to the main pyglet clock.
 	"""
 	__metaclass__ = abc.ABCMeta
-
-	clock = None
-	"""The :class:`pyglet.clock.Clock` instance used as this mode's clock.
-	You should use this clock to schedule tasks for this mode, so they
-	properly respect when the mode is active or inactive
-
-	Example::
-
-		my_mode.clock.schedule_once(my_cool_function, 4)
-	"""
 
 	manager = None
 	"""The :class:`BaseManager` that manages this mode"""
 
-	def __init__(self, step_rate=60, master_clock=pyglet.clock, 
-		         clock_factory=pyglet.clock.Clock):
+	def __init__(self, step_rate=60):
 		self.step_rate = step_rate
 		self.active = False
 		self.time = 0.0
-		self.master_clock = master_clock
-		self.clock = clock_factory(time_function=lambda: self.time)
-		self.clock.schedule_interval(self.step, 1.0 / step_rate)
-	
+		
 	def tick(self, dt):
 		"""Tick the mode's clock.
 
@@ -214,7 +161,6 @@ class Mode(object):
 		:type dt: float
 		"""
 		self.time += dt
-		self.clock.tick(poll=False)
 	
 	@abc.abstractmethod
 	def step(self, dt):
@@ -224,6 +170,10 @@ class Mode(object):
 		:type dt: float
 		"""
 
+	@abc.abstractmethod
+	def start_tick(self):
+		"""Perform actions to start the tick"""
+	
 	def activate(self, mode_manager):
 		"""Activate the mode for the given mode manager, if the mode is already active, 
 		do nothing
@@ -232,9 +182,13 @@ class Mode(object):
 		second, sets the :attr:`manager` and sets the :attr:`active` flag to True.
 		"""
 		if not self.active:
-			self.master_clock.schedule(self.tick)
+			self.start_tick()
 			self.manager = mode_manager
 			self.active = True
+
+	@abc.abstractmethod
+	def stop_tick(self):
+		"""Perform actions to stop the tick"""
 
 	def deactivate(self, mode_manager):
 		"""Deactivate the mode, if the mode is not active, do nothing
@@ -242,11 +196,11 @@ class Mode(object):
 		The default implementation unschedules time steps for the mode and
 		sets the :attr:`active` flag to False.
 		"""
-		self.master_clock.unschedule(self.tick)
+		self.stop_tick()
 		self.active = False
 
 
-class Multi(Mode):
+class BaseMulti(BaseMode):
 	"""A mode with multiple submodes. One submode is active at one time.
 	Submodes can be switched to directly or switched in sequence. If
 	the Multi is active, then one submode is always active.
@@ -400,8 +354,6 @@ class Multi(Mode):
 	
 	def _set_active_submode(self, submode):
 		self.active_submode = submode
-		self.master_clock = submode.master_clock
-		self.clock = submode.clock
 		self.step_rate = submode.step_rate
 
 	def _activate_submode(self, submode):
@@ -419,25 +371,25 @@ class Multi(Mode):
 		self._set_active_submode(submode)
 		if submode is not None:
 			if self.active:
-				self.manager.event_dispatcher.push_handlers(submode)
-				submode.activate(self.manager)
+				self.manager.activate_mode(submode)
 		else:
 			if self.manager is not None:
 				self.manager.remove_mode(self)
 	
+	def clear_subnode(self):
+		"""Clear any subnmode data"""
+		self.active_submode = None
+		self.step_rate = None
+				
 	def _deactivate_submode(self, clear_subnode=True):
 		"""Deactivate the current submode, if any. if `clear_subnode` is
 		True, `active_submode` is always None when this method returns
 		"""
 		if self.active_submode is not None:
 			if self.active:
-				self.manager.event_dispatcher.remove_handlers(self.active_submode)
-				self.active_submode.deactivate(self.manager)
+				self.manager.deactivate_mode(self.active_submode)
 			if clear_subnode:
-				self.active_submode = None
-				self.master_clock = None
-				self.clock = None
-				self.step_rate = None
+				self.clear_subnode()
 	
 	def activate(self, mode_manager):
 		"""Activate the :class:`Multi` for the specified manager. The
@@ -451,17 +403,16 @@ class Multi(Mode):
 			self._set_active_submode(self.submodes[0])
 		else:
 			self._set_active_submode(self.active_submode)
-		self.manager.event_dispatcher.push_handlers(self.active_submode)
-		self.active_submode.activate(self.manager)
-		super(Multi, self).activate(mode_manager)
+		self.manager.activate_mode(self.active_submode)
+		super(BaseMulti, self).activate(mode_manager)
 	
 	def deactivate(self, mode_manager):
 		"""Deactivate the :class:`Multi` for the specified manager.
 		The `active_submode`, if any, is deactivated.
 		"""
 		self._deactivate_submode(clear_subnode=False)
-		super(Multi, self).deactivate(mode_manager)
-	
+		super(BaseMulti, self).deactivate(mode_manager)
+
 	def tick(self, dt):
 		"""Tick the active submode's clock.
 
@@ -469,8 +420,6 @@ class Multi(Mode):
 		:type dt: float
 		"""
 		self.time += dt
-		if self.active_submode is not None:
-			self.active_submode.clock.tick(poll=False)
 	
 	def step(self, dt):
 		"""No-op, only the active submode is actually stepped"""
