@@ -138,41 +138,19 @@ class BaseManager(object):
 				pass
 
 class BaseMode(object):
-	"""Application mode abstract base class
-
-	Subclasses must implement the :meth:`step` method
-	
-	:param step_rate: The rate of :meth:`step()` calls per second. 
+	"""Application mode very abstract base class
 	"""
 	__metaclass__ = abc.ABCMeta
 
 	manager = None
 	"""The :class:`BaseManager` that manages this mode"""
 
-	def __init__(self, step_rate=60):
-		self.step_rate = step_rate
+	def __init__(self):
 		self.active = False
-		self.time = 0.0
 		
-	def tick(self, dt):
-		"""Tick the mode's clock.
-
-		:param dt: The time delta since the last tick
-		:type dt: float
-		"""
-		self.time += dt
-	
-	@abc.abstractmethod
-	def step(self, dt):
-		"""Execute a timestep for this mode. Must be defined by subclasses.
-		
-		:param dt: The time delta since the last time step
-		:type dt: float
-		"""
-
-	@abc.abstractmethod
-	def start_tick(self):
-		"""Perform actions to start the tick"""
+	def on_activate(self):
+		"""Being called when the Mode is activated"""
+		pass
 	
 	def activate(self, mode_manager):
 		"""Activate the mode for the given mode manager, if the mode is already active, 
@@ -182,13 +160,13 @@ class BaseMode(object):
 		second, sets the :attr:`manager` and sets the :attr:`active` flag to True.
 		"""
 		if not self.active:
-			self.start_tick()
+			self.on_activate()
 			self.manager = mode_manager
 			self.active = True
 
-	@abc.abstractmethod
-	def stop_tick(self):
-		"""Perform actions to stop the tick"""
+	def on_deactivate(self):
+		"""Being called when the Mode is deactivated"""
+		pass
 
 	def deactivate(self, mode_manager):
 		"""Deactivate the mode, if the mode is not active, do nothing
@@ -196,7 +174,7 @@ class BaseMode(object):
 		The default implementation unschedules time steps for the mode and
 		sets the :attr:`active` flag to False.
 		"""
-		self.stop_tick()
+		self.on_deactivate()
 		self.active = False
 
 
@@ -218,7 +196,6 @@ class BaseMulti(BaseMode):
 
 	def __init__(self, *submodes):
 		# We do not invoke the superclass __init__ intentionally
-		self.time = 0.0
 		self.active = False
 		self.submodes = list(submodes)
 	
@@ -412,15 +389,4 @@ class BaseMulti(BaseMode):
 		"""
 		self._deactivate_submode(clear_subnode=False)
 		super(BaseMulti, self).deactivate(mode_manager)
-
-	def tick(self, dt):
-		"""Tick the active submode's clock.
-
-		:param dt: The time delta since the last tick
-		:type dt: float
-		"""
-		self.time += dt
-	
-	def step(self, dt):
-		"""No-op, only the active submode is actually stepped"""
 

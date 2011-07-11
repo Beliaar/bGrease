@@ -129,27 +129,37 @@ class Mode(BaseMode):
 
 	def __init__(self, step_rate=60, master_clock=pyglet.clock, 
 		         clock_factory=pyglet.clock.Clock):
-		BaseMode.__init__(self, step_rate)
+		BaseMode.__init__(self)
+		self.step_rate = step_rate
+		self.time = 0.0
 		self.master_clock = master_clock
 		self.clock = clock_factory(time_function=lambda: self.time)
 		self.clock.schedule_interval(self.step, 1.0 / step_rate)
 	
+	def on_activate(self):
+		"""Being called when the Mode is activated"""
+		self.master_clock.schedule(self.tick)
+	
+	def on_deactivate(self):
+		"""Being called when the Mode is deactivated"""
+		self.master_clock.unschedule(self.tick)
+		
 	def tick(self, dt):
 		"""Tick the mode's clock.
 
 		:param dt: The time delta since the last tick
 		:type dt: float
 		"""
-		BaseMode.tick(self, dt)
+		self.time += dt
 		self.clock.tick(poll=False)
 	
-	def start_tick(self):
-		"""Perform actions to start the tick"""
-		self.master_clock.schedule(self.tick)
-
-	def stop_tick(self):
-		"""Perform actions to stop the tick"""
-		self.master_clock.unschedule(self.tick)
+	@abc.abstractmethod
+	def step(self, dt):
+		"""Execute a timestep for this mode. Must be defined by subclasses.
+		
+		:param dt: The time delta since the last time step
+		:type dt: float
+		"""
 
 class Multi(BaseMulti, Mode):
 	"""A mode with multiple submodes. One submode is active at one time.
@@ -165,6 +175,10 @@ class Multi(BaseMulti, Mode):
 	instead.
 	"""
 	
+	def __init__(self, submodes):
+		BaseMulti.__init__(self, submodes)
+		self.time = 0.0
+
 	
 	def _set_active_submode(self, submode):
 		BaseMulti._set_active_submode(self, submode)
@@ -183,7 +197,7 @@ class Multi(BaseMulti, Mode):
 		:param dt: The time delta since the last tick
 		:type dt: float
 		"""
-		BaseMulti.tick(self, dt)
+		self.time += dt
 		if self.active_submode is not None:
 			self.active_submode.clock.tick(poll=False)
 
