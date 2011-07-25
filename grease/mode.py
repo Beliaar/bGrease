@@ -100,7 +100,6 @@ class BaseManager(object):
 		"""
 		mode = self.modes.pop()
 		mode.deactivate(self)
-		self.event_dispatcher.remove_handlers(mode)
 		current = self.current_mode
 		if current is not None:
 			self.activate_mode(current)
