@@ -16,11 +16,11 @@ __version__ = '.'.join(str(n) for n in __versioninfo__)
 
 __all__ = ('BaseWorld', 'Entity', 'System', 'Renderer')
 
-import grease.component
-import grease.geometry
-import grease.collision
-from grease.entity import Entity
-from grease.world import BaseWorld
+import component
+import geometry
+import collision
+from entity import Entity
+from world import BaseWorld
 
 import abc
 
