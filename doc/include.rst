@@ -1,6 +1,6 @@
 .. Global includes
 
-.. |World| replace:: :class:`~bGrease.world.World`
+.. |World| replace:: :class:`~bGrease.impl.world.World`
 .. |System| replace:: :class:`~bGrease.System`
 .. |Component| replace:: :class:`~bGrease.component.Component`
 .. |Renderer| replace:: :class:`~bGrease.Renderer`
