@@ -1,6 +1,6 @@
 #############################################################################
 #
-# Copyright (c) 2012 by Karsten Bock and contributors
+# Copyright (c) 2010 by Casey Duncan and contributors
 # All Rights Reserved.
 #
 # This software is subject to the provisions of the MIT License
@@ -14,7 +14,9 @@
 __versioninfo__ = (0, 3, 0)
 __version__ = '.'.join(str(n) for n in __versioninfo__)
 
-__all__ = ('grease_pyglet', 'grease_fife')
+__all__ = ('Mode', 'World')
 
-import grease_pyglet
-import grease_fife
+from mode import Mode
+from world import World
+
+

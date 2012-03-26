@@ -11,10 +11,20 @@
 #
 #############################################################################
 
-__versioninfo__ = (0, 3, 0)
-__version__ = '.'.join(str(n) for n in __versioninfo__)
+from bGrease.world import *
+from bGrease.component import Component
+from bgrease.impl.grease_fife.mode import FifeMode
 
-__all__ = ('grease_pyglet', 'grease_fife')
+class World(FifeMode, BaseWorld):
 
-import grease_pyglet
-import grease_fife
+    def __init__(self):
+        FifeMode.__init__(self)
+        BaseWorld.__init__(self)
+            
+    def pump(self, dt):
+        for component in self.components:
+            if hasattr(component, "step"):
+                component.step(dt)
+        for system in self.systems:
+            if hasattr(system, "step"):
+                system.step(dt)
