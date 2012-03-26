@@ -1,7 +1,7 @@
 :mod:`bGrease.world` -- Entity Environment
 =========================================
 
-.. automodule:: bGrease.world
+.. automodule:: bGrease.impl.grease_pyglet.world
    :synopsis: Container and environment for entities, component, systems and renderers
 
 .. autoclass:: BaseWorld()

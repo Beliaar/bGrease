@@ -27,7 +27,7 @@ import itertools
 import pyglet
 from pyglet import gl
 from bGrease.world import *
-from bGrease.impl import Mode
+from bGrease.impl.grease_pyglet import Mode
 
 class World(Mode, BaseWorld):
 	"""A coordinated collection of components, systems and entities

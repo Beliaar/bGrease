@@ -12,6 +12,6 @@ Other Base Classes
 
 The following other common base classes can be imported from here for convenience:
 
-- :class:`~bGrease.impl.world.World`
+- :class:`~bGrease.impl.grease_pyglet.world.World`
 - :class:`~bGrease.entity.Entity`
 

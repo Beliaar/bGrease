@@ -47,6 +47,7 @@ setup(
                  'bGrease.component': 'grease/component',
                  'bGrease.renderer': 'grease/renderer',
                  'bGrease.impl': 'grease/impl',
+                 'bGrease.impl.grease_pyglet': 'grease/impl/grease_pyglet',
                  'bGrease.test': 'test',
                  'bGrease.examples': 'examples'},
     package_data={'bGrease.examples': ['font/*', 'sfx/*']},
@@ -55,6 +56,7 @@ setup(
               'bGrease.component', 
               'bGrease.renderer', 
               'bGrease.impl',
+              'bGrease.impl.grease_pyglet',
               'bGrease.test',
               'bGrease.examples'],
 )
