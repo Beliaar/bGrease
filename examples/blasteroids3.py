@@ -18,11 +18,11 @@ import random
 import itertools
 import pyglet
 from pyglet.window import key
-import grease
-from grease import component, controller, geometry, collision, renderer
-import grease.impl
-from grease.impl import mode
-from grease.impl.controls import KeyControls
+import bGrease
+from bGrease import component, controller, geometry, collision, renderer
+import bGrease.impl
+from bGrease.impl import mode
+from bGrease.impl.controls import KeyControls
 
 ## Utility functions ##
 
@@ -45,7 +45,7 @@ def looping_sound(name):
 
 ## Define entity classes ##
 
-class BlasteroidsEntity(grease.Entity):
+class BlasteroidsEntity(bGrease.Entity):
     """Entity base class"""
 
     def explode(self):
@@ -61,7 +61,7 @@ class BlasteroidsEntity(grease.Entity):
             debris.renderable.color = self.renderable.color
 
 
-class Debris(grease.Entity):
+class Debris(bGrease.Entity):
     """Floating space junk"""
 
 
@@ -184,7 +184,7 @@ class Asteroid(BlasteroidsEntity):
         self.delete()    
 
 
-class Shot(grease.Entity):
+class Shot(bGrease.Entity):
     """Pew Pew!
     
     Args:
@@ -219,7 +219,7 @@ class Shot(grease.Entity):
 
 ## Define game systems ##
 
-class PositionWrapper(grease.System):
+class PositionWrapper(bGrease.System):
     """Wrap positions around when they go off the edge of the window"""
 
     def __init__(self):
@@ -237,7 +237,7 @@ class PositionWrapper(grease.System):
             entity.position.position.y -= window.height + entity.collision.aabb.height
 
 
-class Gun(grease.System):
+class Gun(bGrease.System):
     """Fires Shot entities"""
 
     def step(self, dt):
@@ -249,7 +249,7 @@ class Gun(grease.System):
                 entity.gun.last_fire_time = self.world.time
 
 
-class Sweeper(grease.System):
+class Sweeper(bGrease.System):
     """Clears out space debris"""
 
     SWEEP_TIME = 2.0
@@ -383,7 +383,7 @@ class GameSystem(KeyControls):
 
 
 
-class Hud(grease.Renderer):
+class Hud(bGrease.Renderer):
     """Heads-up display renderer"""
     
     def set_world(self, world):
@@ -401,7 +401,7 @@ class Hud(grease.Renderer):
         left = -window.width // 2 + 25
         top = window.height // 2 - 25
         for i in range(20):
-            entity = grease.Entity(self.world)
+            entity = bGrease.Entity(self.world)
             entity.shape.verts = verts.transform(scale=0.75)
             entity.position.position = (i * 20 + left, top)
             self.lives.append((i, entity))
@@ -462,7 +462,7 @@ class TitleScreenControls(KeyControls):
             Game('Player Two')))
 
 
-class BaseWorld(grease.impl.World):
+class BaseWorld(bGrease.impl.World):
 
     def configure(self):
         """Configure the game world's components, systems and renderers"""

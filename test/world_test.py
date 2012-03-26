@@ -107,7 +107,7 @@ class TestModeManager(object):
 class WorldTestCase(unittest.TestCase):
 
 	def test_defaults(self):
-		from grease import World
+		from bGrease import World
 		world = World(clock_factory=TestClock)
 		self.assertEqual(world.step_rate, 60)
 		self.assertFalse(world.active)
@@ -116,13 +116,13 @@ class WorldTestCase(unittest.TestCase):
 		self.assertTrue((world.step, 1.0/60) in world.clock.scheduled)
 	
 	def test_overrides(self):
-		from grease import World
+		from bGrease import World
 		world = World(step_rate=30, clock_factory=TestClock)
 		self.assertEqual(world.step_rate, 30)
 		self.assertTrue((world.step, 1.0/30) in world.clock.scheduled)
 
 	def test_create_entities_in_world(self):
-		from grease import World, Entity
+		from bGrease import World, Entity
 		world = World()
 		self.assertFalse(world.entities)
 		e1 = Entity(world)
@@ -135,7 +135,7 @@ class WorldTestCase(unittest.TestCase):
 		self.assertNotEqual(e1, e2)
 	
 	def test_worlds_disjoint(self):
-		from grease import World, Entity
+		from bGrease import World, Entity
 		world1 = World()
 		world2 = World()
 		self.assertTrue(world1 is not world2)
@@ -152,7 +152,7 @@ class WorldTestCase(unittest.TestCase):
 		self.assertNotEqual(e1, e2)
 	
 	def test_remove_entity(self):
-		from grease import World, Entity
+		from bGrease import World, Entity
 		world = World()
 		comp1 = world.components.one = TestComponent()
 		comp2 = world.components.two = TestComponent()
@@ -172,7 +172,7 @@ class WorldTestCase(unittest.TestCase):
 		self.assertRaises(KeyError, world.entities.remove, entity)
 	
 	def test_discard_entity(self):
-		from grease import World, Entity
+		from bGrease import World, Entity
 		world = World()
 		comp1 = world.components.one = TestComponent()
 		comp2 = world.components.two = TestComponent()
@@ -196,8 +196,8 @@ class WorldTestCase(unittest.TestCase):
 		self.assertFalse(entity in comp3)
 	
 	def test_entity_extent_component_access(self):
-		from grease import World, Entity
-		from grease.entity import ComponentEntitySet
+		from bGrease import World, Entity
+		from bGrease.entity import ComponentEntitySet
 		world = World()
 		comp = world.components.test = TestComponent()
 		e1 = Entity(world)
@@ -210,7 +210,7 @@ class WorldTestCase(unittest.TestCase):
 		self.assertRaises(AttributeError, getattr, extent, "hummina")
 	
 	def test_entity_extent_membership_simple(self):
-		from grease import World, Entity
+		from bGrease import World, Entity
 		class MyEntity(Entity):
 			pass
 		class Another(Entity):
@@ -231,7 +231,7 @@ class WorldTestCase(unittest.TestCase):
 		self.assertTrue(entity3 in world[Another].entities)
 	
 	def test_entity_superclass_extents(self):
-		from grease import World, Entity
+		from bGrease import World, Entity
 		class Superentity(Entity):
 			pass
 		class Subentity(Superentity):
@@ -272,7 +272,7 @@ class WorldTestCase(unittest.TestCase):
 		self.assertFalse(subsub in another_extent.entities)
 	
 	def test_union_extent(self):
-		from grease import World, Entity
+		from bGrease import World, Entity
 		class Entity1(Entity):
 			pass
 		class Entity2(Entity1):
@@ -289,7 +289,7 @@ class WorldTestCase(unittest.TestCase):
 		self.assertEqual(union_extent_1_3.entities, set(entities))
 
 	def test_full_extent(self):
-		from grease import World, Entity
+		from bGrease import World, Entity
 		class Entity1(Entity):
 			pass
 		class Entity2(Entity1):
@@ -305,7 +305,7 @@ class WorldTestCase(unittest.TestCase):
 		self.assertEqual(world[...].entities, entities)
 
 	def test_configure_components(self):
-		from grease import World
+		from bGrease import World
 		comp1 = TestComponent()
 		comp2 = TestComponent()
 		comp3 = TestComponent()
@@ -320,7 +320,7 @@ class WorldTestCase(unittest.TestCase):
 		self.assertTrue(comp3.world is world)
 
 	def test_set_components(self):
-		from grease import World
+		from bGrease import World
 		comp1 = TestComponent()
 		comp2 = TestComponent()
 		comp3 = TestComponent()
@@ -347,7 +347,7 @@ class WorldTestCase(unittest.TestCase):
 		self.assertEqual(list(world.components), [comp3, comp2])
 	
 	def test_del_component(self):
-		from grease import World
+		from bGrease import World
 		world = World()
 		comp1 = world.components.one = TestComponent()
 		comp2 = world.components.two = TestComponent()
@@ -360,7 +360,7 @@ class WorldTestCase(unittest.TestCase):
 		self.assertRaises(AttributeError, delattr, world, 'one')
 
 	def test_step_components(self):
-		from grease import World, Entity
+		from bGrease import World, Entity
 		world = World()
 		comp1 = world.components.one = TestComponent()
 		comp2 = world.components.two = TestComponent()
@@ -374,7 +374,7 @@ class WorldTestCase(unittest.TestCase):
 		self.assertEqual(comp2.runtime, 0.11)
 
 	def test_join_components(self):
-		from grease import World, Entity
+		from bGrease import World, Entity
 		world = World()
 		comp1 = world.components.foo = TestComponent()
 		comp2 = world.components.bar = TestComponent()
@@ -395,8 +395,8 @@ class WorldTestCase(unittest.TestCase):
 			(0,), (100,), (200,)])
 
 	def test_illegal_part_name(self):
-		from grease import World
-		from grease.component import ComponentError
+		from bGrease import World
+		from bGrease.component import ComponentError
 		world = World()
 		self.assertRaises(ComponentError, 
 			setattr, world.components, 'entities', TestComponent())
@@ -418,7 +418,7 @@ class WorldTestCase(unittest.TestCase):
 			setattr, world.renderers, 'insert', TestRenderer())
 	
 	def test_add_systems(self):
-		from grease import World
+		from bGrease import World
 		world = World()
 		self.assertFalse(world.systems)
 		sys1 = world.systems.one = TestSystem()
@@ -433,7 +433,7 @@ class WorldTestCase(unittest.TestCase):
 		self.assertTrue(sys3.world is world)
 	
 	def test_del_systems(self):
-		from grease import World
+		from bGrease import World
 		world = World()
 		sys1 = world.systems.one = TestSystem()
 		sys2 = world.systems.two = TestSystem()
@@ -446,7 +446,7 @@ class WorldTestCase(unittest.TestCase):
 		self.assertRaises(AttributeError, delattr, world, 'one')
 	
 	def test_insert_system(self):
-		from grease import World
+		from bGrease import World
 		world = World()
 		sys1 = world.systems.sys1 = TestSystem()
 		sys2 = world.systems.sys2 = TestSystem()
@@ -465,7 +465,7 @@ class WorldTestCase(unittest.TestCase):
 		self.assertTrue(world.systems.onemore is onemore)
 	
 	def test_system_step_order(self):
-		from grease import World
+		from bGrease import World
 		world = World()
 		sys1 = world.systems.one = TestSystem()
 		sys3 = world.systems.three = TestSystem()
@@ -481,7 +481,7 @@ class WorldTestCase(unittest.TestCase):
 		self.assertEqual(sys3.order, start + 2)
 	
 	def test_add_system_during_run(self):
-		from grease import World
+		from bGrease import World
 		world = World()
 		sys1 = world.systems.sys1 = TestSystem()
 		to_inject = TestSystem()
@@ -502,7 +502,7 @@ class WorldTestCase(unittest.TestCase):
 		self.assertEqual(to_inject.runtime, 0.1)
 	
 	def test_activate(self):
-		from grease import World
+		from bGrease import World
 		world = World(master_clock=TestClock())
 		sys1 = world.systems.one = TestSystem()
 		sys2 = world.systems.two = TestSystem()
@@ -526,7 +526,7 @@ class WorldTestCase(unittest.TestCase):
 		self.assertFalse(sys2 in manager.handlers)
 	
 	def test_tick_increments_world_time(self):
-		from grease import World
+		from bGrease import World
 		world = World(clock_factory=TestClock)
 		self.assertEqual(world.time, 0)
 		self.assertEqual(world.clock.ticks, 0)
@@ -542,7 +542,7 @@ class WorldTestCase(unittest.TestCase):
 		self.assertEqual(world.clock.ticks, 2)
 	
 	def test_running(self):
-		from grease import World
+		from bGrease import World
 		world = World()
 		self.assertTrue(world.running)
 		self.assertEqual(world.time, 0)
@@ -558,7 +558,7 @@ class WorldTestCase(unittest.TestCase):
 		self.assertAlmostEqual(world.time, dt*2)
 	
 	def test_step_max_dt(self):
-		from grease import World
+		from bGrease import World
 		world = World()
 		sys1 = world.systems.sys = TestSystem()
 		comp1 = world.components.foo = TestComponent()
@@ -567,7 +567,7 @@ class WorldTestCase(unittest.TestCase):
 		self.assertEqual(sys1.runtime, 10.0 / world.step_rate)
 	
 	def test_set_renderers(self):
-		from grease import World
+		from bGrease import World
 		world = World()
 		self.assertEqual(tuple(world.renderers), ())
 		renderer1 = world.renderers.one = TestRenderer()
@@ -579,7 +579,7 @@ class WorldTestCase(unittest.TestCase):
 		self.assertTrue(renderer2.world is world)
 	
 	def test_on_draw(self):
-		from grease import World
+		from bGrease import World
 		world = World()
 		renderer1 = world.renderers.one = TestRenderer()
 		renderer2 = world.renderers.two = TestRenderer()

@@ -15,14 +15,14 @@
 import math
 import random
 import pyglet
-import grease
-from grease import component, controller, renderer, geometry, collision
-import grease.impl
+import bGrease
+from bGrease import component, controller, renderer, geometry, collision
+import bGrease.impl
 from pyglet.window import key
-from grease.impl.controls import KeyControls
+from bGrease.impl.controls import KeyControls
 
 
-class BlasteroidsEntity(grease.Entity):
+class BlasteroidsEntity(bGrease.Entity):
     """Entity base class"""
 
     def explode(self):
@@ -38,7 +38,7 @@ class BlasteroidsEntity(grease.Entity):
             debris.renderable.color = self.renderable.color
 
 
-class Debris(grease.Entity):
+class Debris(bGrease.Entity):
     """Floating space junk"""
 
 
@@ -114,7 +114,7 @@ class Asteroid(BlasteroidsEntity):
         self.delete()
 
 
-class Shot(grease.Entity):
+class Shot(bGrease.Entity):
     """Pew Pew!"""
 
     SPEED = 300
@@ -139,7 +139,7 @@ class Shot(grease.Entity):
         self.delete()
 
 
-class PositionWrapper(grease.System):
+class PositionWrapper(bGrease.System):
     """Wrap positions around when they go off the edge of the window"""
 
     def __init__(self):
@@ -157,7 +157,7 @@ class PositionWrapper(grease.System):
             entity.position.position.y -= window.height + entity.collision.aabb.height
 
 
-class Gun(grease.System):
+class Gun(bGrease.System):
     """Fires Shot entities"""
 
     def step(self, dt):
@@ -168,7 +168,7 @@ class Gun(grease.System):
 
 
 
-class Sweeper(grease.System):
+class Sweeper(bGrease.System):
     """Clears out space debris"""
 
     SWEEP_TIME = 2.0
@@ -241,7 +241,7 @@ class GameSystem(KeyControls):
             self.player_ship.gun.firing = False
 
 
-class GameWorld(grease.impl.World):
+class GameWorld(bGrease.impl.World):
 
     def configure(self):
         """Configure the game world's components, systems and renderers"""

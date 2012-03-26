@@ -58,7 +58,7 @@ class EntityMeta(type):
 class Entity(object):
 	"""Base class for grease entities.
 	
-	Entity objects themselves are merely identifiers within a :class:`grease.world.World`.
+	Entity objects themselves are merely identifiers within a :class:`bGrease.world.World`.
 	They also provide a facade for convenient entity-wise access of component
 	data. However, they do not contain any data themselves other than an
 	entity id.
@@ -150,7 +150,7 @@ class EntityComponentAccessor(object):
 	entity is not yet a member of, it is automatically added to the
 	component first.
 
-	:param component: The :class:`grease.Component` being accessed
+	:param component: The :class:`bGrease.Component` being accessed
 	:param entity: The :class:`Entity` being accessed
 	"""
 	

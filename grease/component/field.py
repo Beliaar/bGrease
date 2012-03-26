@@ -14,8 +14,8 @@
 __version__ = '$Id$'
 
 import operator
-from grease.geometry import Vec2d, Vec2dArray, Rect
-from grease import color
+from bGrease.geometry import Vec2d, Vec2dArray, Rect
+from bGrease import color
 
 # Allowed field types -> default values
 types = {int:lambda: 0, 

@@ -17,9 +17,9 @@ __version__ = '$Id$'
 class EulerMovement(object):
 	"""System that applies entity movement to position using Euler's method
 
-	:param position_component: Name of :class:`grease.component.Position` 
+	:param position_component: Name of :class:`bGrease.component.Position` 
 		component to update.
-	:param movement_component: Name of :class:`grease.component.Movement` 
+	:param movement_component: Name of :class:`bGrease.component.Movement` 
 		component used to update position.
 	"""
 

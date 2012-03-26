@@ -15,7 +15,7 @@ __version__ = '$Id$'
 
 __all__ = ('Vector',)
 
-from grease.geometry import Vec2d
+from bGrease.geometry import Vec2d
 import ctypes
 from math import sin, cos, radians
 import pyglet
@@ -39,14 +39,14 @@ class Vector(object):
 		the visual quality of the rendering at larger line widths at some
 		cost to performance. Has no effect if ``line_width`` is not specified.
 
-	:param position_component: Name of :class:`grease.component.Position` 
+	:param position_component: Name of :class:`bGrease.component.Position` 
 		component to use. Shapes rendered are offset by the entity positions.
 
-	:param renderable_component: Name of :class:`grease.component.Renderable` 
+	:param renderable_component: Name of :class:`bGrease.component.Renderable` 
 		component to use. This component specifies the entities to be 
 		rendered and their base color.
 
-	:param shape_component: Name of :class:`grease.component.Shape` 
+	:param shape_component: Name of :class:`bGrease.component.Shape` 
 		component to use. Source of the shape vertices for each entity.
 
 	The entities rendered are taken from the intersection of he position,

@@ -36,7 +36,7 @@ __version__ = '$Id$'
 
 import abc
 import pyglet
-from grease.mode import *
+from bGrease.mode import *
 
 class PygletManager(BaseManager):
 	"""Mode manager abstract base class using pyglet.

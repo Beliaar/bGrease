@@ -1,7 +1,7 @@
-:mod:`grease.renderer` -- World Presentation
+:mod:`bGrease.renderer` -- World Presentation
 ============================================
 
-.. automodule:: grease.renderer
+.. automodule:: bGrease.renderer
    :synopsis: Visualize Whirred Peas
    :members:
 

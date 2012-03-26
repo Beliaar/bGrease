@@ -15,12 +15,12 @@
 import math
 import random
 import pyglet
-import grease
-from grease import component, controller, renderer
-import grease.impl
+import bGrease
+from bGrease import component, controller, renderer
+import bGrease.impl
 
 
-class Asteroid(grease.Entity):
+class Asteroid(bGrease.Entity):
     """Big floating space rock"""
 
     UNIT_CIRCLE = [(math.sin(math.radians(a)), math.cos(math.radians(a))) 
@@ -38,7 +38,7 @@ class Asteroid(grease.Entity):
         self.renderable.color = "#aaa"
 
 
-class GameWorld(grease.impl.World):
+class GameWorld(bGrease.impl.World):
 
     def configure(self):
         """Configure the game world's components, systems and renderers"""

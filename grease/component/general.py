@@ -13,9 +13,9 @@
 
 __version__ = '$Id$'
 
-from grease.component import base
-from grease.component import field
-from grease.entity import ComponentEntitySet
+from bGrease.component import base
+from bGrease.component import field
+from bGrease.entity import ComponentEntitySet
 
 
 class Component(dict):

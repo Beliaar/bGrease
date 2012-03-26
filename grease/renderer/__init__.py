@@ -15,11 +15,11 @@ built-in renderer classes.
 
 See also:
 
-- :class:`~grease.Renderer` abstract base class.
+- :class:`~bGrease.Renderer` abstract base class.
 - :ref:`Example renderer class in the tutorial <tut-renderer-example>`
 """
 
 __all__ = ('Vector', 'Camera')
 
-from grease.renderer.vector import Vector
-from grease.renderer.camera import Camera
+from bGrease.renderer.vector import Vector
+from bGrease.renderer.camera import Camera

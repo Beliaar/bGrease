@@ -9,7 +9,7 @@ class TestEntity(object):
 class GeneralTestCase(unittest.TestCase):
 
 	def test_fields(self):
-		from grease.component import Component
+		from bGrease.component import Component
 		c = Component()
 		self.assertEqual(len(c.fields), 0)
 
@@ -26,11 +26,11 @@ class GeneralTestCase(unittest.TestCase):
 		self.assertTrue(c.fields['f3'].component is c)
 	
 	def test_invalid_field_type(self):
-		from grease.component import Component
+		from bGrease.component import Component
 		self.assertRaises(AssertionError, Component, t=tuple)
 	
 	def test_add_no_data(self):
-		from grease.component import Component
+		from bGrease.component import Component
 		c = Component()
 		c.set_world(world)
 		entity = TestEntity()
@@ -40,7 +40,7 @@ class GeneralTestCase(unittest.TestCase):
 		self.assertEqual(list(c), [entity])
 	
 	def test_add_kw_data(self):
-		from grease.component import Component
+		from bGrease.component import Component
 		c = Component(x=float, y=float, name=str)
 		c.set_world(world)
 		entity = TestEntity()
@@ -52,7 +52,7 @@ class GeneralTestCase(unittest.TestCase):
 		self.assertEqual(ed.name, "timmy!")
 	
 	def test_add_data_object(self):
-		from grease.component import Component
+		from bGrease.component import Component
 		c = Component(sweat=int, odor=str)
 		c.set_world(world)
 		class Data: pass
@@ -66,7 +66,7 @@ class GeneralTestCase(unittest.TestCase):
 		self.assertEqual(ed.odor, "rank")
 	
 	def test_add_with_data_object_and_kw(self):
-		from grease.component import Component
+		from bGrease.component import Component
 		c = Component(state=str, time=float)
 		c.set_world(world)
 		class Data: pass
@@ -80,8 +80,8 @@ class GeneralTestCase(unittest.TestCase):
 		self.assertEqual(ed.time, 12.5)
 	
 	def test_data_defaults(self):
-		from grease.component import Component
-		from grease.geometry import Vec2d
+		from bGrease.component import Component
+		from bGrease.geometry import Vec2d
 		c = Component(speed=int, accel=Vec2d, state=str)
 		c.set_world(world)
 		e1 = TestEntity()
@@ -96,7 +96,7 @@ class GeneralTestCase(unittest.TestCase):
 		self.assertEqual(ed.state, "uber")
 	
 	def test_step_updates_new_and_deleted_lists(self):
-		from grease.component import Component
+		from bGrease.component import Component
 		c = Component(x=float, y=float)
 		c.set_world(world)
 		self.assertEqual(list(c.new_entities), [])
@@ -122,7 +122,7 @@ class GeneralTestCase(unittest.TestCase):
 		self.assertEqual(list(c.deleted_entities), [e1, e2])
 	
 	def test_getitem(self):
-		from grease.component import Component
+		from bGrease.component import Component
 		c = Component()
 		c.set_world(world)
 		entity = TestEntity()
@@ -131,7 +131,7 @@ class GeneralTestCase(unittest.TestCase):
 		self.assertTrue(c[entity] is ed)
 	
 	def test_remove_and_contains(self):
-		from grease.component import Component
+		from bGrease.component import Component
 		c = Component()
 		c.set_world(world)
 		e1 = TestEntity()
@@ -153,7 +153,7 @@ class GeneralTestCase(unittest.TestCase):
 		self.assertFalse(e2 in c)
 	
 	def test_len(self):
-		from grease.component import Component
+		from bGrease.component import Component
 		c = Component()
 		c.set_world(world)
 		self.assertEqual(len(c), 0)
@@ -170,7 +170,7 @@ class GeneralTestCase(unittest.TestCase):
 		self.assertEqual(len(c.entities), 25)
 	
 	def test_iter(self):
-		from grease.component import Component
+		from bGrease.component import Component
 		c = Component()
 		c.set_world(world)
 		self.assertEqual(list(c), [])
@@ -178,14 +178,14 @@ class GeneralTestCase(unittest.TestCase):
 		self.assertEqual(sorted(c.itervalues()), sorted(ed))
 	
 	def test_set_world(self):
-		from grease.component import Component
+		from bGrease.component import Component
 		c = Component()
 		world = object()
 		c.set_world(world)
 		self.assertTrue(c.world is world)
 	
 	def test_entities_set(self):
-		from grease.component import Component
+		from bGrease.component import Component
 		c = Component()
 		c.set_world(world)
 		self.assertEqual(len(c.entities), 0)

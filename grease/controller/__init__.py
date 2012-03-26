@@ -1,4 +1,4 @@
 
 __all__ = ('EulerMovement',)
 
-from grease.controller.integrator import EulerMovement
+from bGrease.controller.integrator import EulerMovement

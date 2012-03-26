@@ -44,7 +44,7 @@ Let's move on to the thrust method:
 .. literalinclude:: blasteroids2.py
    :pyobject: PlayerShip.thrust_on
 
-This method accelerates the ship in the direction it is facing. We start by defining an upward-facing vector with a magnitude set to the class's :attr:`THRUST_ACCEL` value. This vector is then rotated in-place to face the direction of the ship using :meth:`Vec2d.rotate()`. The :attr:`accel` field of the entity's movment component is then set to the rotated thrust vector. The :class:`~grease.controller.EulerMovement` system, already in the world takes care of calculating the ship's velocity and position over time based on the acceleration. 
+This method accelerates the ship in the direction it is facing. We start by defining an upward-facing vector with a magnitude set to the class's :attr:`THRUST_ACCEL` value. This vector is then rotated in-place to face the direction of the ship using :meth:`Vec2d.rotate()`. The :attr:`accel` field of the entity's movment component is then set to the rotated thrust vector. The :class:`~bGrease.controller.EulerMovement` system, already in the world takes care of calculating the ship's velocity and position over time based on the acceleration. 
 
 The last line changes one of the shape vertices, moving it to a random position behind the ship. This will create a simple flickering flame animation that will act as an import cue to the player that the thrust is active. Notice that the vertex is simply moved to a random position vertically relative to the origin, the renderer will automatically take care of translating and rotating the vertex to the proper window coordinates according to the ship's current position and rotation, as well as the current camera settings.
 
@@ -76,7 +76,7 @@ Remember that systems are behavioral aspects of our application, and are invoked
    :pyobject: GameSystem
    :end-before: @
 
-We start by defining our :class:`GameSystem` as a subclass of :class:`~grease.controls.KeyControls`. :class:`KeyControls` is a system subclass that provides a convenient mechanism for binding its methods to keyboard events.
+We start by defining our :class:`GameSystem` as a subclass of :class:`~bGrease.controls.KeyControls`. :class:`KeyControls` is a system subclass that provides a convenient mechanism for binding its methods to keyboard events.
 
 The :meth:`set_world` method is overridden to include a call to create a :class:`PlayerShip` entity and store it in the system as game state. Since there is only one player ship, this is an easy way to keep track of it so that we can call it's methods in response to particular key presses. We make the entity here in this method -- instead of, say :meth:`__init__` -- because this method is called when the system is added to the world. Since we need a reference to the world in order to create an entity, this is the most convenient place to do so.
 
@@ -107,7 +107,7 @@ The methods for handling turning right are the same as above with the direction 
    :start-after: turn(0)
    :end-before: key.SPACE
 
-For activating thrust, we use the :meth:`~grease.controls.KeyControls.key_hold` decorator. This works differently than the key press and release decorators we used for turning. The press and release decorators configure a method to fire once for each specific key event. The key hold decorator configures a method to fire continuously, once per time step, as long as the specified key is held down. This is perfect for thrust, which needs to be adjusted continuously as the ship turns, and runs a continuous animation while activated.
+For activating thrust, we use the :meth:`~bGrease.controls.KeyControls.key_hold` decorator. This works differently than the key press and release decorators we used for turning. The press and release decorators configure a method to fire once for each specific key event. The key hold decorator configures a method to fire continuously, once per time step, as long as the specified key is held down. This is perfect for thrust, which needs to be adjusted continuously as the ship turns, and runs a continuous animation while activated.
 
 The :meth:`stop_thrust` method is simply bound to key release, to ensure the thrust is deactivated at the proper time.
 
@@ -139,13 +139,13 @@ Flying around is way too safe at the moment, since you can't actually run into a
    :pyobject: GameWorld
    :linenos:
 
-The :class:`~grease.component.Collision` component (line 9 above) has the fields we need to make the collision system (line 13-14 above) work. The fields in this component are:
+The :class:`~bGrease.component.Collision` component (line 9 above) has the fields we need to make the collision system (line 13-14 above) work. The fields in this component are:
 
 `aabb`
     This is the axis-aligned bounding box that contains the entity. This box is used in the collision detection system to quickly reduce the number of collision checks that need to be performed. We can also use it for our own purposes when we need to find the top, left, bottom or right edges of entities.
 
 `radius`
-   The meaning of this field is up to the specific collision system used. For :class:`~grease.collision.Circular` systems, entities are approximated as circles for the purposes of collision detection. The radius value is simply the radius of the collision circle for an entity.
+   The meaning of this field is up to the specific collision system used. For :class:`~bGrease.collision.Circular` systems, entities are approximated as circles for the purposes of collision detection. The radius value is simply the radius of the collision circle for an entity.
 
 `from_mask` and `into_mask`
    Not all entities in the collision component need to be able to collide with each other. These two mask fields let you specify which entities can collide. Both mask fields are 32 bit integer bitmasks. When two entities are compared for collision, the :attr:`from_mask` value from each entity is bit-anded with the :attr:`into_mask` of the other. If this bit-and operation returns a non-zero result, then a collision is possible, if the result is zero, the entities cannot collide. Note that this check happens in both directions, so a collision can occur between entity A and B if ``A.collision.from_mask & B.collision.into_mask != 0 or B.collision.from_mask & A.collision.into_mask != 0``.
@@ -159,7 +159,7 @@ Let's take a closer look at how the collision system is configured above:
 
 There are two major steps to collision handling in Grease: *collision detection* and *collision response*. The detection step happens within the collision system. A set of pairs of the currently colliding entities can be found in the :attr:`collision_pairs` attribute of the collision system. Applications are free to use :attr:`collision_pairs` directly, but they can also register one or more handlers for more automated collision response. Collision handlers are simply functions that accept the collision system they are configured for as an argument. The handler functions are called each time step to deal with collision response.
 
-Above we have configured :func:`~grease.collision.dispatch_events` as the collision handler. This function calls :meth:`on_collide` on all entities that are colliding. The entities' :meth:`on_collide` handler methods can contain whatever logic desired to handle the collision. This method accepts three arguments: :attr:`other_entity`, :attr:`collision_point`, and :attr:`collision_normal`. These arguments are the other entity collided with, the point where the collision occurred and the normal vector at the point of collision respectively. It is up to the handler method to decide how these values are used. Note that when two entities collide, both of their :meth:`on_collide` handler methods will be called, if defined.
+Above we have configured :func:`~bGrease.collision.dispatch_events` as the collision handler. This function calls :meth:`on_collide` on all entities that are colliding. The entities' :meth:`on_collide` handler methods can contain whatever logic desired to handle the collision. This method accepts three arguments: :attr:`other_entity`, :attr:`collision_point`, and :attr:`collision_normal`. These arguments are the other entity collided with, the point where the collision occurred and the normal vector at the point of collision respectively. It is up to the handler method to decide how these values are used. Note that when two entities collide, both of their :meth:`on_collide` handler methods will be called, if defined.
 
 In our game we will leverage the collision masks to make it so that the player's ship collides with asteroids, but the asteroids do not collide with each other. To do that we need to modify the :class:`Asteroid` and :class:`PlayerShip` constructors to set the collision component fields.
 

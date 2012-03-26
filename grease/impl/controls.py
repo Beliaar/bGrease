@@ -12,10 +12,10 @@
 #############################################################################
 """Control systems for binding controls to game logic"""
 
-import grease
+import bGrease
 from pyglet.window import key
 
-class KeyControls(grease.System):
+class KeyControls(bGrease.System):
 	"""System that maps subclass-defined action methods to keys. 
 
 	Keys may be mapped in the subclass definition using decorators
@@ -31,7 +31,7 @@ class KeyControls(grease.System):
 	"""
 
 	world = None
-	""":class:`grease.World` object this system is bound to"""
+	""":class:`bGrease.World` object this system is bound to"""
 
 	def __init__(self):
 		self._key_press_map = {}

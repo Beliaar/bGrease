@@ -20,9 +20,9 @@ as keys and data records as values. An application will typically
 interact with components via entity attributes, entity extents or
 by joining them. For more information see:
 
-- :class:`~grease.entity.Entity` class.
-- :class:`~grease.world.EntityExtent` class.
-- :meth:`~grease.world.ComponentParts.join` method of ComponentParts.
+- :class:`~bGrease.entity.Entity` class.
+- :class:`~bGrease.world.EntityExtent` class.
+- :meth:`~bGrease.world.ComponentParts.join` method of ComponentParts.
 
 See also :ref:`defining custom components in the tutorial <custom-component-example>`.
 """
@@ -32,9 +32,9 @@ __version__ = '$Id$'
 __all__ = ('Component', 'ComponentError', 'Position', 'Transform', 'Movement', 
 	'Shape', 'Renderable', 'Collision')
 
-from grease.component.general import Component
-from grease.geometry import Vec2d, Vec2dArray, Rect
-from grease import color
+from bGrease.component.general import Component
+from bGrease.geometry import Vec2d, Vec2dArray, Rect
+from bGrease import color
 
 
 class ComponentError(Exception):

@@ -1,9 +1,9 @@
 .. include:: ../include.rst
 
-:mod:`grease.component` -- Entity Data Containers
+:mod:`bGrease.component` -- Entity Data Containers
 =================================================
 
-.. automodule:: grease.component
+.. automodule:: bGrease.component
    :synopsis: Entity Data Containers
    :members:
 

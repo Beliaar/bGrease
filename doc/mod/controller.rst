@@ -1,7 +1,7 @@
-:mod:`grease.controller` -- General Behavioral Aspects
+:mod:`bGrease.controller` -- General Behavioral Aspects
 ======================================================
 
-.. automodule:: grease.controller
+.. automodule:: bGrease.controller
    :synopsis: General Behavioral Aspects
    :members:
 

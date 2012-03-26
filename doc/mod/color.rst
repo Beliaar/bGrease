@@ -1,7 +1,7 @@
-:mod:`grease.color` -- Colors
+:mod:`bGrease.color` -- Colors
 =============================
 
-.. automodule:: grease.color
+.. automodule:: bGrease.color
    :synopsis: Come Smell the Colors
    :members:
 

@@ -26,14 +26,14 @@ __version__ = '$Id$'
 import itertools
 import pyglet
 from pyglet import gl
-from grease.world import *
-from grease.impl import Mode
+from bGrease.world import *
+from bGrease.impl import Mode
 
 class World(Mode, BaseWorld):
 	"""A coordinated collection of components, systems and entities
 	
 	A world is also a mode that may be pushed onto a 
-	:class:`grease.mode.Manager`
+	:class:`bGrease.mode.Manager`
 
 	:param step_rate: The rate of :meth:`step()` calls per second. 
 

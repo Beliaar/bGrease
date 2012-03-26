@@ -154,7 +154,7 @@ class ModeManagerTestBase(object):
 class ManagerTestCase(ModeManagerTestBase, unittest.TestCase):
 
 	def setUp(self):
-		from grease import mode
+		from bGrease import mode
 		self.ManagerClass = mode.Manager
 	
 	def createManager(self, cls=None):
@@ -170,7 +170,7 @@ class ManagerTestCase(ModeManagerTestBase, unittest.TestCase):
 class WindowManagerTestCase(ModeManagerTestBase, unittest.TestCase):
 
 	def setUp(self):
-		from grease import mode
+		from bGrease import mode
 		self.ManagerClass = mode.ManagerWindow
 	
 	def createManager(self, cls=None):
@@ -184,12 +184,12 @@ class WindowManagerTestCase(ModeManagerTestBase, unittest.TestCase):
 		self.assertTrue(isinstance(manager, pyglet.window.Window))
 	
 	def test_event_dispatcher_is_window(self):
-		from grease import mode
+		from bGrease import mode
 		window = mode.ManagerWindow(visible=False)
 		self.assertTrue(window.event_dispatcher is window)
 	
 	def test_last_pop_closes_window(self):
-		from grease import mode
+		from bGrease import mode
 		event_loop = pyglet.app.EventLoop() # We need one for on_close() to do its thing
 		event_loop._setup()
 		window = mode.ManagerWindow(visible=False)

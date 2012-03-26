@@ -24,31 +24,31 @@ See :ref:`an example of world configuration in the tutorial <tut-world-example>`
 __version__ = '$Id$'
 
 import itertools
-from grease import mode
-from grease.component import ComponentError
-from grease.entity import Entity, ComponentEntitySet
+from bGrease import mode
+from bGrease.component import ComponentError
+from bGrease.entity import Entity, ComponentEntitySet
 
 
 class BaseWorld(object):
 	"""A coordinated collection of components, systems and entities
 	
 	A world is also a mode that may be pushed onto a 
-	:class:`grease.mode.Manager`
+	:class:`bGrease.mode.Manager`
 	"""
 
 	components = None
 	""":class:`ComponentParts` object containing all world components.
-	:class:`grease.component.Component` objects define and contain all entity data
+	:class:`bGrease.component.Component` objects define and contain all entity data
 	"""
 
 	systems = None
 	""":class:`Parts` object containing all world systems. 
-	:class:`grease.System` objects define world and entity behavior
+	:class:`bGrease.System` objects define world and entity behavior
 	"""
 
 	renderers = None
 	""":class:`Parts` object containing all world renderers. 
-	:class:`grease.Renderer` objects define world presentation
+	:class:`bGrease.Renderer` objects define world presentation
 	"""
 
 	entities = None

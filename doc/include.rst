@@ -1,14 +1,14 @@
 .. Global includes
 
-.. |World| replace:: :class:`~grease.world.World`
-.. |System| replace:: :class:`~grease.System`
-.. |Component| replace:: :class:`~grease.component.Component`
-.. |Renderer| replace:: :class:`~grease.Renderer`
-.. |Entity| replace:: :class:`~grease.entity.Entity`
-.. |Vec2d| replace:: :class:`~grease.geometry.Vec2d`
-.. |Vec2dArray| replace:: :class:`~grease.geometry.Vec2dArray`
-.. |Rect| replace:: :class:`~grease.geometry.Rect`
-.. |RGBA| replace:: :class:`~grease.color.RGBA`
-.. |Mode| replace:: :class:`~grease.mode.Mode`
-.. |Manager| replace:: :class:`~grease.mode.Manager`
-.. |Multi| replace:: :class:`~grease.mode.Multi`
+.. |World| replace:: :class:`~bGrease.world.World`
+.. |System| replace:: :class:`~bGrease.System`
+.. |Component| replace:: :class:`~bGrease.component.Component`
+.. |Renderer| replace:: :class:`~bGrease.Renderer`
+.. |Entity| replace:: :class:`~bGrease.entity.Entity`
+.. |Vec2d| replace:: :class:`~bGrease.geometry.Vec2d`
+.. |Vec2dArray| replace:: :class:`~bGrease.geometry.Vec2dArray`
+.. |Rect| replace:: :class:`~bGrease.geometry.Rect`
+.. |RGBA| replace:: :class:`~bGrease.color.RGBA`
+.. |Mode| replace:: :class:`~bGrease.mode.Mode`
+.. |Manager| replace:: :class:`~bGrease.mode.Manager`
+.. |Multi| replace:: :class:`~bGrease.mode.Multi`

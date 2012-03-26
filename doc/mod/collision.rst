@@ -1,9 +1,9 @@
 .. include:: ../include.rst
 
-:mod:`grease.collision` -- Collision Detection
+:mod:`bGrease.collision` -- Collision Detection
 ===============================================
 
-.. automodule:: grease.collision
+.. automodule:: bGrease.collision
    :synopsis: Collision detection systems
    :members:
 

@@ -39,7 +39,7 @@ broad-phase system are actually in collision.
 
 __version__ = '$Id$'
 
-from grease.geometry import Vec2d
+from bGrease.geometry import Vec2d
 from bisect import bisect_right
 
 

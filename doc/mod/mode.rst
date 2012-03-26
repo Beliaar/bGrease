@@ -1,7 +1,7 @@
-:mod:`grease.mode` -- Modal Framework
+:mod:`bGrease.mode` -- Modal Framework
 =====================================
 
-.. automodule:: grease.mode
+.. automodule:: bGrease.mode
    :synopsis: Application modes
    :members:
 

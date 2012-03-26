@@ -35,7 +35,7 @@ class TestAccessor(object):
 class FieldTestCase(unittest.TestCase):
 
 	def test_basics(self):
-		from grease.component.field import Field
+		from bGrease.component.field import Field
 		comp = TestComponent()
 
 		f = Field(comp, "myfield", int)
@@ -44,8 +44,8 @@ class FieldTestCase(unittest.TestCase):
 		self.assertEqual(f.default(), 0)
 	
 	def test_cast(self):
-		from grease.component.field import Field
-		from grease.geometry import Vec2d
+		from bGrease.component.field import Field
+		from bGrease.geometry import Vec2d
 		f = Field(None, "string", str)
 		self.assertEqual(f.cast(22), "22")
 		f = Field(None, "int", int)
@@ -54,7 +54,7 @@ class FieldTestCase(unittest.TestCase):
 		self.assertEqual(f.cast((11,12)), Vec2d(11,12))
 	
 	def test_accessor_default_set(self):
-		from grease.component.field import Field
+		from bGrease.component.field import Field
 		comp = TestComponent()
 		f = Field(comp, "acc_default", str, TestAccessor)
 		acc = f.accessor()
@@ -62,7 +62,7 @@ class FieldTestCase(unittest.TestCase):
 		self.assertTrue(acc.entities is comp.entities, (acc.entities, comp.entities))
 	
 	def test_accessor_subset(self):
-		from grease.component.field import Field
+		from bGrease.component.field import Field
 		comp = TestComponent((1,2,3,4))
 		f = Field(comp, "acc_default", str, TestAccessor)
 		acc = f.accessor(set([2,4,6,8]))
@@ -73,14 +73,14 @@ class FieldTestCase(unittest.TestCase):
 class FieldAccessorTestCase(unittest.TestCase):
 
 	def test_iter(self):
-		from grease.component.field import FieldAccessor
+		from bGrease.component.field import FieldAccessor
 		entities = set([1,5,9])
 		comp = TestComponent()
 		accessor = FieldAccessor(TestField(comp, 'entity'), entities)
 		self.assertEqual(sorted(iter(accessor)), [1, 5, 9])
 	
 	def test_child_attr(self):
-		from grease.component.field import FieldAccessor
+		from bGrease.component.field import FieldAccessor
 		entities = set([1,2,3])
 		comp = TestComponent()
 		comp[1] = TestData(foo=TestData(bar=100, baz=TestData(spam=-1)))
@@ -101,7 +101,7 @@ class FieldAccessorTestCase(unittest.TestCase):
 		self.assertRaises(KeyError, lambda: baz_spam_acc[4])
 	
 	def test_set(self):
-		from grease.component.field import FieldAccessor
+		from bGrease.component.field import FieldAccessor
 		entities = set([3,7,8])
 		comp = TestComponent()
 		for i in range(9):
@@ -121,7 +121,7 @@ class FieldAccessorTestCase(unittest.TestCase):
 				self.assertEqual(comp[i].xy.y, i*-10)
 	
 	def test_set_join(self):
-		from grease.component.field import FieldAccessor
+		from bGrease.component.field import FieldAccessor
 		entities1 = set([2,3,7,8])
 		entities2 = set([1,2,3])
 		comp1 = TestComponent()
@@ -155,13 +155,13 @@ class FieldAccessorTestCase(unittest.TestCase):
 				self.assertEqual(comp2[i].bar, -i)
 	
 	def test_use_as_bool(self):
-		from grease.component.field import FieldAccessor
+		from bGrease.component.field import FieldAccessor
 		field = TestField(TestComponent(), 'test')
 		self.assertFalse(FieldAccessor(field, set()))
 		self.assertTrue(FieldAccessor(field, set([1,2,3])))
 	
 	def test_repr(self):
-		from grease.component.field import FieldAccessor
+		from bGrease.component.field import FieldAccessor
 		field = TestField(TestComponent(), 'test')
 		accessor = FieldAccessor(field, set())
 		self.assertTrue(
@@ -171,7 +171,7 @@ class FieldAccessorTestCase(unittest.TestCase):
 			repr(accessor))
 	
 	def test_query_ops(self):
-		from grease.component.field import FieldAccessor
+		from bGrease.component.field import FieldAccessor
 		comp = TestComponent()
 		for i in range(1,4):
 			comp[i] = TestData(x=i*i, pos=TestData(x=i, y=-i))
@@ -197,7 +197,7 @@ class FieldAccessorTestCase(unittest.TestCase):
 		self.assertEqual(pos_accessor.x < 3, set([1, 2, 4, 5]))
 	
 	def test_query_ops_join(self):
-		from grease.component.field import FieldAccessor
+		from bGrease.component.field import FieldAccessor
 		comp = TestComponent()
 		entities1 = set([2,3,7,8])
 		entities2 = set([1,2,3,8])
@@ -216,7 +216,7 @@ class FieldAccessorTestCase(unittest.TestCase):
 		self.assertEqual(foo_accessor != bar_accessor, set([2,8]))
 	
 	def test_inplace_mutators(self):
-		from grease.component.field import FieldAccessor
+		from bGrease.component.field import FieldAccessor
 		entities = set([2,6,7])
 		comp = TestComponent()
 		for i in range(9):
@@ -266,7 +266,7 @@ class FieldAccessorTestCase(unittest.TestCase):
 			self.assertEqual(comp[i].xy.x, i*10)
 	
 	def test_inplace_mutators_join(self):
-		from grease.component.field import FieldAccessor
+		from bGrease.component.field import FieldAccessor
 		comp = TestComponent()
 		entities1 = set([2,3,7,8])
 		entities2 = set([1,2,3,8])

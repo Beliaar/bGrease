@@ -1,7 +1,7 @@
-:mod:`grease.controls` -- Game Controls
+:mod:`bGrease.controls` -- Game Controls
 =======================================
 
-.. automodule:: grease.controls
+.. automodule:: bGrease.controls
    :synopsis: Game Controls
    :members:
 

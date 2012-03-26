@@ -58,7 +58,7 @@ The gun sound is a bit more involved. Since the :class:`PlayerShip` class does n
 
 For this to work, we will need to reconfigure the gun component in the :class:`GameWorld` class, adding a :attr:`sound` field::
 
-		class GameWorld(grease.World):
+		class GameWorld(bGrease.World):
 
 			def configure(self):
 				"""Configure the game world's components, systems and renderers"""
@@ -108,7 +108,7 @@ Currently when you shoot an asteroid, it is simply destroyed. This is not much o
 
 First some arguments are added to the constructor: :attr:`position`, :attr:`parent_velocity`, and :attr:`points` (line 14). If :attr:`position` is provided, it is used as the initial asteroid position rather than always having a random initial position (line 20). If :attr:`parent_velocity` is provided, it is added to the random velocity vector (line 22-23), this way fragments are influenced by their parent's movement. Last, we store the point value for the asteroid in a new :attr:`award` component (line 32). Of course we'll need to add this component to our :class:`GameWorld`::
 
-    class GameWorld(grease.World):
+    class GameWorld(bGrease.World):
 
         def configure(self):
             """Configure the game world's components, systems and renderers"""
@@ -142,7 +142,7 @@ The last new method we add here is :meth:`award_points` (line 41). This simply a
 
 We want to get points when the player shoots things. This means we need to call the :meth:`award_points` when a shot collides with something. Adding the call to the :class:`Shot` class' :meth:`on_collide` method does the trick::
 
-    class Shot(grease.Entity):
+    class Shot(bGrease.Entity):
         """Pew Pew!"""
         ...
 
@@ -260,14 +260,14 @@ Windows, Managers, Worlds, and Modes
 
 Although it is possible to create custom modes and managers in your application, there are two concrete implementations provided by Grease that should prove convenient. One, we are already familiar with: |World|. Worlds implement the mode interface so that they can be used directly as game modes. When a world is active in a mode manager, its clock receives ticks, its systems receive events, and it will invoke its renderers when the display needs to be redrawn. When a world is deactivated, it is "frozen". Its clock no longer runs, its systems no longer receive events and its renderers are no longer invoked. When the world is later reactivated, it resumes right where it left off.
 
-Grease also provides a special mode manager, :class:`~grease.mode.ManagerWindow`. This class is a Pyglet window subclass that implements the mode manager interface. This allows you to push and pop modes, such as |World| objects, directly onto an application window. All of the OS events the window receives will go directly to the active mode. This makes implementing a user interface flow with push and pop semantics a breeze.
+Grease also provides a special mode manager, :class:`~bGrease.mode.ManagerWindow`. This class is a Pyglet window subclass that implements the mode manager interface. This allows you to push and pop modes, such as |World| objects, directly onto an application window. All of the OS events the window receives will go directly to the active mode. This makes implementing a user interface flow with push and pop semantics a breeze.
 
-:class:`~grease.mode.ManagerWindow` objects also include some default behavior:
+:class:`~bGrease.mode.ManagerWindow` objects also include some default behavior:
 
 * When the ``Esc`` key is pressed, the current mode is popped.
 * When the last mode is popped, the window closes.
 
-.. note:: A :class:`ManagerWindow` object is both the mode manager and the source of events (i.e., the event dispatcher). Custom mode managers can be made by subclassing :class:`~grease.mode.BaseManager` to separate these two concerns, if desired. This can allow several mode managers to share a single window, or even use an application-defined event dispatcher.
+.. note:: A :class:`ManagerWindow` object is both the mode manager and the source of events (i.e., the event dispatcher). Custom mode managers can be made by subclassing :class:`~bGrease.mode.BaseManager` to separate these two concerns, if desired. This can allow several mode managers to share a single window, or even use an application-defined event dispatcher.
 
 We can create a custom world to use as our title screen. The title screen will have some text, will respond to some key commands, and will have some asteroids floating in the background to make it more interesting. It will need a very similar configuration of components and systems as our existing :class:`GameWorld`, so let's refactor the common parts into a shared base class:
 
@@ -412,7 +412,7 @@ The :meth:`on_key_press` method implemented above overrides the method in the ba
 
 The give a visual indication when the game is paused, we can modify the heads-up display, adding some additional code to the :class:`Hud` class' :meth:`draw` method::
 
-        class Hud(grease.Renderer):
+        class Hud(bGrease.Renderer):
             """Heads-up display renderer"""
             ...
 
