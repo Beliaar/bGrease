@@ -11,10 +11,23 @@
 #
 #############################################################################
 
-__versioninfo__ = (0, 3, 0)
-__version__ = '.'.join(str(n) for n in __versioninfo__)
+from bGrease.mode import *
+import abc
 
-__all__ = ('grease_pyglet', 'grease_fife')
+class FifeManager(BaseManager):
 
-import grease_pyglet
-import grease_fife
+        def __init__(self):
+                self.modes = []
+
+        def _pump(self):
+                if self.current_mode:
+                        self.current_mode.pump(self.current_mode.engine.getTimeManager().getTimeDelta() / 1000.0)
+
+class Mode(BaseMode):
+
+        def __init__(self):
+                BaseMode.__init__(self)
+
+        @abc.abstractmethod
+        def pump(self, dt):
+                """Performs actions every frame"""

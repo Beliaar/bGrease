@@ -13,9 +13,9 @@
 
 from bGrease.world import *
 from bGrease.component import Component
-from bgrease.impl.grease_fife.mode import FifeMode
+from bGrease.grease_fife.mode import Mode
 
-class World(FifeMode, BaseWorld):
+class World(Mode, BaseWorld):
 
     def __init__(self):
         FifeMode.__init__(self)

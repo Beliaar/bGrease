@@ -20,9 +20,9 @@ import pyglet
 from pyglet.window import key
 import bGrease
 from bGrease import component, controller, geometry, collision, renderer
-import bGrease.impl.grease_pyglet
-from bGrease.impl.grease_pyglet import mode
-from bGrease.impl.grease_pyglet.controls import KeyControls
+import bGrease.grease_pyglet
+from bGrease.grease_pyglet import mode
+from bGrease.grease_pyglet.controls import KeyControls
 
 ## Utility functions ##
 
@@ -462,7 +462,7 @@ class TitleScreenControls(KeyControls):
             Game('Player Two')))
 
 
-class BaseWorld(bGrease.impl.grease_pyglet.World):
+class BaseWorld(bGrease.grease_pyglet.World):
 
     def configure(self):
         """Configure the game world's components, systems and renderers"""

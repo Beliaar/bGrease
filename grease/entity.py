@@ -58,7 +58,7 @@ class EntityMeta(type):
 class Entity(object):
 	"""Base class for grease entities.
 	
-	Entity objects themselves are merely identifiers within a :class:`bGrease.impl.grease_pyglet.world.World`.
+	Entity objects themselves are merely identifiers within a :class:`bGrease.world.BaseWorld`.
 	They also provide a facade for convenient entity-wise access of component
 	data. However, they do not contain any data themselves other than an
 	entity id.
