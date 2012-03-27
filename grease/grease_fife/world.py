@@ -18,7 +18,7 @@ from bGrease.grease_fife.mode import Mode
 class World(Mode, BaseWorld):
 
     def __init__(self):
-        FifeMode.__init__(self)
+        Mode.__init__(self)
         BaseWorld.__init__(self)
             
     def pump(self, dt):
