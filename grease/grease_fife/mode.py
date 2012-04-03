@@ -25,8 +25,13 @@ class FifeManager(BaseManager):
 
 class Mode(BaseMode):
 
-        def __init__(self):
-                BaseMode.__init__(self)
+        def __init__(self, engine):
+            """Constructor
+            Args: 
+                engine: A fife.Engine instance
+            """
+            BaseMode.__init__(self)
+            self.engine = engine
 
         @abc.abstractmethod
         def pump(self, dt):
