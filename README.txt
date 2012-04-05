@@ -2,7 +2,7 @@ bGrease Overview
 ===============
 
 bGrease is a fork of Grease that makes it possible to use grease with other modules than pyglet and a few other modifications.
-Not that this will NOT add any other new functionality to Grease.
+Note that this will NOT add any other new functionality to Grease.
 
 Grease is a pluggable and highly extensible 2D game engine and framework for
 Python.
