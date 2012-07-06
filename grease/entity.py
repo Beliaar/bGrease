@@ -123,7 +123,10 @@ class Entity(object):
 		return self.entity_id
 	
 	def __eq__(self, other):
-		return self.world is other.world and self.entity_id == other.entity_id
+		if isinstance(other, Entity):
+			return self.world is other.world and self.entity_id == other.entity_id
+		else:
+			return False
 
 	def __repr__(self):
 		return "<%s id: %s of %s %x>" % (
