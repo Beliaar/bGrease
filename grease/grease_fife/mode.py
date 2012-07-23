@@ -20,8 +20,15 @@ class FifeManager(BaseManager):
                 self.modes = []
 
         def _pump(self):
-                if self.current_mode:
-                        self.current_mode.pump(self.current_mode.engine.getTimeManager().getTimeDelta() / 1000.0)
+            if self.current_mode:
+                delta_time = (self.current_mode.engine.getTimeManager().
+                                getTimeDelta() / 1000.0)
+                self.pump(delta_time)
+                
+        def pump(self, dt):
+            """Performs actions every frame"""
+            if self.current_mode:
+                self.current_mode.pump(dt)
 
 class Mode(BaseMode):
 
