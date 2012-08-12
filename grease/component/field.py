@@ -21,14 +21,15 @@ from bGrease import color
 types = {int:lambda: 0, 
          float:lambda: 0.0, 
          bool:lambda: False,
-         str:lambda:"", 
-         object:lambda:None,
+         str:lambda: "", 
+         object:lambda: None,
          Vec2d:lambda: Vec2d(0,0), 
-         Vec2dArray:lambda: Vec2dArray(),
+         Vec2dArray: lambda: Vec2dArray(),
          color.RGBA: lambda: color.RGBA(0.0, 0.0, 0.0, 0.0),
          Rect: lambda: Rect(0.0, 0.0, 0.0, 0.0),
          list: lambda: list(),
          dict: lambda: dict(),
+         set: lambda: set(),
          }
 
 class Schema(dict):
