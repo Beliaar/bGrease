@@ -1,0 +1,316 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>bGrease.entity &mdash; Grease 0.3 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="Grease 0.3 documentation" href="../../index.html" />
+    <link rel="up" title="bGrease" href="../bGrease.html" />
+        <link rel="stylesheet" href="../../_static/grease.css" type="text/css" />
+
+  </head>
+  <body>
+<div style="background-color: white; text-align: left; padding: 10px 10px 15px 15px">
+<img src="../../_static/grease.png" alt="Grease logo" />
+</div>
+
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../index.html">Grease 0.3 documentation</a> &raquo;</li>
+          <li><a href="../index.html" >Module code</a> &raquo;</li>
+          <li><a href="../bGrease.html" accesskey="U">bGrease</a> &raquo;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for bGrease.entity</h1><div class="highlight"><pre>
+<span class="c">#############################################################################</span>
+<span class="c">#</span>
+<span class="c"># Copyright (c) 2010 by Casey Duncan and contributors</span>
+<span class="c"># All Rights Reserved.</span>
+<span class="c">#</span>
+<span class="c"># This software is subject to the provisions of the MIT License</span>
+<span class="c"># A copy of the license should accompany this distribution.</span>
+<span class="c"># THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR</span>
+<span class="c"># IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,</span>
+<span class="c"># FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.</span>
+<span class="c">#</span>
+<span class="c">#############################################################################</span>
+<span class="sd">&quot;&quot;&quot;Grease entities are useful as actionable, interactive</span>
+<span class="sd">game elements that are often visible to the player.</span>
+
+<span class="sd">You might use entities to represent:</span>
+
+<span class="sd">- Characters</span>
+<span class="sd">- Bullets</span>
+<span class="sd">- Particles</span>
+<span class="sd">- Pick-ups</span>
+<span class="sd">- Space Ships</span>
+<span class="sd">- Weapons</span>
+<span class="sd">- Trees</span>
+<span class="sd">- Planets</span>
+<span class="sd">- Explosions</span>
+
+<span class="sd">See :ref:`an example entity class in the tutorial &lt;tut-entity-example&gt;`.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="n">__version__</span> <span class="o">=</span> <span class="s">&#39;$Id$&#39;</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;Entity&#39;</span><span class="p">,</span> <span class="s">&#39;EntityComponentAccessor&#39;</span><span class="p">,</span> <span class="s">&#39;ComponentEntitySet&#39;</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">EntityMeta</span><span class="p">(</span><span class="nb">type</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;The entity metaclass enforces fixed slots of `entity_id` and `world`</span>
+<span class="sd">	for all subclasses. This prevents accidental use of other entity instance </span>
+<span class="sd">	attributes, which may not be saved. </span>
+<span class="sd">	</span>
+<span class="sd">	Class attributes are not affected by this restriction, but subclasses</span>
+<span class="sd">	should be careful not to cause name collisions with world components,</span>
+<span class="sd">	which are exposed as entity attributes. Using a naming convention for</span>
+<span class="sd">	class attributes, such as UPPER_CASE_WITH_UNDERSCORES is recommended to</span>
+<span class="sd">	avoid name clashes.</span>
+
+<span class="sd">	Note as a result of this, entity subclasses are not allowed to define</span>
+<span class="sd">	`__slots__`, and doing so will cause a `TypeError` to be raised.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+
+	<span class="k">def</span> <span class="nf">__new__</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">bases</span><span class="p">,</span> <span class="n">clsdict</span><span class="p">):</span>
+		<span class="k">if</span> <span class="s">&#39;__slots__&#39;</span> <span class="ow">in</span> <span class="n">clsdict</span><span class="p">:</span>
+			<span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s">&#39;__slots__ may not be defined in Entity subclasses&#39;</span><span class="p">)</span>
+		<span class="n">clsdict</span><span class="p">[</span><span class="s">&#39;__slots__&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;world&#39;</span><span class="p">,</span> <span class="s">&#39;entity_id&#39;</span><span class="p">)</span>
+		<span class="k">return</span> <span class="nb">type</span><span class="o">.</span><span class="n">__new__</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">bases</span><span class="p">,</span> <span class="n">clsdict</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="Entity"><a class="viewcode-back" href="../../mod/entity.html#bGrease.entity.Entity">[docs]</a><span class="k">class</span> <span class="nc">Entity</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;Base class for grease entities.</span>
+<span class="sd">	</span>
+<span class="sd">	Entity objects themselves are merely identifiers within a :class:`bGrease.world.BaseWorld`.</span>
+<span class="sd">	They also provide a facade for convenient entity-wise access of component</span>
+<span class="sd">	data. However, they do not contain any data themselves other than an</span>
+<span class="sd">	entity id.</span>
+
+<span class="sd">	Entities must be instantiated in the context of a world. To instantiate an</span>
+<span class="sd">	entity, you must pass the world as the first argument to the constructor.</span>
+<span class="sd">	Subclasses that implement the :meth:`__init__()` method, must accept the world</span>
+<span class="sd">	as their first argument (after ``self``). Other constructor arguments can be</span>
+<span class="sd">	specified arbitarily by the subclass.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">__metaclass__</span> <span class="o">=</span> <span class="n">EntityMeta</span>
+
+	<span class="k">def</span> <span class="nf">__new__</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">world</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;Create a new entity and add it to the world&quot;&quot;&quot;</span>
+		<span class="n">entity</span> <span class="o">=</span> <span class="nb">object</span><span class="o">.</span><span class="n">__new__</span><span class="p">(</span><span class="n">cls</span><span class="p">)</span>
+		<span class="n">entity</span><span class="o">.</span><span class="n">world</span> <span class="o">=</span> <span class="n">world</span>
+		<span class="n">entity</span><span class="o">.</span><span class="n">entity_id</span> <span class="o">=</span> <span class="n">world</span><span class="o">.</span><span class="n">new_entity_id</span><span class="p">()</span>
+		<span class="n">world</span><span class="o">.</span><span class="n">entities</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">entity</span><span class="p">)</span>
+		<span class="k">return</span> <span class="n">entity</span>
+	
+<div class="viewcode-block" id="Entity.__getattr__"><a class="viewcode-back" href="../../mod/entity.html#bGrease.entity.Entity.__getattr__">[docs]</a>	<span class="k">def</span> <span class="nf">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;Return an :class:`EntityComponentAccessor` for this entity</span>
+<span class="sd">		for the component named.</span>
+
+<span class="sd">		Example::</span>
+
+<span class="sd">			my_entity.movement</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="n">component</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">world</span><span class="o">.</span><span class="n">components</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+		<span class="k">return</span> <span class="n">EntityComponentAccessor</span><span class="p">(</span><span class="n">component</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+	</div>
+<div class="viewcode-block" id="Entity.__setattr__"><a class="viewcode-back" href="../../mod/entity.html#bGrease.entity.Entity.__setattr__">[docs]</a>	<span class="k">def</span> <span class="nf">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;Set the entity data in the named component for this entity.</span>
+<span class="sd">		This sets the values of the component fields to the values of</span>
+<span class="sd">		the matching attributes of the value provided. This value must</span>
+<span class="sd">		have attributes for each of the component fields.</span>
+
+<span class="sd">		This allows you to easily copy component data from one entity</span>
+<span class="sd">		to another.</span>
+
+<span class="sd">		Example::</span>
+
+<span class="sd">			my_entity.position = other_entity.position</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__slots__</span><span class="p">:</span>
+			<span class="nb">super</span><span class="p">(</span><span class="n">Entity</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__setattr__</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="n">component</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">world</span><span class="o">.</span><span class="n">components</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+			<span class="n">component</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+	</div>
+<div class="viewcode-block" id="Entity.__delattr__"><a class="viewcode-back" href="../../mod/entity.html#bGrease.entity.Entity.__delattr__">[docs]</a>	<span class="k">def</span> <span class="nf">__delattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;Remove this entity and its data from the component.</span>
+<span class="sd">		</span>
+<span class="sd">		Example::</span>
+<span class="sd">		</span>
+<span class="sd">			del my_entity.renderable</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="n">component</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">world</span><span class="o">.</span><span class="n">components</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+		<span class="k">del</span> <span class="n">component</span><span class="p">[</span><span class="bp">self</span><span class="p">]</span>
+	</div>
+	<span class="k">def</span> <span class="nf">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">entity_id</span>
+	
+	<span class="k">def</span> <span class="nf">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+		<span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">Entity</span><span class="p">):</span>
+			<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">world</span> <span class="ow">is</span> <span class="n">other</span><span class="o">.</span><span class="n">world</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">entity_id</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">entity_id</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="k">return</span> <span class="bp">False</span>
+
+	<span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="k">return</span> <span class="s">&quot;&lt;</span><span class="si">%s</span><span class="s"> id: </span><span class="si">%s</span><span class="s"> of </span><span class="si">%s</span><span class="s"> </span><span class="si">%x</span><span class="s">&gt;&quot;</span> <span class="o">%</span> <span class="p">(</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">entity_id</span><span class="p">,</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">world</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span><span class="p">,</span> <span class="nb">id</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">world</span><span class="p">))</span>
+
+<div class="viewcode-block" id="Entity.delete"><a class="viewcode-back" href="../../mod/entity.html#bGrease.entity.Entity.delete">[docs]</a>	<span class="k">def</span> <span class="nf">delete</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;Delete the entity from its world. This removes all of its</span>
+<span class="sd">		component data. If then entity has already been deleted, </span>
+<span class="sd">		this call does nothing.</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">world</span><span class="o">.</span><span class="n">entities</span><span class="o">.</span><span class="n">discard</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+</div>
+	<span class="nd">@property</span>
+<div class="viewcode-block" id="Entity.exists"><a class="viewcode-back" href="../../mod/entity.html#bGrease.entity.Entity.exists">[docs]</a>	<span class="k">def</span> <span class="nf">exists</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;True if the entity still exists in the world&quot;&quot;&quot;</span>
+		<span class="k">return</span> <span class="bp">self</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">world</span><span class="o">.</span><span class="n">entities</span>
+
+</div></div>
+<div class="viewcode-block" id="EntityComponentAccessor"><a class="viewcode-back" href="../../mod/entity.html#bGrease.entity.EntityComponentAccessor">[docs]</a><span class="k">class</span> <span class="nc">EntityComponentAccessor</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;A facade for accessing specific component data for a single entity.</span>
+<span class="sd">	The implementation is lazy and does not actually access the component</span>
+<span class="sd">	data until needed. If an attribute is set for a component that the </span>
+<span class="sd">	entity is not yet a member of, it is automatically added to the</span>
+<span class="sd">	component first.</span>
+
+<span class="sd">	:param component: The :class:`bGrease.Component` being accessed</span>
+<span class="sd">	:param entity: The :class:`Entity` being accessed</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	
+	<span class="c"># beware, name mangling ahead. We want to avoid clashing with any</span>
+	<span class="c"># user-configured component field names</span>
+	<span class="n">__data</span> <span class="o">=</span> <span class="bp">None</span>
+
+	<span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">component</span><span class="p">,</span> <span class="n">entity</span><span class="p">):</span>
+		<span class="n">clsname</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">__dict__</span><span class="p">[</span><span class="s">&#39;_</span><span class="si">%s</span><span class="s">__component&#39;</span> <span class="o">%</span> <span class="n">clsname</span><span class="p">]</span> <span class="o">=</span> <span class="n">component</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">__dict__</span><span class="p">[</span><span class="s">&#39;_</span><span class="si">%s</span><span class="s">__entity&#39;</span> <span class="o">%</span> <span class="n">clsname</span><span class="p">]</span> <span class="o">=</span> <span class="n">entity</span>
+	
+<div class="viewcode-block" id="EntityComponentAccessor.__nonzero__"><a class="viewcode-back" href="../../mod/entity.html#bGrease.entity.EntityComponentAccessor.__nonzero__">[docs]</a>	<span class="k">def</span> <span class="nf">__nonzero__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;The accessor is True if the entity is in the component,</span>
+<span class="sd">		False if not, for convenient membership tests</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__entity</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__component</span>
+	</div>
+<div class="viewcode-block" id="EntityComponentAccessor.__getattr__"><a class="viewcode-back" href="../../mod/entity.html#bGrease.entity.EntityComponentAccessor.__getattr__">[docs]</a>	<span class="k">def</span> <span class="nf">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;Return the data for the specified field of the entity&#39;s component&quot;&quot;&quot;</span>
+		<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__data</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+			<span class="k">try</span><span class="p">:</span>
+				<span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__component</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">__entity</span><span class="p">]</span>
+			<span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+				<span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+			<span class="n">clsname</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">__dict__</span><span class="p">[</span><span class="s">&#39;_</span><span class="si">%s</span><span class="s">__data&#39;</span> <span class="o">%</span> <span class="n">clsname</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span>
+		<span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__data</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+	</div>
+<div class="viewcode-block" id="EntityComponentAccessor.__setattr__"><a class="viewcode-back" href="../../mod/entity.html#bGrease.entity.EntityComponentAccessor.__setattr__">[docs]</a>	<span class="k">def</span> <span class="nf">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;Set the data for the specified field of the entity&#39;s component&quot;&quot;&quot;</span>
+		<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__data</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+			<span class="n">clsname</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span>
+			<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__entity</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__component</span><span class="p">:</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">__dict__</span><span class="p">[</span><span class="s">&#39;_</span><span class="si">%s</span><span class="s">__data&#39;</span> <span class="o">%</span> <span class="n">clsname</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__component</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">__entity</span><span class="p">]</span>
+			<span class="k">else</span><span class="p">:</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">__dict__</span><span class="p">[</span><span class="s">&#39;_</span><span class="si">%s</span><span class="s">__data&#39;</span> <span class="o">%</span> <span class="n">clsname</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__component</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__entity</span><span class="p">)</span>
+		<span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__data</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+
+</div></div>
+<div class="viewcode-block" id="ComponentEntitySet"><a class="viewcode-back" href="../../mod/entity.html#bGrease.entity.ComponentEntitySet">[docs]</a><span class="k">class</span> <span class="nc">ComponentEntitySet</span><span class="p">(</span><span class="nb">set</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;Set of entities in a component, can be queried by component fields&quot;&quot;&quot;</span>
+
+	<span class="n">_component</span> <span class="o">=</span> <span class="bp">None</span>
+
+	<span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">component</span><span class="p">,</span> <span class="n">entities</span><span class="o">=</span><span class="p">()):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">__dict__</span><span class="p">[</span><span class="s">&#39;_component&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">component</span>
+		<span class="nb">super</span><span class="p">(</span><span class="n">ComponentEntitySet</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">entities</span><span class="p">)</span>
+	
+	<span class="k">def</span> <span class="nf">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+		<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_component</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_component</span><span class="o">.</span><span class="n">fields</span><span class="p">:</span>
+			<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_component</span><span class="o">.</span><span class="n">fields</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">accessor</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+		<span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+	
+	<span class="k">def</span> <span class="nf">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+		<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_component</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_component</span><span class="o">.</span><span class="n">fields</span><span class="p">:</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">_component</span><span class="o">.</span><span class="n">fields</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">accessor</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__set__</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+		<span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+</pre></div></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../index.html">Grease 0.3 documentation</a> &raquo;</li>
+          <li><a href="../index.html" >Module code</a> &raquo;</li>
+          <li><a href="../bGrease.html" >bGrease</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2010, Casey Duncan.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

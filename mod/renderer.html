@@ -1,0 +1,193 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>bGrease.renderer – World Presentation &mdash; Grease 0.3 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="Grease 0.3 documentation" href="../index.html" />
+    <link rel="next" title="bGrease.world – Entity Environment" href="world.html" />
+    <link rel="prev" title="bGrease.mode – Modal Framework" href="mode.html" />
+        <link rel="stylesheet" href="../_static/grease.css" type="text/css" />
+
+  </head>
+  <body>
+<div style="background-color: white; text-align: left; padding: 10px 10px 15px 15px">
+<img src="../_static/grease.png" alt="Grease logo" />
+</div>
+
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="world.html" title="bGrease.world – Entity Environment"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="mode.html" title="bGrease.mode – Modal Framework"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">Grease 0.3 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="mode.html"
+                        title="previous chapter"><tt class="docutils literal docutils literal docutils literal"><span class="pre">bGrease.mode</span></tt> &#8211; Modal Framework</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="world.html"
+                        title="next chapter"><tt class="docutils literal docutils literal"><span class="pre">bGrease.world</span></tt> &#8211; Entity Environment</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/mod/renderer.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="bgrease-renderer-world-presentation">
+<h1><a class="reference internal" href="#module-bGrease.renderer" title="bGrease.renderer: Visualize Whirred Peas"><tt class="xref py py-mod docutils literal"><span class="pre">bGrease.renderer</span></tt></a> &#8211; World Presentation<a class="headerlink" href="#bgrease-renderer-world-presentation" title="Permalink to this headline">¶</a></h1>
+<span class="target" id="module-bGrease.renderer"></span><p>Renderers define world presentation. This module contains the
+built-in renderer classes.</p>
+<p>See also:</p>
+<ul class="simple">
+<li><a class="reference internal" href="grease.html#bGrease.Renderer" title="bGrease.Renderer"><tt class="xref py py-class docutils literal"><span class="pre">Renderer</span></tt></a> abstract base class.</li>
+<li><a class="reference internal" href="../tutorial/tutorial3.html#tut-renderer-example"><em>Example renderer class in the tutorial</em></a></li>
+</ul>
+<dl class="class">
+<dt id="bGrease.renderer.Vector">
+<em class="property">class </em><tt class="descclassname">bGrease.renderer.</tt><tt class="descname">Vector</tt><big>(</big><em>scale=1.0</em>, <em>line_width=None</em>, <em>anti_alias=True</em>, <em>corner_fill=True</em>, <em>position_component='position'</em>, <em>renderable_component='renderable'</em>, <em>shape_component='shape'</em><big>)</big><a class="headerlink" href="#bGrease.renderer.Vector" title="Permalink to this definition">¶</a></dt>
+<dd><p>Renders shapes in a classic vector graphics style</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>scale</strong> &#8211; Scaling factor applied to shape vertices when rendered.</li>
+<li><strong>line_width</strong> &#8211; The line width provided to <tt class="docutils literal"><span class="pre">glLineWidth</span></tt> before rendering.
+If not specified or None, <tt class="docutils literal"><span class="pre">glLineWidth</span></tt> is not called, and the line
+width used is determined by the OpenGL state at the time of rendering.</li>
+<li><strong>anti_alias</strong> &#8211; If <tt class="docutils literal"><span class="pre">True</span></tt>, OpenGL blending and line smoothing is enabled.
+This allows for fractional line widths as well. If <tt class="docutils literal"><span class="pre">False</span></tt>, the blending
+and line smoothing modes are unchanged.</li>
+<li><strong>corner_fill</strong> &#8211; If true (the default), the shape corners will be filled
+with round points when the <tt class="docutils literal"><span class="pre">line_width</span></tt> exceeds 2.0. This improves
+the visual quality of the rendering at larger line widths at some
+cost to performance. Has no effect if <tt class="docutils literal"><span class="pre">line_width</span></tt> is not specified.</li>
+<li><strong>position_component</strong> &#8211; Name of <a class="reference internal" href="component.html#bGrease.component.Position" title="bGrease.component.Position"><tt class="xref py py-class docutils literal"><span class="pre">bGrease.component.Position</span></tt></a> 
+component to use. Shapes rendered are offset by the entity positions.</li>
+<li><strong>renderable_component</strong> &#8211; Name of <a class="reference internal" href="component.html#bGrease.component.Renderable" title="bGrease.component.Renderable"><tt class="xref py py-class docutils literal"><span class="pre">bGrease.component.Renderable</span></tt></a> 
+component to use. This component specifies the entities to be 
+rendered and their base color.</li>
+<li><strong>shape_component</strong> &#8211; Name of <a class="reference internal" href="component.html#bGrease.component.Shape" title="bGrease.component.Shape"><tt class="xref py py-class docutils literal"><span class="pre">bGrease.component.Shape</span></tt></a> 
+component to use. Source of the shape vertices for each entity.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p>The entities rendered are taken from the intersection of he position,
+renderable and shape components each time <tt class="xref py py-meth docutils literal"><span class="pre">draw()</span></tt> is called.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="bGrease.renderer.Camera">
+<em class="property">class </em><tt class="descclassname">bGrease.renderer.</tt><tt class="descname">Camera</tt><big>(</big><em>position=None</em>, <em>angle=None</em>, <em>zoom=None</em>, <em>relative=False</em><big>)</big><a class="headerlink" href="#bGrease.renderer.Camera" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the point of view for further renderers by altering the
+model/view matrix when it is drawn. It does not actually perform
+any drawing itself.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>position</strong> (<em>Vec2d</em>) &#8211; The position vector for the camera. Sets the center of the view.</li>
+<li><strong>angle</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; Camera rotation in degrees about the z-axis.</li>
+<li><strong>zoom</strong> (<em>Vec2d</em>) &#8211; Scaling vector for the coordinate axis.</li>
+<li><strong>relative</strong> &#8211; Flag to indicate if the camera settings are relative 
+to the previous view state. If <tt class="docutils literal"><span class="pre">False</span></tt> the view state is reset before 
+setting the camera view by loading the identity model/view matrix.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p>At runtime the camera may be manipulated via attributes with the 
+same names and functions as the parameters above.</p>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="world.html" title="bGrease.world – Entity Environment"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="mode.html" title="bGrease.mode – Modal Framework"
+             >previous</a> |</li>
+        <li><a href="../index.html">Grease 0.3 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2010, Casey Duncan.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

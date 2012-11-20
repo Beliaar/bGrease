@@ -1,0 +1,250 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>bGrease.component &mdash; Grease 0.3 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="Grease 0.3 documentation" href="../../index.html" />
+    <link rel="up" title="bGrease" href="../bGrease.html" />
+        <link rel="stylesheet" href="../../_static/grease.css" type="text/css" />
+
+  </head>
+  <body>
+<div style="background-color: white; text-align: left; padding: 10px 10px 15px 15px">
+<img src="../../_static/grease.png" alt="Grease logo" />
+</div>
+
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../index.html">Grease 0.3 documentation</a> &raquo;</li>
+          <li><a href="../index.html" >Module code</a> &raquo;</li>
+          <li><a href="../bGrease.html" accesskey="U">bGrease</a> &raquo;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for bGrease.component</h1><div class="highlight"><pre>
+<span class="c">#############################################################################</span>
+<span class="c">#</span>
+<span class="c"># Copyright (c) 2010 by Casey Duncan and contributors</span>
+<span class="c"># All Rights Reserved.</span>
+<span class="c">#</span>
+<span class="c"># This software is subject to the provisions of the MIT License</span>
+<span class="c"># A copy of the license should accompany this distribution.</span>
+<span class="c"># THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR</span>
+<span class="c"># IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,</span>
+<span class="c"># FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.</span>
+<span class="c">#</span>
+<span class="c">#############################################################################</span>
+<span class="sd">&quot;&quot;&quot;Components store all entity data in a given |World|. You can</span>
+<span class="sd">think of components as tables with entities as their primary keys. Like</span>
+<span class="sd">database tables, components are defined with a &quot;schema&quot; that specifies</span>
+<span class="sd">the data fields. Each field in a component has a name and a type.</span>
+
+<span class="sd">Component objects themselves have a dict-like interface with entities</span>
+<span class="sd">as keys and data records as values. An application will typically </span>
+<span class="sd">interact with components via entity attributes, entity extents or</span>
+<span class="sd">by joining them. For more information see:</span>
+
+<span class="sd">- :class:`~bGrease.entity.Entity` class.</span>
+<span class="sd">- :class:`~bGrease.world.EntityExtent` class.</span>
+<span class="sd">- :meth:`~bGrease.world.ComponentParts.join` method of ComponentParts.</span>
+
+<span class="sd">See also :ref:`defining custom components in the tutorial &lt;custom-component-example&gt;`.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="n">__version__</span> <span class="o">=</span> <span class="s">&#39;$Id$&#39;</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;Component&#39;</span><span class="p">,</span> <span class="s">&#39;ComponentError&#39;</span><span class="p">,</span> <span class="s">&#39;Position&#39;</span><span class="p">,</span> <span class="s">&#39;Transform&#39;</span><span class="p">,</span> <span class="s">&#39;Movement&#39;</span><span class="p">,</span> 
+	<span class="s">&#39;Shape&#39;</span><span class="p">,</span> <span class="s">&#39;Renderable&#39;</span><span class="p">,</span> <span class="s">&#39;Collision&#39;</span><span class="p">)</span>
+
+<span class="kn">from</span> <span class="nn">bGrease.component.general</span> <span class="kn">import</span> <span class="n">Component</span>
+<span class="kn">from</span> <span class="nn">bGrease.geometry</span> <span class="kn">import</span> <span class="n">Vec2d</span><span class="p">,</span> <span class="n">Vec2dArray</span><span class="p">,</span> <span class="n">Rect</span>
+<span class="kn">from</span> <span class="nn">bGrease</span> <span class="kn">import</span> <span class="n">color</span>
+
+
+<div class="viewcode-block" id="ComponentError"><a class="viewcode-back" href="../../mod/component.html#bGrease.component.ComponentError">[docs]</a><span class="k">class</span> <span class="nc">ComponentError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;General component error&quot;&quot;&quot;</span>
+
+</div>
+<div class="viewcode-block" id="Position"><a class="viewcode-back" href="../../mod/component.html#bGrease.component.Position">[docs]</a><span class="k">class</span> <span class="nc">Position</span><span class="p">(</span><span class="n">Component</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;Predefined component that stores position and orientation info for </span>
+<span class="sd">	entities.</span>
+
+<span class="sd">	Fields:</span>
+
+<span class="sd">	- **position** (Vec2d) -- Position vector</span>
+<span class="sd">	- **angle** (float) -- Angle, in degrees</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+
+	<span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="n">Component</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">position</span><span class="o">=</span><span class="n">Vec2d</span><span class="p">,</span> <span class="n">angle</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="Transform"><a class="viewcode-back" href="../../mod/component.html#bGrease.component.Transform">[docs]</a><span class="k">class</span> <span class="nc">Transform</span><span class="p">(</span><span class="n">Component</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;Predefined component that stores offset, shear, </span>
+<span class="sd">	rotation and scale info for entity shapes.</span>
+<span class="sd">	</span>
+<span class="sd">	Fields:</span>
+
+<span class="sd">	- **offset** (Vec2d)</span>
+<span class="sd">	- **shear** (Vec2d)</span>
+<span class="sd">	- **rotation** (float)</span>
+<span class="sd">	- **scale** (float, default 1.0)</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+
+	<span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="n">Component</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">offset</span><span class="o">=</span><span class="n">Vec2d</span><span class="p">,</span> <span class="n">shear</span><span class="o">=</span><span class="n">Vec2d</span><span class="p">,</span> <span class="n">rotation</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">fields</span><span class="p">[</span><span class="s">&#39;scale&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">default</span> <span class="o">=</span> <span class="k">lambda</span><span class="p">:</span> <span class="mf">1.0</span>
+
+</div>
+<div class="viewcode-block" id="Movement"><a class="viewcode-back" href="../../mod/component.html#bGrease.component.Movement">[docs]</a><span class="k">class</span> <span class="nc">Movement</span><span class="p">(</span><span class="n">Component</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;Predefined component that stores velocity, </span>
+<span class="sd">	acceleration and rotation info for entities.</span>
+<span class="sd">	</span>
+<span class="sd">	Fields:</span>
+
+<span class="sd">	- **velocity** (Vec2d) -- Rate of change of entity position</span>
+<span class="sd">	- **accel** (Vec2d) -- Rate of change of entity velocity</span>
+<span class="sd">	- **rotation** (Vec2d) -- Rate of change of entity angle, in degrees/time</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+
+	<span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="n">Component</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">velocity</span><span class="o">=</span><span class="n">Vec2d</span><span class="p">,</span> <span class="n">accel</span><span class="o">=</span><span class="n">Vec2d</span><span class="p">,</span> <span class="n">rotation</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="Shape"><a class="viewcode-back" href="../../mod/component.html#bGrease.component.Shape">[docs]</a><span class="k">class</span> <span class="nc">Shape</span><span class="p">(</span><span class="n">Component</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;Predefined component that stores shape vertices for entities</span>
+<span class="sd">	</span>
+<span class="sd">	- **closed** (bool) -- If the shapes is closed implying an edge between</span>
+<span class="sd">	  last and first vertices.</span>
+<span class="sd">	- **verts** (Vec2dArray) -- Array of vertex points</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+
+	<span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="n">Component</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">closed</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">verts</span><span class="o">=</span><span class="n">Vec2dArray</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">fields</span><span class="p">[</span><span class="s">&#39;closed&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">default</span> <span class="o">=</span> <span class="k">lambda</span><span class="p">:</span> <span class="mi">1</span>
+
+</div>
+<div class="viewcode-block" id="Renderable"><a class="viewcode-back" href="../../mod/component.html#bGrease.component.Renderable">[docs]</a><span class="k">class</span> <span class="nc">Renderable</span><span class="p">(</span><span class="n">Component</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;Predefined component that identifies entities to be </span>
+<span class="sd">	rendered and provides their depth and color.</span>
+<span class="sd">	</span>
+<span class="sd">	- **depth** (float) -- Drawing depth, can be used to determine z-order</span>
+<span class="sd">		  while rendering.</span>
+<span class="sd">	- **color** (color.RGBA) -- Color used for entity. The effect of this</span>
+<span class="sd">		  field depends on the renderer.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+
+	<span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="n">Component</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">depth</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="o">.</span><span class="n">RGBA</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">fields</span><span class="p">[</span><span class="s">&#39;color&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">default</span> <span class="o">=</span> <span class="k">lambda</span><span class="p">:</span> <span class="n">color</span><span class="o">.</span><span class="n">RGBA</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="Collision"><a class="viewcode-back" href="../../mod/component.html#bGrease.component.Collision">[docs]</a><span class="k">class</span> <span class="nc">Collision</span><span class="p">(</span><span class="n">Component</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;Predefined component that stores collision masks to determine </span>
+<span class="sd">	which entities can collide.</span>
+
+<span class="sd">	Fields:</span>
+
+<span class="sd">	- **aabb** (Rect) -- The axis-aligned bounding box for the entity.</span>
+<span class="sd">		This is used for broad-phase collision detection.</span>
+
+<span class="sd">	- **radius** (float) -- The collision radius of the entity, used for narrow-phase</span>
+<span class="sd">		collision detection. The exact meaning of this value depends on the collision</span>
+<span class="sd">		system in use.</span>
+<span class="sd">	</span>
+<span class="sd">	- **from_mask** (int) -- A bitmask that determines what entities this object</span>
+<span class="sd">		can collide with.</span>
+
+<span class="sd">	- **into_mask** (int) -- A bitmask that determines what entities can collide</span>
+<span class="sd">		with this object.</span>
+
+<span class="sd">	When considering an entity A for collision with entity B, A&#39;s ``from_mask`` is</span>
+<span class="sd">	bit ANDed with B&#39;s ``into_mask``. If the result is nonzero (meaning 1 or more</span>
+<span class="sd">	bits is set the same for each) then the collision test is made. Otherwise,</span>
+<span class="sd">	the pair cannot collide. </span>
+
+<span class="sd">	The default value for both of these masks is ``0xffffffff``, which means that</span>
+<span class="sd">	all entities will collide with each other by default.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="n">Component</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">aabb</span><span class="o">=</span><span class="n">Rect</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span> <span class="n">from_mask</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">into_mask</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">fields</span><span class="p">[</span><span class="s">&#39;into_mask&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">default</span> <span class="o">=</span> <span class="k">lambda</span><span class="p">:</span> <span class="mh">0xffffffff</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">fields</span><span class="p">[</span><span class="s">&#39;from_mask&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">default</span> <span class="o">=</span> <span class="k">lambda</span><span class="p">:</span> <span class="mh">0xffffffff</span>
+</pre></div></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../index.html">Grease 0.3 documentation</a> &raquo;</li>
+          <li><a href="../index.html" >Module code</a> &raquo;</li>
+          <li><a href="../bGrease.html" >bGrease</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2010, Casey Duncan.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

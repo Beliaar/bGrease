@@ -1,0 +1,141 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>bGrease.color – Colors &mdash; Grease 0.3 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="Grease 0.3 documentation" href="../index.html" />
+    <link rel="next" title="bGrease.component – Entity Data Containers" href="component.html" />
+    <link rel="prev" title="bGrease.collision – Collision Detection" href="collision.html" />
+        <link rel="stylesheet" href="../_static/grease.css" type="text/css" />
+
+  </head>
+  <body>
+<div style="background-color: white; text-align: left; padding: 10px 10px 15px 15px">
+<img src="../_static/grease.png" alt="Grease logo" />
+</div>
+
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="component.html" title="bGrease.component – Entity Data Containers"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="collision.html" title="bGrease.collision – Collision Detection"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">Grease 0.3 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="collision.html"
+                        title="previous chapter"><tt class="docutils literal docutils literal"><span class="pre">bGrease.collision</span></tt> &#8211; Collision Detection</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="component.html"
+                        title="next chapter"><tt class="docutils literal"><span class="pre">bGrease.component</span></tt> &#8211; Entity Data Containers</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/mod/color.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="bgrease-color-colors">
+<h1><a class="reference internal" href="#module-bGrease.color" title="bGrease.color: Come Smell the Colors"><tt class="xref py py-mod docutils literal"><span class="pre">bGrease.color</span></tt></a> &#8211; Colors<a class="headerlink" href="#bgrease-color-colors" title="Permalink to this headline">¶</a></h1>
+<span class="target" id="module-bGrease.color"></span><dl class="class">
+<dt id="bGrease.color.RGBA">
+<em class="property">class </em><tt class="descclassname">bGrease.color.</tt><tt class="descname">RGBA</tt><big>(</big><em>r_or_colorstr</em>, <em>g=None</em>, <em>b=None</em>, <em>a=None</em><big>)</big><a class="reference internal" href="../_modules/bGrease/color.html#RGBA"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bGrease.color.RGBA" title="Permalink to this definition">¶</a></dt>
+<dd><p>Four channel color representation.</p>
+<p>RGBA colors are floating point color representations with color channel
+values between (0..1). Colors may be initialized from 3 or 4 floating
+point numbers or a hex string:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">RGBA</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span> <span class="c"># Alpha defaults to 1.0</span>
+<span class="n">RGBA</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)</span>
+<span class="n">RGBA</span><span class="p">(</span><span class="s">&quot;#333&quot;</span><span class="p">)</span>
+<span class="n">RGBA</span><span class="p">(</span><span class="s">&quot;#7F7F7F&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Individual color channels can be accessed by attribute name, or the
+color object can be treated as a sequence of 4 floats.</p>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="component.html" title="bGrease.component – Entity Data Containers"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="collision.html" title="bGrease.collision – Collision Detection"
+             >previous</a> |</li>
+        <li><a href="../index.html">Grease 0.3 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2010, Casey Duncan.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

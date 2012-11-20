@@ -1,0 +1,492 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>bGrease.mode &mdash; Grease 0.3 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="Grease 0.3 documentation" href="../../index.html" />
+    <link rel="up" title="bGrease" href="../bGrease.html" />
+        <link rel="stylesheet" href="../../_static/grease.css" type="text/css" />
+
+  </head>
+  <body>
+<div style="background-color: white; text-align: left; padding: 10px 10px 15px 15px">
+<img src="../../_static/grease.png" alt="Grease logo" />
+</div>
+
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../index.html">Grease 0.3 documentation</a> &raquo;</li>
+          <li><a href="../index.html" >Module code</a> &raquo;</li>
+          <li><a href="../bGrease.html" accesskey="U">bGrease</a> &raquo;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for bGrease.mode</h1><div class="highlight"><pre>
+<span class="c">#############################################################################</span>
+<span class="c">#</span>
+<span class="c"># Copyright (c) 2010 by Casey Duncan and contributors</span>
+<span class="c"># All Rights Reserved.</span>
+<span class="c">#</span>
+<span class="c"># This software is subject to the provisions of the MIT License</span>
+<span class="c"># A copy of the license should accompany this distribution.</span>
+<span class="c"># THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR</span>
+<span class="c"># IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,</span>
+<span class="c"># FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.</span>
+<span class="c">#</span>
+<span class="c">#############################################################################</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Modes manage the state and transition between different application modes.</span>
+<span class="sd">Typically such modes are presented as different screens that the user can</span>
+<span class="sd">navigate between, similar to the way a browser navigates web pages. Individual</span>
+<span class="sd">modes may be things like:</span>
+
+<span class="sd">- Title screen</span>
+<span class="sd">- Options dialog</span>
+<span class="sd">- About screen</span>
+<span class="sd">- In-progress game</span>
+<span class="sd">- Inventory interface</span>
+
+<span class="sd">The modal framework provides a simple mechanism to ensure that modes are</span>
+<span class="sd">activated and deactivated properly. An activated mode is running and receives</span>
+<span class="sd">events. A deactivated mode is paused and does not receive events.</span>
+
+<span class="sd">Modes may be managed as a *last-in-first-out* stack, or as a list, or ring</span>
+<span class="sd">of modes in sequence, or some combination of all.</span>
+
+<span class="sd">For example usage see: :ref:`the mode section of the tutorial &lt;tut-mode-section&gt;`.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="n">__version__</span> <span class="o">=</span> <span class="s">&#39;$Id$&#39;</span>
+
+<span class="kn">import</span> <span class="nn">abc</span>
+
+
+<div class="viewcode-block" id="BaseManager"><a class="viewcode-back" href="../../mod/mode.html#bGrease.mode.BaseManager">[docs]</a><span class="k">class</span> <span class="nc">BaseManager</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;Mode manager abstract base class.</span>
+<span class="sd">	</span>
+<span class="sd">	The mode manager keeps a stack of modes where a single mode</span>
+<span class="sd">	is active at one time. As modes are pushed on and popped from </span>
+<span class="sd">	the stack, the mode at the top is always active. The current</span>
+<span class="sd">	active mode receives events from the manager&#39;s event dispatcher.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+
+	<span class="n">modes</span> <span class="o">=</span> <span class="p">()</span>
+	<span class="sd">&quot;&quot;&quot;The mode stack sequence. The last mode in the stack is</span>
+<span class="sd">	the current active mode. Read-only.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+
+	<span class="nd">@property</span>
+<div class="viewcode-block" id="BaseManager.current_mode"><a class="viewcode-back" href="../../mod/mode.html#bGrease.mode.BaseManager.current_mode">[docs]</a>	<span class="k">def</span> <span class="nf">current_mode</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;The current active mode or ``None``. Read-only&quot;&quot;&quot;</span>
+		<span class="k">try</span><span class="p">:</span>
+			<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">modes</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+		<span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>
+			<span class="k">return</span> <span class="bp">None</span>
+	</div>
+<div class="viewcode-block" id="BaseManager.on_last_mode_pop"><a class="viewcode-back" href="../../mod/mode.html#bGrease.mode.BaseManager.on_last_mode_pop">[docs]</a>	<span class="k">def</span> <span class="nf">on_last_mode_pop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;Hook executed when the last mode is popped from the manager.</span>
+<span class="sd">		Implementing this method is optional for subclasses.</span>
+
+<span class="sd">		:param mode: The :class:`Mode` object just popped from the manager</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+	</div>
+<div class="viewcode-block" id="BaseManager.activate_mode"><a class="viewcode-back" href="../../mod/mode.html#bGrease.mode.BaseManager.activate_mode">[docs]</a>	<span class="k">def</span> <span class="nf">activate_mode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;Perform actions to activate a node</span>
+<span class="sd">		</span>
+<span class="sd">		:param mode: The :class: &#39;Mode&#39; object to activate</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="n">mode</span><span class="o">.</span><span class="n">activate</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="BaseManager.deactivate_mode"><a class="viewcode-back" href="../../mod/mode.html#bGrease.mode.BaseManager.deactivate_mode">[docs]</a>	<span class="k">def</span> <span class="nf">deactivate_mode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;Perform actions to deactivate a node</span>
+<span class="sd">		</span>
+<span class="sd">		:param mode: The :class: &#39;Mode&#39; object to deactivate</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="n">mode</span><span class="o">.</span><span class="n">deactivate</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+		</div>
+<div class="viewcode-block" id="BaseManager.push_mode"><a class="viewcode-back" href="../../mod/mode.html#bGrease.mode.BaseManager.push_mode">[docs]</a>	<span class="k">def</span> <span class="nf">push_mode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;Push a mode to the top of the mode stack and make it active</span>
+<span class="sd">		</span>
+<span class="sd">		:param mode: The :class:`Mode` object to make active</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="n">current</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_mode</span>
+		<span class="k">if</span> <span class="n">current</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">deactivate_mode</span><span class="p">(</span><span class="n">current</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">modes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mode</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">activate_mode</span><span class="p">(</span><span class="n">mode</span><span class="p">)</span>
+	</div>
+<div class="viewcode-block" id="BaseManager.pop_mode"><a class="viewcode-back" href="../../mod/mode.html#bGrease.mode.BaseManager.pop_mode">[docs]</a>	<span class="k">def</span> <span class="nf">pop_mode</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;Pop the current mode off the top of the stack and deactivate it.</span>
+<span class="sd">		The mode now at the top of the stack, if any is then activated.</span>
+
+<span class="sd">		:param mode: The :class:`Mode` object popped from the stack</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="n">mode</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">modes</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
+		<span class="n">mode</span><span class="o">.</span><span class="n">deactivate</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+		<span class="n">current</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_mode</span>
+		<span class="k">if</span> <span class="n">current</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">activate_mode</span><span class="p">(</span><span class="n">current</span><span class="p">)</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">on_last_mode_pop</span><span class="p">(</span><span class="n">mode</span><span class="p">)</span>
+		<span class="k">return</span> <span class="n">mode</span>
+	</div>
+<div class="viewcode-block" id="BaseManager.swap_modes"><a class="viewcode-back" href="../../mod/mode.html#bGrease.mode.BaseManager.swap_modes">[docs]</a>	<span class="k">def</span> <span class="nf">swap_modes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;Exchange the specified mode with the mode at the top of the stack.</span>
+<span class="sd">		This is similar to popping the current mode and pushing the specified</span>
+<span class="sd">		one, but without activating the previous mode on the stack or</span>
+<span class="sd">		executing :meth:`on_last_mode_pop()` if there is no previous mode.</span>
+
+<span class="sd">		:param mode: The :class:`Mode` object that was deactivated and replaced.</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="n">old_mode</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">modes</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">deactivate_mode</span><span class="p">(</span><span class="n">old_mode</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">modes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mode</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">activate_mode</span><span class="p">(</span><span class="n">mode</span><span class="p">)</span>
+		<span class="k">return</span> <span class="n">old_mode</span>
+	</div>
+<div class="viewcode-block" id="BaseManager.remove_mode"><a class="viewcode-back" href="../../mod/mode.html#bGrease.mode.BaseManager.remove_mode">[docs]</a>	<span class="k">def</span> <span class="nf">remove_mode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;Remove the specified mode. If the mode is at the top of the stack,</span>
+<span class="sd">		this is equivilent to :meth:`pop_mode()`. If not, no other modes</span>
+<span class="sd">		are affected. If the mode is not in the manager, do nothing.</span>
+
+<span class="sd">		:param mode: The :class:`Mode` object to remove from the manager.</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_mode</span> <span class="ow">is</span> <span class="n">mode</span><span class="p">:</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">pop_mode</span><span class="p">()</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="k">try</span><span class="p">:</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">modes</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">mode</span><span class="p">)</span>
+			<span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+				<span class="k">pass</span>
+</div></div>
+<div class="viewcode-block" id="BaseMode"><a class="viewcode-back" href="../../mod/mode.html#bGrease.mode.BaseMode">[docs]</a><span class="k">class</span> <span class="nc">BaseMode</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;Application mode very abstract base class</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">__metaclass__</span> <span class="o">=</span> <span class="n">abc</span><span class="o">.</span><span class="n">ABCMeta</span>
+
+	<span class="n">manager</span> <span class="o">=</span> <span class="bp">None</span>
+	<span class="sd">&quot;&quot;&quot;The :class:`BaseManager` that manages this mode&quot;&quot;&quot;</span>
+
+	<span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">active</span> <span class="o">=</span> <span class="bp">False</span>
+		
+<div class="viewcode-block" id="BaseMode.on_activate"><a class="viewcode-back" href="../../mod/mode.html#bGrease.mode.BaseMode.on_activate">[docs]</a>	<span class="k">def</span> <span class="nf">on_activate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;Being called when the Mode is activated&quot;&quot;&quot;</span>
+		<span class="k">pass</span>
+	</div>
+<div class="viewcode-block" id="BaseMode.activate"><a class="viewcode-back" href="../../mod/mode.html#bGrease.mode.BaseMode.activate">[docs]</a>	<span class="k">def</span> <span class="nf">activate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode_manager</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;Activate the mode for the given mode manager, if the mode is already active, </span>
+<span class="sd">		do nothing</span>
+
+<span class="sd">		The default implementation schedules time steps at :attr:`step_rate` per</span>
+<span class="sd">		second, sets the :attr:`manager` and sets the :attr:`active` flag to True.</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">active</span><span class="p">:</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">on_activate</span><span class="p">()</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">manager</span> <span class="o">=</span> <span class="n">mode_manager</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">active</span> <span class="o">=</span> <span class="bp">True</span>
+</div>
+<div class="viewcode-block" id="BaseMode.on_deactivate"><a class="viewcode-back" href="../../mod/mode.html#bGrease.mode.BaseMode.on_deactivate">[docs]</a>	<span class="k">def</span> <span class="nf">on_deactivate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;Being called when the Mode is deactivated&quot;&quot;&quot;</span>
+		<span class="k">pass</span>
+</div>
+<div class="viewcode-block" id="BaseMode.deactivate"><a class="viewcode-back" href="../../mod/mode.html#bGrease.mode.BaseMode.deactivate">[docs]</a>	<span class="k">def</span> <span class="nf">deactivate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode_manager</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;Deactivate the mode, if the mode is not active, do nothing</span>
+
+<span class="sd">		The default implementation unschedules time steps for the mode and</span>
+<span class="sd">		sets the :attr:`active` flag to False.</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">on_deactivate</span><span class="p">()</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">active</span> <span class="o">=</span> <span class="bp">False</span>
+
+</div></div>
+<div class="viewcode-block" id="BaseMulti"><a class="viewcode-back" href="../../mod/mode.html#bGrease.mode.BaseMulti">[docs]</a><span class="k">class</span> <span class="nc">BaseMulti</span><span class="p">(</span><span class="n">BaseMode</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;A mode with multiple submodes. One submode is active at one time.</span>
+<span class="sd">	Submodes can be switched to directly or switched in sequence. If</span>
+<span class="sd">	the Multi is active, then one submode is always active.</span>
+
+<span class="sd">	Multis are useful when modes can switch in an order other than</span>
+<span class="sd">	a LIFO stack, such as in &quot;hotseat&quot; multiplayer games, a</span>
+<span class="sd">	&quot;wizard&quot; style ui, or a sequence of slides.</span>
+
+<span class="sd">	Note unlike a normal :class:`Mode`, a :class:`Multi` doesn&#39;t have it&#39;s own</span>
+<span class="sd">	:attr:`clock` and :attr:`step_rate`. The active submode&#39;s are used</span>
+<span class="sd">	instead.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">active_submode</span> <span class="o">=</span> <span class="bp">None</span>
+	<span class="sd">&quot;&quot;&quot;The currently active submode&quot;&quot;&quot;</span>
+
+	<span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">submodes</span><span class="p">):</span>
+		<span class="c"># We do not invoke the superclass __init__ intentionally</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">active</span> <span class="o">=</span> <span class="bp">False</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">submodes</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">submodes</span><span class="p">)</span>
+	
+<div class="viewcode-block" id="BaseMulti.add_submode"><a class="viewcode-back" href="../../mod/mode.html#bGrease.mode.BaseMulti.add_submode">[docs]</a>	<span class="k">def</span> <span class="nf">add_submode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="p">,</span> <span class="n">before</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;Add the submode, but do not make it active.</span>
+
+<span class="sd">		:param mode: The :class:`Mode` object to add.</span>
+
+<span class="sd">		:param before: The existing mode to insert the mode before. </span>
+<span class="sd">			If the mode specified is not a submode, raise</span>
+<span class="sd">			ValueError.</span>
+
+<span class="sd">		:param index: The place to insert the mode in the mode list.</span>
+<span class="sd">			Only one of ``before`` or ``index`` may be specified.</span>
+
+<span class="sd">			If neither ``before`` or ``index`` are specified, the</span>
+<span class="sd">			mode is appended to the end of the list.</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">assert</span> <span class="n">before</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">or</span> <span class="n">index</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">,</span> <span class="p">(</span>
+			<span class="s">&quot;Cannot specify both &#39;before&#39; and &#39;index&#39; arguments&quot;</span><span class="p">)</span>
+		<span class="k">if</span> <span class="n">before</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+			<span class="n">index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">submodes</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">mode</span><span class="p">)</span>
+		<span class="k">if</span> <span class="n">index</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">submodes</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">mode</span><span class="p">)</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">submodes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mode</span><span class="p">)</span>
+	</div>
+<div class="viewcode-block" id="BaseMulti.remove_submode"><a class="viewcode-back" href="../../mod/mode.html#bGrease.mode.BaseMulti.remove_submode">[docs]</a>	<span class="k">def</span> <span class="nf">remove_submode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;Remove the submode.</span>
+
+<span class="sd">		:param mode: The submode to remove, if omitted the active submode</span>
+<span class="sd">			is removed. If the mode is not present, do nothing.  If the</span>
+<span class="sd">			mode is active, it is deactivated, and the next mode, if any</span>
+<span class="sd">			is activated. If the last mode is removed, the :class:`Multi`</span>
+<span class="sd">			is removed from its manager. </span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="c"># TODO handle multiple instances of the same subnode</span>
+		<span class="k">if</span> <span class="n">mode</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+			<span class="n">mode</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">active_submode</span>
+		<span class="k">elif</span> <span class="n">mode</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">submodes</span><span class="p">:</span>
+			<span class="k">return</span>
+		<span class="n">next_mode</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">activate_next</span><span class="p">()</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">submodes</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">mode</span><span class="p">)</span>
+		<span class="k">if</span> <span class="n">next_mode</span> <span class="ow">is</span> <span class="n">mode</span><span class="p">:</span>
+			<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">manager</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">manager</span><span class="o">.</span><span class="n">remove_mode</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">_deactivate_submode</span><span class="p">()</span>
+				</div>
+<div class="viewcode-block" id="BaseMulti.activate_subnode"><a class="viewcode-back" href="../../mod/mode.html#bGrease.mode.BaseMulti.activate_subnode">[docs]</a>	<span class="k">def</span> <span class="nf">activate_subnode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="p">,</span> <span class="n">before</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;Activate the specified mode, adding it as a subnode</span>
+<span class="sd">		if it is not already. If the mode is already the active</span>
+<span class="sd">		submode, do nothing.</span>
+
+<span class="sd">		:param mode: The mode to activate, and add as necesary.</span>
+
+<span class="sd">		:param before: The existing mode to insert the mode before</span>
+<span class="sd">			if it is not already a submode.  If the mode specified is not</span>
+<span class="sd">			a submode, raise ValueError.</span>
+
+<span class="sd">		:param index: The place to insert the mode in the mode list</span>
+<span class="sd">			if it is not already a submode.  Only one of ``before`` or</span>
+<span class="sd">			``index`` may be specified.</span>
+
+<span class="sd">			If the mode is already a submode, the ``before`` and ``index``</span>
+<span class="sd">			arguments are ignored.</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">if</span> <span class="n">mode</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">submodes</span><span class="p">:</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">add_submode</span><span class="p">(</span><span class="n">mode</span><span class="p">,</span> <span class="n">before</span><span class="p">,</span> <span class="n">index</span><span class="p">)</span>
+		<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">active_submode</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">mode</span><span class="p">:</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">_activate_submode</span><span class="p">(</span><span class="n">mode</span><span class="p">)</span>
+	</div>
+<div class="viewcode-block" id="BaseMulti.activate_next"><a class="viewcode-back" href="../../mod/mode.html#bGrease.mode.BaseMulti.activate_next">[docs]</a>	<span class="k">def</span> <span class="nf">activate_next</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">loop</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;Activate the submode after the current submode in order.  If there</span>
+<span class="sd">		is no current submode, the first submode is activated.</span>
+
+<span class="sd">		Note if there is only one submode, it&#39;s active, and `loop` is True</span>
+<span class="sd">		(the default), then this method does nothing and the subnode remains</span>
+<span class="sd">		active.</span>
+
+<span class="sd">		:param loop: When :meth:`activate_next` is called </span>
+<span class="sd">			when the last submode is active, a True value for ``loop`` will</span>
+<span class="sd">			cause the first submode to be activated.  Otherwise the</span>
+<span class="sd">			:class:`Multi` is removed from its manager.</span>
+<span class="sd">		:type loop: bool</span>
+
+<span class="sd">		:return:</span>
+<span class="sd">			The submode that was activated or None if there is no</span>
+<span class="sd">			other submode to activate.</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">submodes</span><span class="p">,</span> <span class="s">&quot;No submode to activate&quot;</span>
+		<span class="n">next_mode</span> <span class="o">=</span> <span class="bp">None</span>
+		<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">active_submode</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+			<span class="n">next_mode</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">submodes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="n">last_mode</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">active_submode</span>
+			<span class="n">index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">submodes</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">last_mode</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+			<span class="k">if</span> <span class="n">index</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">submodes</span><span class="p">):</span>
+				<span class="n">next_mode</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">submodes</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
+			<span class="k">elif</span> <span class="n">loop</span><span class="p">:</span>
+				<span class="n">next_mode</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">submodes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">_activate_submode</span><span class="p">(</span><span class="n">next_mode</span><span class="p">)</span>
+		<span class="k">return</span> <span class="n">next_mode</span>
+</div>
+<div class="viewcode-block" id="BaseMulti.activate_previous"><a class="viewcode-back" href="../../mod/mode.html#bGrease.mode.BaseMulti.activate_previous">[docs]</a>	<span class="k">def</span> <span class="nf">activate_previous</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">loop</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;Activate the submode before the current submode in order.  If there</span>
+<span class="sd">		is no current submode, the last submode is activated.</span>
+
+<span class="sd">		Note if there is only one submode, it&#39;s active, and `loop` is True</span>
+<span class="sd">		(the default), then this method does nothing and the subnode remains</span>
+<span class="sd">		active.</span>
+<span class="sd">		</span>
+<span class="sd">		:param loop: When :meth:`activate_previous` is called </span>
+<span class="sd">			when the first submode is active, a True value for ``loop`` will</span>
+<span class="sd">			cause the last submode to be activated.  Otherwise the</span>
+<span class="sd">			:class:`Multi` is removed from its manager.</span>
+<span class="sd">		:type loop: bool</span>
+
+<span class="sd">		:return:</span>
+<span class="sd">			The submode that was activated or None if there is no</span>
+<span class="sd">			other submode to activate.</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">submodes</span><span class="p">,</span> <span class="s">&quot;No submode to activate&quot;</span>
+		<span class="n">prev_mode</span> <span class="o">=</span> <span class="bp">None</span>
+		<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">active_submode</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+			<span class="n">prev_mode</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">submodes</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="n">last_mode</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">active_submode</span>
+			<span class="n">index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">submodes</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">last_mode</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+			<span class="k">if</span> <span class="n">loop</span> <span class="ow">or</span> <span class="n">index</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span>
+				<span class="n">prev_mode</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">submodes</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">_activate_submode</span><span class="p">(</span><span class="n">prev_mode</span><span class="p">)</span>
+		<span class="k">return</span> <span class="n">prev_mode</span>
+	</div>
+	<span class="k">def</span> <span class="nf">_set_active_submode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">submode</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">active_submode</span> <span class="o">=</span> <span class="n">submode</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">step_rate</span> <span class="o">=</span> <span class="n">submode</span><span class="o">.</span><span class="n">step_rate</span>
+
+	<span class="k">def</span> <span class="nf">_activate_submode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">submode</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;Activate a submode deactivating any current submode. If the Multi</span>
+<span class="sd">		itself is active, this happens immediately, otherwise the actual</span>
+<span class="sd">		activation is deferred until the Multi is activated. If the submode</span>
+<span class="sd">		is None, the Mulitmode is removed from its manager.</span>
+
+<span class="sd">		If submode is already the active submode, do nothing.</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">active_submode</span> <span class="ow">is</span> <span class="n">submode</span><span class="p">:</span>
+			<span class="k">return</span>
+		<span class="k">assert</span> <span class="n">submode</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">submodes</span><span class="p">,</span> <span class="s">&quot;Unknown submode&quot;</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">_deactivate_submode</span><span class="p">()</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">_set_active_submode</span><span class="p">(</span><span class="n">submode</span><span class="p">)</span>
+		<span class="k">if</span> <span class="n">submode</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+			<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">active</span><span class="p">:</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">manager</span><span class="o">.</span><span class="n">activate_mode</span><span class="p">(</span><span class="n">submode</span><span class="p">)</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">manager</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">manager</span><span class="o">.</span><span class="n">remove_mode</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+	
+<div class="viewcode-block" id="BaseMulti.clear_subnode"><a class="viewcode-back" href="../../mod/mode.html#bGrease.mode.BaseMulti.clear_subnode">[docs]</a>	<span class="k">def</span> <span class="nf">clear_subnode</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;Clear any subnmode data&quot;&quot;&quot;</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">active_submode</span> <span class="o">=</span> <span class="bp">None</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">step_rate</span> <span class="o">=</span> <span class="bp">None</span>
+				</div>
+	<span class="k">def</span> <span class="nf">_deactivate_submode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">clear_subnode</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;Deactivate the current submode, if any. if `clear_subnode` is</span>
+<span class="sd">		True, `active_submode` is always None when this method returns</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">active_submode</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+			<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">active</span><span class="p">:</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">manager</span><span class="o">.</span><span class="n">deactivate_mode</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">active_submode</span><span class="p">)</span>
+			<span class="k">if</span> <span class="n">clear_subnode</span><span class="p">:</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">clear_subnode</span><span class="p">()</span>
+	
+<div class="viewcode-block" id="BaseMulti.activate"><a class="viewcode-back" href="../../mod/mode.html#bGrease.mode.BaseMulti.activate">[docs]</a>	<span class="k">def</span> <span class="nf">activate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode_manager</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;Activate the :class:`Multi` for the specified manager. The</span>
+<span class="sd">		previously active submode of the :class:`Multi` is activated. If there</span>
+<span class="sd">		is no previously active submode, then the first submode is made active. </span>
+<span class="sd">		A :class:`Multi` with no submodes cannot be activated</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">submodes</span><span class="p">,</span> <span class="s">&quot;No submode to activate&quot;</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">manager</span> <span class="o">=</span> <span class="n">mode_manager</span>
+		<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">active_submode</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">_set_active_submode</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">submodes</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">_set_active_submode</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">active_submode</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">manager</span><span class="o">.</span><span class="n">activate_mode</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">active_submode</span><span class="p">)</span>
+		<span class="nb">super</span><span class="p">(</span><span class="n">BaseMulti</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">activate</span><span class="p">(</span><span class="n">mode_manager</span><span class="p">)</span>
+	</div>
+<div class="viewcode-block" id="BaseMulti.deactivate"><a class="viewcode-back" href="../../mod/mode.html#bGrease.mode.BaseMulti.deactivate">[docs]</a>	<span class="k">def</span> <span class="nf">deactivate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode_manager</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;Deactivate the :class:`Multi` for the specified manager.</span>
+<span class="sd">		The `active_submode`, if any, is deactivated.</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">_deactivate_submode</span><span class="p">(</span><span class="n">clear_subnode</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+		<span class="nb">super</span><span class="p">(</span><span class="n">BaseMulti</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">deactivate</span><span class="p">(</span><span class="n">mode_manager</span><span class="p">)</span>
+</pre></div></div></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../index.html">Grease 0.3 documentation</a> &raquo;</li>
+          <li><a href="../index.html" >Module code</a> &raquo;</li>
+          <li><a href="../bGrease.html" >bGrease</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2010, Casey Duncan.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

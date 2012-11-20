@@ -1,0 +1,317 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>bGrease.grease_pyglet.controls &mdash; Grease 0.3 documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '0.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="top" title="Grease 0.3 documentation" href="../../../index.html" />
+    <link rel="up" title="bGrease" href="../../bGrease.html" />
+        <link rel="stylesheet" href="../../../_static/grease.css" type="text/css" />
+
+  </head>
+  <body>
+<div style="background-color: white; text-align: left; padding: 10px 10px 15px 15px">
+<img src="../../../_static/grease.png" alt="Grease logo" />
+</div>
+
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">Grease 0.3 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" >Module code</a> &raquo;</li>
+          <li><a href="../../bGrease.html" accesskey="U">bGrease</a> &raquo;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for bGrease.grease_pyglet.controls</h1><div class="highlight"><pre>
+<span class="c">#############################################################################</span>
+<span class="c">#</span>
+<span class="c"># Copyright (c) 2010 by Casey Duncan</span>
+<span class="c"># All Rights Reserved.</span>
+<span class="c">#</span>
+<span class="c"># This software is subject to the provisions of the MIT License</span>
+<span class="c"># A copy of the license should accompany this distribution.</span>
+<span class="c"># THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR</span>
+<span class="c"># IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,</span>
+<span class="c"># FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.</span>
+<span class="c">#</span>
+<span class="c">#############################################################################</span>
+<span class="sd">&quot;&quot;&quot;Control systems for binding controls to game logic&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">bGrease</span>
+<span class="kn">from</span> <span class="nn">pyglet.window</span> <span class="kn">import</span> <span class="n">key</span>
+
+<div class="viewcode-block" id="KeyControls"><a class="viewcode-back" href="../../../mod/controls.html#bGrease.grease_pyglet.controls.KeyControls">[docs]</a><span class="k">class</span> <span class="nc">KeyControls</span><span class="p">(</span><span class="n">bGrease</span><span class="o">.</span><span class="n">System</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;System that maps subclass-defined action methods to keys. </span>
+
+<span class="sd">	Keys may be mapped in the subclass definition using decorators</span>
+<span class="sd">	defined here as class methods or at runtime using the ``bind_key_*`` </span>
+<span class="sd">	instance methods.</span>
+
+<span class="sd">	See :ref:`an example implementation in the tutorial &lt;tut-controls-example&gt;`.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">MODIFIER_MASK</span> <span class="o">=</span> <span class="o">~</span><span class="p">(</span><span class="n">key</span><span class="o">.</span><span class="n">MOD_NUMLOCK</span> <span class="o">|</span> <span class="n">key</span><span class="o">.</span><span class="n">MOD_SCROLLLOCK</span> <span class="o">|</span> <span class="n">key</span><span class="o">.</span><span class="n">MOD_CAPSLOCK</span><span class="p">)</span>
+	<span class="sd">&quot;&quot;&quot;The MODIFIER_MASK allows you to filter out modifier keys that should be</span>
+<span class="sd">	ignored by the application. By default, capslock, numlock, and scrolllock </span>
+<span class="sd">	are ignored.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+
+	<span class="n">world</span> <span class="o">=</span> <span class="bp">None</span>
+	<span class="sd">&quot;&quot;&quot;:class:`bGrease.World` object this system is bound to&quot;&quot;&quot;</span>
+
+	<span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">_key_press_map</span> <span class="o">=</span> <span class="p">{}</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">_key_release_map</span> <span class="o">=</span> <span class="p">{}</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">_key_hold_map</span> <span class="o">=</span> <span class="p">{}</span>
+		<span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__dict__</span><span class="p">:</span>
+			<span class="n">member</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+			<span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">member</span><span class="p">,</span> <span class="s">&#39;_grease_hold_key_binding&#39;</span><span class="p">):</span>
+				<span class="k">for</span> <span class="n">binding</span> <span class="ow">in</span> <span class="n">member</span><span class="o">.</span><span class="n">_grease_hold_key_binding</span><span class="p">:</span>
+					<span class="bp">self</span><span class="o">.</span><span class="n">bind_key_hold</span><span class="p">(</span><span class="n">member</span><span class="p">,</span> <span class="o">*</span><span class="n">binding</span><span class="p">)</span>
+			<span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">member</span><span class="p">,</span> <span class="s">&#39;_grease_press_key_binding&#39;</span><span class="p">):</span>
+				<span class="k">for</span> <span class="n">binding</span> <span class="ow">in</span> <span class="n">member</span><span class="o">.</span><span class="n">_grease_press_key_binding</span><span class="p">:</span>
+					<span class="bp">self</span><span class="o">.</span><span class="n">bind_key_press</span><span class="p">(</span><span class="n">member</span><span class="p">,</span> <span class="o">*</span><span class="n">binding</span><span class="p">)</span>
+			<span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">member</span><span class="p">,</span> <span class="s">&#39;_grease_release_key_binding&#39;</span><span class="p">):</span>
+				<span class="k">for</span> <span class="n">binding</span> <span class="ow">in</span> <span class="n">member</span><span class="o">.</span><span class="n">_grease_release_key_binding</span><span class="p">:</span>
+					<span class="bp">self</span><span class="o">.</span><span class="n">bind_key_release</span><span class="p">(</span><span class="n">member</span><span class="p">,</span> <span class="o">*</span><span class="n">binding</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">held_keys</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+
+	<span class="c">## decorator methods for binding methods to key input events ##</span>
+
+	<span class="nd">@classmethod</span>
+<div class="viewcode-block" id="KeyControls.key_hold"><a class="viewcode-back" href="../../../mod/controls.html#bGrease.grease_pyglet.controls.KeyControls.key_hold">[docs]</a>	<span class="k">def</span> <span class="nf">key_hold</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">symbol</span><span class="p">,</span> <span class="n">modifiers</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;Decorator to bind a method to be executed where a key is held down&quot;&quot;&quot;</span>
+		<span class="k">def</span> <span class="nf">bind</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>
+			<span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="s">&#39;_grease_hold_key_binding&#39;</span><span class="p">):</span>
+				<span class="n">f</span><span class="o">.</span><span class="n">_grease_hold_key_binding</span> <span class="o">=</span> <span class="p">[]</span>
+			<span class="n">f</span><span class="o">.</span><span class="n">_grease_hold_key_binding</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">symbol</span><span class="p">,</span> <span class="n">modifiers</span> <span class="o">&amp;</span> <span class="n">cls</span><span class="o">.</span><span class="n">MODIFIER_MASK</span><span class="p">))</span>
+			<span class="k">return</span> <span class="n">f</span>
+		<span class="k">return</span> <span class="n">bind</span>
+</div>
+	<span class="nd">@classmethod</span>
+<div class="viewcode-block" id="KeyControls.key_press"><a class="viewcode-back" href="../../../mod/controls.html#bGrease.grease_pyglet.controls.KeyControls.key_press">[docs]</a>	<span class="k">def</span> <span class="nf">key_press</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">symbol</span><span class="p">,</span> <span class="n">modifiers</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;Decorator to bind a method to be executed where a key is initially depressed&quot;&quot;&quot;</span>
+		<span class="k">def</span> <span class="nf">bind</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>
+			<span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="s">&#39;_grease_press_key_binding&#39;</span><span class="p">):</span>
+				<span class="n">f</span><span class="o">.</span><span class="n">_grease_press_key_binding</span> <span class="o">=</span> <span class="p">[]</span>
+			<span class="n">f</span><span class="o">.</span><span class="n">_grease_press_key_binding</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">symbol</span><span class="p">,</span> <span class="n">modifiers</span> <span class="o">&amp;</span> <span class="n">cls</span><span class="o">.</span><span class="n">MODIFIER_MASK</span><span class="p">))</span>
+			<span class="k">return</span> <span class="n">f</span>
+		<span class="k">return</span> <span class="n">bind</span>
+</div>
+	<span class="nd">@classmethod</span>
+<div class="viewcode-block" id="KeyControls.key_release"><a class="viewcode-back" href="../../../mod/controls.html#bGrease.grease_pyglet.controls.KeyControls.key_release">[docs]</a>	<span class="k">def</span> <span class="nf">key_release</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">symbol</span><span class="p">,</span> <span class="n">modifiers</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;Decorator to bind a method to be executed where a key is released&quot;&quot;&quot;</span>
+		<span class="k">def</span> <span class="nf">bind</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>
+			<span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="s">&#39;_grease_release_key_binding&#39;</span><span class="p">):</span>
+				<span class="n">f</span><span class="o">.</span><span class="n">_grease_release_key_binding</span> <span class="o">=</span> <span class="p">[]</span>
+			<span class="n">f</span><span class="o">.</span><span class="n">_grease_release_key_binding</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">symbol</span><span class="p">,</span> <span class="n">modifiers</span> <span class="o">&amp;</span> <span class="n">cls</span><span class="o">.</span><span class="n">MODIFIER_MASK</span><span class="p">))</span>
+			<span class="k">return</span> <span class="n">f</span>
+		<span class="k">return</span> <span class="n">bind</span>
+	
+	<span class="c">## runtime binding methods ##</span>
+	</div>
+<div class="viewcode-block" id="KeyControls.bind_key_hold"><a class="viewcode-back" href="../../../mod/controls.html#bGrease.grease_pyglet.controls.KeyControls.bind_key_hold">[docs]</a>	<span class="k">def</span> <span class="nf">bind_key_hold</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">modifiers</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;Bind a method to a key at runtime to be invoked when the key is</span>
+<span class="sd">		held down, this replaces any existing key hold binding for this key.</span>
+<span class="sd">		To unbind the key entirely, pass ``None`` for method.</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">if</span> <span class="n">method</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">_key_hold_map</span><span class="p">[</span><span class="n">key</span><span class="p">,</span> <span class="n">modifiers</span> <span class="o">&amp;</span> <span class="bp">self</span><span class="o">.</span><span class="n">MODIFIER_MASK</span><span class="p">]</span> <span class="o">=</span> <span class="n">method</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="k">try</span><span class="p">:</span>
+				<span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_key_hold_map</span><span class="p">[</span><span class="n">key</span><span class="p">,</span> <span class="n">modifiers</span> <span class="o">&amp;</span> <span class="bp">self</span><span class="o">.</span><span class="n">MODIFIER_MASK</span><span class="p">]</span>
+			<span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+				<span class="k">pass</span>
+</div>
+<div class="viewcode-block" id="KeyControls.bind_key_press"><a class="viewcode-back" href="../../../mod/controls.html#bGrease.grease_pyglet.controls.KeyControls.bind_key_press">[docs]</a>	<span class="k">def</span> <span class="nf">bind_key_press</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">modifiers</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;Bind a method to a key at runtime to be invoked when the key is initially</span>
+<span class="sd">		pressed, this replaces any existing key hold binding for this key. To unbind</span>
+<span class="sd">		the key entirely, pass ``None`` for method.</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">if</span> <span class="n">method</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">_key_press_map</span><span class="p">[</span><span class="n">key</span><span class="p">,</span> <span class="n">modifiers</span> <span class="o">&amp;</span> <span class="bp">self</span><span class="o">.</span><span class="n">MODIFIER_MASK</span><span class="p">]</span> <span class="o">=</span> <span class="n">method</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="k">try</span><span class="p">:</span>
+				<span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_key_press_map</span><span class="p">[</span><span class="n">key</span><span class="p">,</span> <span class="n">modifiers</span> <span class="o">&amp;</span> <span class="bp">self</span><span class="o">.</span><span class="n">MODIFIER_MASK</span><span class="p">]</span>
+			<span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+				<span class="k">pass</span>
+</div>
+<div class="viewcode-block" id="KeyControls.bind_key_release"><a class="viewcode-back" href="../../../mod/controls.html#bGrease.grease_pyglet.controls.KeyControls.bind_key_release">[docs]</a>	<span class="k">def</span> <span class="nf">bind_key_release</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">modifiers</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;Bind a method to a key at runtime to be invoked when the key is releaseed,</span>
+<span class="sd">		this replaces any existing key hold binding for this key. To unbind</span>
+<span class="sd">		the key entirely, pass ``None`` for method.</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">if</span> <span class="n">method</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">_key_release_map</span><span class="p">[</span><span class="n">key</span><span class="p">,</span> <span class="n">modifiers</span> <span class="o">&amp;</span> <span class="bp">self</span><span class="o">.</span><span class="n">MODIFIER_MASK</span><span class="p">]</span> <span class="o">=</span> <span class="n">method</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="k">try</span><span class="p">:</span>
+				<span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_key_release_map</span><span class="p">[</span><span class="n">key</span><span class="p">,</span> <span class="n">modifiers</span> <span class="o">&amp;</span> <span class="bp">self</span><span class="o">.</span><span class="n">MODIFIER_MASK</span><span class="p">]</span>
+			<span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+				<span class="k">pass</span>
+</div>
+<div class="viewcode-block" id="KeyControls.step"><a class="viewcode-back" href="../../../mod/controls.html#bGrease.grease_pyglet.controls.KeyControls.step">[docs]</a>	<span class="k">def</span> <span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dt</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;invoke held key functions&quot;&quot;&quot;</span>
+		<span class="n">already_run</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+		<span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">held_keys</span><span class="p">:</span>
+			<span class="n">func</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_key_hold_map</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+			<span class="k">if</span> <span class="n">func</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">func</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">already_run</span><span class="p">:</span>
+				<span class="n">already_run</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+				<span class="n">func</span><span class="p">(</span><span class="n">dt</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="KeyControls.on_key_press"><a class="viewcode-back" href="../../../mod/controls.html#bGrease.grease_pyglet.controls.KeyControls.on_key_press">[docs]</a>	<span class="k">def</span> <span class="nf">on_key_press</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">modifiers</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;Handle pyglet key press. Invoke key press methods and</span>
+<span class="sd">		activate key hold functions</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="n">key_mod</span> <span class="o">=</span> <span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">modifiers</span> <span class="o">&amp;</span> <span class="bp">self</span><span class="o">.</span><span class="n">MODIFIER_MASK</span><span class="p">)</span>
+		<span class="k">if</span> <span class="n">key_mod</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_key_press_map</span><span class="p">:</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">_key_press_map</span><span class="p">[</span><span class="n">key_mod</span><span class="p">]()</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">held_keys</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">key_mod</span><span class="p">)</span>
+	</div>
+<div class="viewcode-block" id="KeyControls.on_key_release"><a class="viewcode-back" href="../../../mod/controls.html#bGrease.grease_pyglet.controls.KeyControls.on_key_release">[docs]</a>	<span class="k">def</span> <span class="nf">on_key_release</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">modifiers</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;Handle pyglet key release. Invoke key release methods and</span>
+<span class="sd">		deactivate key hold functions</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="n">key_mod</span> <span class="o">=</span> <span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">modifiers</span> <span class="o">&amp;</span> <span class="bp">self</span><span class="o">.</span><span class="n">MODIFIER_MASK</span><span class="p">)</span>
+		<span class="k">if</span> <span class="n">key_mod</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_key_release_map</span><span class="p">:</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">_key_release_map</span><span class="p">[</span><span class="n">key_mod</span><span class="p">]()</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">held_keys</span><span class="o">.</span><span class="n">discard</span><span class="p">(</span><span class="n">key_mod</span><span class="p">)</span>
+
+</div></div>
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&#39;__main__&#39;</span><span class="p">:</span>
+	<span class="kn">import</span> <span class="nn">pyglet</span>
+
+	<span class="k">class</span> <span class="nc">TestKeyControls</span><span class="p">(</span><span class="n">KeyControls</span><span class="p">):</span>
+		
+		<span class="n">MODIFIER_MASK</span> <span class="o">=</span> <span class="o">~</span><span class="p">(</span><span class="n">key</span><span class="o">.</span><span class="n">MOD_NUMLOCK</span> <span class="o">|</span> <span class="n">key</span><span class="o">.</span><span class="n">MOD_SCROLLLOCK</span> <span class="o">|</span> <span class="n">key</span><span class="o">.</span><span class="n">MOD_CTRL</span><span class="p">)</span>
+
+		<span class="n">remapped</span> <span class="o">=</span> <span class="bp">False</span>
+		
+		<span class="nd">@KeyControls.key_hold</span><span class="p">(</span><span class="n">key</span><span class="o">.</span><span class="n">UP</span><span class="p">)</span>
+		<span class="nd">@KeyControls.key_hold</span><span class="p">(</span><span class="n">key</span><span class="o">.</span><span class="n">W</span><span class="p">)</span>
+		<span class="k">def</span> <span class="nf">up</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dt</span><span class="p">):</span>
+			<span class="k">print</span> <span class="s">&#39;UP!&#39;</span>
+		
+		<span class="nd">@KeyControls.key_hold</span><span class="p">(</span><span class="n">key</span><span class="o">.</span><span class="n">LEFT</span><span class="p">)</span>
+		<span class="nd">@KeyControls.key_hold</span><span class="p">(</span><span class="n">key</span><span class="o">.</span><span class="n">A</span><span class="p">)</span>
+		<span class="k">def</span> <span class="nf">left</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dt</span><span class="p">):</span>
+			<span class="k">print</span> <span class="s">&#39;LEFT!&#39;</span>
+		
+		<span class="nd">@KeyControls.key_hold</span><span class="p">(</span><span class="n">key</span><span class="o">.</span><span class="n">RIGHT</span><span class="p">)</span>
+		<span class="nd">@KeyControls.key_hold</span><span class="p">(</span><span class="n">key</span><span class="o">.</span><span class="n">D</span><span class="p">)</span>
+		<span class="k">def</span> <span class="nf">right</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dt</span><span class="p">):</span>
+			<span class="k">print</span> <span class="s">&#39;RIGHT!&#39;</span>
+		
+		<span class="nd">@KeyControls.key_hold</span><span class="p">(</span><span class="n">key</span><span class="o">.</span><span class="n">DOWN</span><span class="p">)</span>
+		<span class="nd">@KeyControls.key_hold</span><span class="p">(</span><span class="n">key</span><span class="o">.</span><span class="n">S</span><span class="p">)</span>
+		<span class="k">def</span> <span class="nf">down</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dt</span><span class="p">):</span>
+			<span class="k">print</span> <span class="s">&#39;DOWN!&#39;</span>
+
+		<span class="nd">@KeyControls.key_press</span><span class="p">(</span><span class="n">key</span><span class="o">.</span><span class="n">SPACE</span><span class="p">)</span>
+		<span class="k">def</span> <span class="nf">fire</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+			<span class="k">print</span> <span class="s">&#39;FIRE!&#39;</span>
+
+		<span class="nd">@KeyControls.key_press</span><span class="p">(</span><span class="n">key</span><span class="o">.</span><span class="n">R</span><span class="p">)</span>
+		<span class="k">def</span> <span class="nf">remap_keys</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+			<span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">remapped</span><span class="p">:</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">bind_key_hold</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="n">key</span><span class="o">.</span><span class="n">W</span><span class="p">)</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">bind_key_hold</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="n">key</span><span class="o">.</span><span class="n">A</span><span class="p">)</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">bind_key_hold</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="n">key</span><span class="o">.</span><span class="n">S</span><span class="p">)</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">bind_key_hold</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="n">key</span><span class="o">.</span><span class="n">D</span><span class="p">)</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">bind_key_hold</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">up</span><span class="p">,</span> <span class="n">key</span><span class="o">.</span><span class="n">I</span><span class="p">)</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">bind_key_hold</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">left</span><span class="p">,</span> <span class="n">key</span><span class="o">.</span><span class="n">J</span><span class="p">)</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">bind_key_hold</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">right</span><span class="p">,</span> <span class="n">key</span><span class="o">.</span><span class="n">L</span><span class="p">)</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">bind_key_hold</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">down</span><span class="p">,</span> <span class="n">key</span><span class="o">.</span><span class="n">K</span><span class="p">)</span>
+			<span class="k">else</span><span class="p">:</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">bind_key_hold</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="n">key</span><span class="o">.</span><span class="n">I</span><span class="p">)</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">bind_key_hold</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="n">key</span><span class="o">.</span><span class="n">J</span><span class="p">)</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">bind_key_hold</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="n">key</span><span class="o">.</span><span class="n">K</span><span class="p">)</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">bind_key_hold</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="n">key</span><span class="o">.</span><span class="n">L</span><span class="p">)</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">bind_key_hold</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">up</span><span class="p">,</span> <span class="n">key</span><span class="o">.</span><span class="n">W</span><span class="p">)</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">bind_key_hold</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">left</span><span class="p">,</span> <span class="n">key</span><span class="o">.</span><span class="n">A</span><span class="p">)</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">bind_key_hold</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">right</span><span class="p">,</span> <span class="n">key</span><span class="o">.</span><span class="n">D</span><span class="p">)</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">bind_key_hold</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">down</span><span class="p">,</span> <span class="n">key</span><span class="o">.</span><span class="n">S</span><span class="p">)</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">remapped</span> <span class="o">=</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">remapped</span>
+			
+
+	<span class="n">window</span> <span class="o">=</span> <span class="n">pyglet</span><span class="o">.</span><span class="n">window</span><span class="o">.</span><span class="n">Window</span><span class="p">()</span>
+	<span class="n">window</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+	<span class="n">controls</span> <span class="o">=</span> <span class="n">TestKeyControls</span><span class="p">()</span>
+	<span class="n">window</span><span class="o">.</span><span class="n">push_handlers</span><span class="p">(</span><span class="n">controls</span><span class="p">)</span>
+	<span class="n">pyglet</span><span class="o">.</span><span class="n">clock</span><span class="o">.</span><span class="n">schedule_interval</span><span class="p">(</span><span class="n">controls</span><span class="o">.</span><span class="n">step</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)</span>
+	<span class="n">pyglet</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">Grease 0.3 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" >Module code</a> &raquo;</li>
+          <li><a href="../../bGrease.html" >bGrease</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2010, Casey Duncan.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,294 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>bGrease.component – Entity Data Containers &mdash; Grease 0.3 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="Grease 0.3 documentation" href="../index.html" />
+    <link rel="next" title="bGrease.controller – General Behavioral Aspects" href="controller.html" />
+    <link rel="prev" title="bGrease.color – Colors" href="color.html" />
+        <link rel="stylesheet" href="../_static/grease.css" type="text/css" />
+
+  </head>
+  <body>
+<div style="background-color: white; text-align: left; padding: 10px 10px 15px 15px">
+<img src="../_static/grease.png" alt="Grease logo" />
+</div>
+
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="controller.html" title="bGrease.controller – General Behavioral Aspects"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="color.html" title="bGrease.color – Colors"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">Grease 0.3 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="color.html"
+                        title="previous chapter"><tt class="docutils literal docutils literal docutils literal"><span class="pre">bGrease.color</span></tt> &#8211; Colors</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="controller.html"
+                        title="next chapter"><tt class="docutils literal"><span class="pre">bGrease.controller</span></tt> &#8211; General Behavioral Aspects</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/mod/component.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="bgrease-component-entity-data-containers">
+<h1><a class="reference internal" href="#module-bGrease.component" title="bGrease.component: Entity Data Containers"><tt class="xref py py-mod docutils literal"><span class="pre">bGrease.component</span></tt></a> &#8211; Entity Data Containers<a class="headerlink" href="#bgrease-component-entity-data-containers" title="Permalink to this headline">¶</a></h1>
+<span class="target" id="module-bGrease.component"></span><p>Components store all entity data in a given <a href="#id1"><span class="problematic" id="id2">|World|</span></a>. You can
+think of components as tables with entities as their primary keys. Like
+database tables, components are defined with a &#8220;schema&#8221; that specifies
+the data fields. Each field in a component has a name and a type.</p>
+<p>Component objects themselves have a dict-like interface with entities
+as keys and data records as values. An application will typically 
+interact with components via entity attributes, entity extents or
+by joining them. For more information see:</p>
+<ul class="simple">
+<li><a class="reference internal" href="entity.html#bGrease.entity.Entity" title="bGrease.entity.Entity"><tt class="xref py py-class docutils literal"><span class="pre">Entity</span></tt></a> class.</li>
+<li><a class="reference internal" href="world.html#bGrease.world.EntityExtent" title="bGrease.world.EntityExtent"><tt class="xref py py-class docutils literal"><span class="pre">EntityExtent</span></tt></a> class.</li>
+<li><a class="reference internal" href="world.html#bGrease.world.ComponentParts.join" title="bGrease.world.ComponentParts.join"><tt class="xref py py-meth docutils literal"><span class="pre">join()</span></tt></a> method of ComponentParts.</li>
+</ul>
+<p>See also <a class="reference internal" href="../tutorial/tutorial2.html#custom-component-example"><em>defining custom components in the tutorial</em></a>.</p>
+<dl class="exception">
+<dt id="bGrease.component.ComponentError">
+<em class="property">exception </em><tt class="descclassname">bGrease.component.</tt><tt class="descname">ComponentError</tt><a class="reference internal" href="../_modules/bGrease/component.html#ComponentError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bGrease.component.ComponentError" title="Permalink to this definition">¶</a></dt>
+<dd><p>General component error</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="bGrease.component.Component">
+<em class="property">class </em><tt class="descclassname">bGrease.component.</tt><tt class="descname">Component</tt><big>(</big><em>**fields</em><big>)</big><a class="headerlink" href="#bGrease.component.Component" title="Permalink to this definition">¶</a></dt>
+<dd><p>General component with a configurable schema</p>
+<p>The field schema is defined via keyword args where the 
+arg name is the field name and the value is the type object.</p>
+<p>The following types are supported for fields:</p>
+<ul class="simple">
+<li><tt class="xref py py-class docutils literal"><span class="pre">int</span></tt></li>
+<li><tt class="xref py py-class docutils literal"><span class="pre">float</span></tt></li>
+<li><tt class="xref py py-class docutils literal"><span class="pre">bool</span></tt></li>
+<li><tt class="xref py py-class docutils literal"><span class="pre">str</span></tt></li>
+<li><tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></li>
+<li><a class="reference internal" href="geometry.html#bGrease.geometry.Vec2d" title="bGrease.geometry.Vec2d"><tt class="xref py py-class docutils literal"><span class="pre">Vec2d</span></tt></a></li>
+<li><tt class="xref py py-class docutils literal"><span class="pre">Vec2dArray</span></tt></li>
+<li><a class="reference internal" href="color.html#bGrease.color.RGBA" title="bGrease.color.RGBA"><tt class="xref py py-class docutils literal"><span class="pre">RGBA</span></tt></a></li>
+<li><a class="reference internal" href="geometry.html#bGrease.geometry.Rect" title="bGrease.geometry.Rect"><tt class="xref py py-class docutils literal"><span class="pre">Rect</span></tt></a></li>
+</ul>
+<dl class="method">
+<dt id="bGrease.component.Component.set">
+<tt class="descname">set</tt><big>(</big><em>entity</em>, <em>data=None</em>, <em>**data_kw</em><big>)</big><a class="headerlink" href="#bGrease.component.Component.set" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the component data for an entity, adding it to the
+component if it is not already a member.</p>
+<p>If data is specified, its data for the new entity&#8217;s fields are
+copied from its attributes, making it easy to copy another
+entity&#8217;s data. Keyword arguments are also matched to fields.
+If both a data attribute and keyword argument are supplied for
+a single field, the keyword arg is used.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="bGrease.component.Component.step">
+<tt class="descname">step</tt><big>(</big><em>dt</em><big>)</big><a class="headerlink" href="#bGrease.component.Component.step" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update the component for the next timestep</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="bGrease.component.Position">
+<em class="property">class </em><tt class="descclassname">bGrease.component.</tt><tt class="descname">Position</tt><a class="reference internal" href="../_modules/bGrease/component.html#Position"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bGrease.component.Position" title="Permalink to this definition">¶</a></dt>
+<dd><p>Predefined component that stores position and orientation info for 
+entities.</p>
+<p>Fields:</p>
+<ul class="simple">
+<li><strong>position</strong> (Vec2d) &#8211; Position vector</li>
+<li><strong>angle</strong> (float) &#8211; Angle, in degrees</li>
+</ul>
+</dd></dl>
+
+<dl class="class">
+<dt id="bGrease.component.Transform">
+<em class="property">class </em><tt class="descclassname">bGrease.component.</tt><tt class="descname">Transform</tt><a class="reference internal" href="../_modules/bGrease/component.html#Transform"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bGrease.component.Transform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Predefined component that stores offset, shear, 
+rotation and scale info for entity shapes.</p>
+<p>Fields:</p>
+<ul class="simple">
+<li><strong>offset</strong> (Vec2d)</li>
+<li><strong>shear</strong> (Vec2d)</li>
+<li><strong>rotation</strong> (float)</li>
+<li><strong>scale</strong> (float, default 1.0)</li>
+</ul>
+</dd></dl>
+
+<dl class="class">
+<dt id="bGrease.component.Movement">
+<em class="property">class </em><tt class="descclassname">bGrease.component.</tt><tt class="descname">Movement</tt><a class="reference internal" href="../_modules/bGrease/component.html#Movement"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bGrease.component.Movement" title="Permalink to this definition">¶</a></dt>
+<dd><p>Predefined component that stores velocity, 
+acceleration and rotation info for entities.</p>
+<p>Fields:</p>
+<ul class="simple">
+<li><strong>velocity</strong> (Vec2d) &#8211; Rate of change of entity position</li>
+<li><strong>accel</strong> (Vec2d) &#8211; Rate of change of entity velocity</li>
+<li><strong>rotation</strong> (Vec2d) &#8211; Rate of change of entity angle, in degrees/time</li>
+</ul>
+</dd></dl>
+
+<dl class="class">
+<dt id="bGrease.component.Shape">
+<em class="property">class </em><tt class="descclassname">bGrease.component.</tt><tt class="descname">Shape</tt><a class="reference internal" href="../_modules/bGrease/component.html#Shape"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bGrease.component.Shape" title="Permalink to this definition">¶</a></dt>
+<dd><p>Predefined component that stores shape vertices for entities</p>
+<ul class="simple">
+<li><strong>closed</strong> (bool) &#8211; If the shapes is closed implying an edge between
+last and first vertices.</li>
+<li><strong>verts</strong> (Vec2dArray) &#8211; Array of vertex points</li>
+</ul>
+</dd></dl>
+
+<dl class="class">
+<dt id="bGrease.component.Renderable">
+<em class="property">class </em><tt class="descclassname">bGrease.component.</tt><tt class="descname">Renderable</tt><a class="reference internal" href="../_modules/bGrease/component.html#Renderable"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bGrease.component.Renderable" title="Permalink to this definition">¶</a></dt>
+<dd><p>Predefined component that identifies entities to be 
+rendered and provides their depth and color.</p>
+<ul>
+<li><dl class="first docutils">
+<dt><strong>depth</strong> (float) &#8211; Drawing depth, can be used to determine z-order</dt>
+<dd><p class="first last">while rendering.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt><strong>color</strong> (color.RGBA) &#8211; Color used for entity. The effect of this</dt>
+<dd><p class="first last">field depends on the renderer.</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd></dl>
+
+<dl class="class">
+<dt id="bGrease.component.Collision">
+<em class="property">class </em><tt class="descclassname">bGrease.component.</tt><tt class="descname">Collision</tt><a class="reference internal" href="../_modules/bGrease/component.html#Collision"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bGrease.component.Collision" title="Permalink to this definition">¶</a></dt>
+<dd><p>Predefined component that stores collision masks to determine 
+which entities can collide.</p>
+<p>Fields:</p>
+<ul>
+<li><dl class="first docutils">
+<dt><strong>aabb</strong> (Rect) &#8211; The axis-aligned bounding box for the entity.</dt>
+<dd><p class="first last">This is used for broad-phase collision detection.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt><strong>radius</strong> (float) &#8211; The collision radius of the entity, used for narrow-phase</dt>
+<dd><p class="first last">collision detection. The exact meaning of this value depends on the collision
+system in use.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt><strong>from_mask</strong> (int) &#8211; A bitmask that determines what entities this object</dt>
+<dd><p class="first last">can collide with.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt><strong>into_mask</strong> (int) &#8211; A bitmask that determines what entities can collide</dt>
+<dd><p class="first last">with this object.</p>
+</dd>
+</dl>
+</li>
+</ul>
+<p>When considering an entity A for collision with entity B, A&#8217;s <tt class="docutils literal"><span class="pre">from_mask</span></tt> is
+bit ANDed with B&#8217;s <tt class="docutils literal"><span class="pre">into_mask</span></tt>. If the result is nonzero (meaning 1 or more
+bits is set the same for each) then the collision test is made. Otherwise,
+the pair cannot collide.</p>
+<p>The default value for both of these masks is <tt class="docutils literal"><span class="pre">0xffffffff</span></tt>, which means that
+all entities will collide with each other by default.</p>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="controller.html" title="bGrease.controller – General Behavioral Aspects"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="color.html" title="bGrease.color – Colors"
+             >previous</a> |</li>
+        <li><a href="../index.html">Grease 0.3 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2010, Casey Duncan.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

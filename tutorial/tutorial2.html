@@ -1,0 +1,349 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Grease Tutorial Part II &mdash; Grease 0.3 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="Grease 0.3 documentation" href="../index.html" />
+    <link rel="next" title="Grease Tutorial Part III" href="tutorial3.html" />
+    <link rel="prev" title="Grease Tutorial Part I" href="tutorial1.html" />
+        <link rel="stylesheet" href="../_static/grease.css" type="text/css" />
+
+  </head>
+  <body>
+<div style="background-color: white; text-align: left; padding: 10px 10px 15px 15px">
+<img src="../_static/grease.png" alt="Grease logo" />
+</div>
+
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="tutorial3.html" title="Grease Tutorial Part III"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="tutorial1.html" title="Grease Tutorial Part I"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">Grease 0.3 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Grease Tutorial Part II</a><ul>
+<li><a class="reference internal" href="#making-a-game-of-it">Making a Game of it</a></li>
+<li><a class="reference internal" href="#controlling-the-ship">Controlling the Ship</a></li>
+<li><a class="reference internal" href="#running-into-stuff">Running Into Stuff</a></li>
+<li><a class="reference internal" href="#blowing-stuff-up">Blowing Stuff Up</a><ul>
+<li><a class="reference internal" href="#cleaning-up-the-mess">Cleaning Up the Mess</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#shoot-me-now">Shoot Me Now</a><ul>
+<li><a class="reference internal" href="#shot-class">Shot Class</a></li>
+<li><a class="reference internal" href="#gun-system">Gun System</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#wrapping-things-up">Wrapping Things Up</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="tutorial1.html"
+                        title="previous chapter">Grease Tutorial Part I</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="tutorial3.html"
+                        title="next chapter">Grease Tutorial Part III</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/tutorial/tutorial2.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="grease-tutorial-part-ii">
+<span id="tut-chapter-2"></span><h1>Grease Tutorial Part II<a class="headerlink" href="#grease-tutorial-part-ii" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="making-a-game-of-it">
+<h2>Making a Game of it<a class="headerlink" href="#making-a-game-of-it" title="Permalink to this headline">¶</a></h2>
+<p id="index-0">In <a class="reference internal" href="tutorial1.html#tut-chapter-1"><em>part 1</em></a> of the tutorial the basis was laid for the <em>Blasteroids</em> game, but it is far from complete or even playable. By the end of this chapter, we&#8217;ll have rectified that. To start with, let&#8217;s build on the techniques we used to create the <tt class="xref py py-class docutils literal"><span class="pre">Asteroid</span></tt> class, and create an entity for the player&#8217;s ship.</p>
+<p>The start should look pretty familiar, and even a bit simpler than the asteroids:</p>
+<p>First we have some class attributes that configure various aspects of the ship, including thrust acceleration, turn rate, shape (vertex points) and color. Separating these values out of the code makes them easier to tweak while testing the game, and also will allow us to refer to them from other code, which can be convenient.</p>
+<p>It&#8217;s probably difficult to envision the shape from just the vertex coordinates, so here&#8217;s what the ship will look like rendered:</p>
+<div class="figure align-left" style="width: 100">
+<img alt="../_images/ship_shape.png" src="../_images/ship_shape.png" />
+</div>
+<p>The shape has some intentionally overlapping vertices (the part labelled <cite>flame</cite> on line 7), so we can easily create a simple animated flame effect coming from the rear of the ship when the thrust is activated.</p>
+<p>In the constructor, we setup the initial position and angle (centered and pointing up), stationary movement and rotation (lines 15-18). Next the shape is initialized, this time with the <tt class="xref py py-attr docutils literal"><span class="pre">closed</span></tt> field set to false since we have overlapping vertices in the shape. Last, we set the color. This puts the ship entity into all of the components we need for movement and rendering.</p>
+<p>Unlike asteroids, the player&#8217;s ship needs to be able to move dynamically in response to player inputs. Specifically, the ship needs to be able to turn (rotate) left and right, and accelerate forward in the direction it is facing to simulate thrust. Let&#8217;s start with the turn method:</p>
+<p>This simple method lets us turn the ship left or right by supplying the proper direction value: <tt class="docutils literal"><span class="pre">-1</span></tt> for turn left, <tt class="docutils literal"><span class="pre">1</span></tt> for turn right, <tt class="docutils literal"><span class="pre">0</span></tt> for straight ahead.</p>
+<p>Let&#8217;s move on to the thrust method:</p>
+<p>This method accelerates the ship in the direction it is facing. We start by defining an upward-facing vector with a magnitude set to the class&#8217;s <tt class="xref py py-attr docutils literal"><span class="pre">THRUST_ACCEL</span></tt> value. This vector is then rotated in-place to face the direction of the ship using <tt class="xref py py-meth docutils literal"><span class="pre">Vec2d.rotate()</span></tt>. The <tt class="xref py py-attr docutils literal"><span class="pre">accel</span></tt> field of the entity&#8217;s movment component is then set to the rotated thrust vector. The <a class="reference internal" href="../mod/controller.html#bGrease.controller.EulerMovement" title="bGrease.controller.EulerMovement"><tt class="xref py py-class docutils literal"><span class="pre">EulerMovement</span></tt></a> system, already in the world takes care of calculating the ship&#8217;s velocity and position over time based on the acceleration.</p>
+<p>The last line changes one of the shape vertices, moving it to a random position behind the ship. This will create a simple flickering flame animation that will act as an import cue to the player that the thrust is active. Notice that the vertex is simply moved to a random position vertically relative to the origin, the renderer will automatically take care of translating and rotating the vertex to the proper window coordinates according to the ship&#8217;s current position and rotation, as well as the current camera settings.</p>
+<p>We will be wiring the <tt class="xref py py-meth docutils literal"><span class="pre">thrust()</span></tt> method to fire every frame that the thrust key is held down. That way the acceleration vector will always be pointing in the right direction if the ship is also turning and the thrust flame will continuously flicker.</p>
+<p>The last thing we need is a method to turn the ship&#8217;s thrust off. We&#8217;ll wire this up to fire when the thrust key is released:</p>
+<p>This resets the ship&#8217;s acceleration and flame tip vertex back to their original values.</p>
+<span class="target" id="tut-controls-example"></span></div>
+<div class="section" id="controlling-the-ship">
+<span id="index-1"></span><h2>Controlling the Ship<a class="headerlink" href="#controlling-the-ship" title="Permalink to this headline">¶</a></h2>
+<p>None of the capabilities we&#8217;ve coded for the player&#8217;s ship mean anything unless the player can control them. Here we are going to see how easy it is to wire up our game logic to the keyboard.</p>
+<p>To do this, we are going to create our own custom <a class="reference internal" href="../mod/grease.html#bGrease.System" title="bGrease.System"><tt class="xref py py-class docutils literal"><span class="pre">System</span></tt></a> to house our top-level game state, logic, and keyboard bindings. Because the example game is simple, we can easily fit all of these things into a single system class. In a more complex games, it may be more appropriate to separate these things into separate systems.</p>
+<p>Remember that systems are behavioral aspects of our application, and are invoked each time step. So they are the perfect place to define and glue together the logic for the game.</p>
+<p>We start by defining our <tt class="xref py py-class docutils literal"><span class="pre">GameSystem</span></tt> as a subclass of <tt class="xref py py-class docutils literal"><span class="pre">KeyControls</span></tt>. <tt class="xref py py-class docutils literal"><span class="pre">KeyControls</span></tt> is a system subclass that provides a convenient mechanism for binding its methods to keyboard events.</p>
+<p>The <tt class="xref py py-meth docutils literal"><span class="pre">set_world()</span></tt> method is overridden to include a call to create a <tt class="xref py py-class docutils literal"><span class="pre">PlayerShip</span></tt> entity and store it in the system as game state. Since there is only one player ship, this is an easy way to keep track of it so that we can call it&#8217;s methods in response to particular key presses. We make the entity here in this method &#8211; instead of, say <tt class="xref py py-meth docutils literal"><span class="pre">__init__()</span></tt> &#8211; because this method is called when the system is added to the world. Since we need a reference to the world in order to create an entity, this is the most convenient place to do so.</p>
+<p>Next let&#8217;s add a method to turn the ship left when either the &#8220;a&#8221; or left arrow keys are pressed:</p>
+<p>The first thing of interest are the two decorators at the top. The <tt class="xref py py-meth docutils literal"><span class="pre">KeyControls.key_press()</span></tt> decorator binds a method to a key press event for a specific key. As you can see from the code, we can have multiple key binding decorators for a given method to bind it to multiple keys. The decorator method takes one or two arguments. The first argument is the Pyglet key code from <tt class="xref py py-obj docutils literal"><span class="pre">pyglet.window.key</span></tt>. The second optional argument is to specify modifier keys (shift, alt, etc). By default, no modifier keys are assumed.</p>
+<p>The logic in this method is quite simple. First we check that the <tt class="xref py py-obj docutils literal"><span class="pre">player_ship</span></tt> entity exists. This ensures that the entity has not been deleted from the world before we use it. Just holding a reference to an entity does not prevent it from being deleted. In this way entity references in your code are like weak references. This check will prove useful when the player ship can be destroyed later on. Next we call the ship entity&#8217;s <tt class="xref py py-meth docutils literal"><span class="pre">turn_left()</span></tt> method we defined earlier passing it a direction of <tt class="docutils literal"><span class="pre">-1</span></tt>.</p>
+<p>Next we add a complimentary method to stop turning left:</p>
+<p>The decorators here bind this method to the key release event for the same keys. The methods check for the existence of the entity as above, but also that it is currently turning left (negative rotation). This is to properly handle simultaneous key presses, e.g., left down, right down, then left up.</p>
+<p>The methods for handling turning right are the same as above with the direction reversed:</p>
+<p>For activating thrust, we use the <tt class="xref py py-meth docutils literal"><span class="pre">key_hold()</span></tt> decorator. This works differently than the key press and release decorators we used for turning. The press and release decorators configure a method to fire once for each specific key event. The key hold decorator configures a method to fire continuously, once per time step, as long as the specified key is held down. This is perfect for thrust, which needs to be adjusted continuously as the ship turns, and runs a continuous animation while activated.</p>
+<p>The <tt class="xref py py-meth docutils literal"><span class="pre">stop_thrust()</span></tt> method is simply bound to key release, to ensure the thrust is deactivated at the proper time.</p>
+<p>With the key control logic code in place, the next step is to add the <tt class="xref py py-class docutils literal"><span class="pre">GameSystem</span></tt> to our <tt class="xref py py-class docutils literal"><span class="pre">GameWorld</span></tt>&#8216;s systems (Line 16 below):</p>
+<p>We also modify the <tt class="xref py py-func docutils literal"><span class="pre">main()</span></tt> function to push the system&#8217;s event handler onto the game window so that it receives the key events (Line #7 below):</p>
+<p>Now we can control the ship and fly it around the screen.</p>
+<img alt="../_images/flying_around.png" src="../_images/flying_around.png" />
+</div>
+<div class="section" id="running-into-stuff">
+<span id="index-2"></span><h2>Running Into Stuff<a class="headerlink" href="#running-into-stuff" title="Permalink to this headline">¶</a></h2>
+<p>Flying around is way too safe at the moment, since you can&#8217;t actually run into anything! Let&#8217;s see what we can do about that. Implementing collision requires that we add a component and a system to the <tt class="xref py py-class docutils literal"><span class="pre">GameWorld</span></tt>:</p>
+<p>The <a class="reference internal" href="../mod/component.html#bGrease.component.Collision" title="bGrease.component.Collision"><tt class="xref py py-class docutils literal"><span class="pre">Collision</span></tt></a> component (line 9 above) has the fields we need to make the collision system (line 13-14 above) work. The fields in this component are:</p>
+<dl class="docutils">
+<dt><cite>aabb</cite></dt>
+<dd>This is the axis-aligned bounding box that contains the entity. This box is used in the collision detection system to quickly reduce the number of collision checks that need to be performed. We can also use it for our own purposes when we need to find the top, left, bottom or right edges of entities.</dd>
+<dt><cite>radius</cite></dt>
+<dd>The meaning of this field is up to the specific collision system used. For <a class="reference internal" href="../mod/collision.html#bGrease.collision.Circular" title="bGrease.collision.Circular"><tt class="xref py py-class docutils literal"><span class="pre">Circular</span></tt></a> systems, entities are approximated as circles for the purposes of collision detection. The radius value is simply the radius of the collision circle for an entity.</dd>
+<dt><cite>from_mask</cite> and <cite>into_mask</cite></dt>
+<dd>Not all entities in the collision component need to be able to collide with each other. These two mask fields let you specify which entities can collide. Both mask fields are 32 bit integer bitmasks. When two entities are compared for collision, the <tt class="xref py py-attr docutils literal"><span class="pre">from_mask</span></tt> value from each entity is bit-anded with the <tt class="xref py py-attr docutils literal"><span class="pre">into_mask</span></tt> of the other. If this bit-and operation returns a non-zero result, then a collision is possible, if the result is zero, the entities cannot collide. Note that this check happens in both directions, so a collision can occur between entity A and B if <tt class="docutils literal"><span class="pre">A.collision.from_mask</span> <span class="pre">&amp;</span> <span class="pre">B.collision.into_mask</span> <span class="pre">!=</span> <span class="pre">0</span> <span class="pre">or</span> <span class="pre">B.collision.from_mask</span> <span class="pre">&amp;</span> <span class="pre">A.collision.into_mask</span> <span class="pre">!=</span> <span class="pre">0</span></tt>.</dd>
+</dl>
+<p>Let&#8217;s take a closer look at how the collision system is configured above:</p>
+<p>There are two major steps to collision handling in Grease: <em>collision detection</em> and <em>collision response</em>. The detection step happens within the collision system. A set of pairs of the currently colliding entities can be found in the <tt class="xref py py-attr docutils literal"><span class="pre">collision_pairs</span></tt> attribute of the collision system. Applications are free to use <tt class="xref py py-attr docutils literal"><span class="pre">collision_pairs</span></tt> directly, but they can also register one or more handlers for more automated collision response. Collision handlers are simply functions that accept the collision system they are configured for as an argument. The handler functions are called each time step to deal with collision response.</p>
+<p>Above we have configured <a class="reference internal" href="../mod/collision.html#bGrease.collision.dispatch_events" title="bGrease.collision.dispatch_events"><tt class="xref py py-func docutils literal"><span class="pre">dispatch_events()</span></tt></a> as the collision handler. This function calls <tt class="xref py py-meth docutils literal"><span class="pre">on_collide()</span></tt> on all entities that are colliding. The entities&#8217; <tt class="xref py py-meth docutils literal"><span class="pre">on_collide()</span></tt> handler methods can contain whatever logic desired to handle the collision. This method accepts three arguments: <tt class="xref py py-attr docutils literal"><span class="pre">other_entity</span></tt>, <tt class="xref py py-attr docutils literal"><span class="pre">collision_point</span></tt>, and <tt class="xref py py-attr docutils literal"><span class="pre">collision_normal</span></tt>. These arguments are the other entity collided with, the point where the collision occurred and the normal vector at the point of collision respectively. It is up to the handler method to decide how these values are used. Note that when two entities collide, both of their <tt class="xref py py-meth docutils literal"><span class="pre">on_collide()</span></tt> handler methods will be called, if defined.</p>
+<p>In our game we will leverage the collision masks to make it so that the player&#8217;s ship collides with asteroids, but the asteroids do not collide with each other. To do that we need to modify the <tt class="xref py py-class docutils literal"><span class="pre">Asteroid</span></tt> and <tt class="xref py py-class docutils literal"><span class="pre">PlayerShip</span></tt> constructors to set the collision component fields.</p>
+<p>Lines 21-22 above initialize the collision settings for the player ship. Note that the radius is set slightly smaller than the farthest vertex in the shape (by 0.5 units). This is common when using circular collision shapes, it prevents the appearance of false positive collisions that can make the game feel unfair.</p>
+<p>Lines 18-20 above setup collision for the asteroids. The radius is simply set to the asteroid&#8217;s radius. The collision masks are configured so that the asteroids will collide with the player&#8217;s ship, but not with each other.</p>
+<p>To start with, will add a simple <tt class="xref py py-meth docutils literal"><span class="pre">on_collide()</span></tt> method to both the <tt class="xref py py-class docutils literal"><span class="pre">Asteroid</span></tt> and <tt class="xref py py-class docutils literal"><span class="pre">PlayerShip</span></tt> classes that simply delete the entities when they collide:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">on_collide</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">,</span> <span class="n">point</span><span class="p">,</span> <span class="n">normal</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Collision response handler&quot;&quot;&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">delete</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="blowing-stuff-up">
+<span id="index-3"></span><h2>Blowing Stuff Up<a class="headerlink" href="#blowing-stuff-up" title="Permalink to this headline">¶</a></h2>
+<p>When you run the game now, you&#8217;ll notice that asteroids pass right through each other, but if you hit one with the ship, both the ship and asteroid disappear. This proves that the collision is working as expected, but it&#8217;s not very interesting yet. What would really spice things up are some simple explosion effects when entities are destroyed.</p>
+<p>Here&#8217;s what we need to implement to make stuff explode:</p>
+<ul class="simple">
+<li>A method to &#8220;explode&#8221; an entity into a bunch of debris fragments.</li>
+<li>A system that manages the debris, fading it out and cleaning it up over
+time.</li>
+</ul>
+<p>Let&#8217;s start with the <tt class="xref py py-meth docutils literal"><span class="pre">explode()</span></tt> method. Since asteroids and the player ship are basically the same except for their shape, they can share the method code. The most straightforward way to do this, is to create a common base class for both entities:</p>
+<p>We also define an entity class for the debris. This class defines no behavior of its own, it just serves to tag the debris entities so that we can easily manage them in the system we will be creating later:</p>
+<p>Let&#8217;s take apart the <tt class="xref py py-class docutils literal"><span class="pre">BlasteroidsEntity</span></tt> class and see how it works. In line 6 above, we take the base shape of the entity and transform it into a new shape, rotating it to the current angle of the entity that is exploding:</p>
+<p>Next we create the debris. This is aided by the <tt class="xref py py-meth docutils literal"><span class="pre">shape.segments()</span></tt> method (line 7). This method returns an iterator of all of the individual line segments of the original shape as separate shapes. This effectively fragments our original entity shape.</p>
+<p>We loop over these fragment segments creating debris entities for each. The shape of each debris fragment is a single segment of the original entity&#8217;s shape. We also set the initial position and velocity of the debris entity to that of the exploding entity (line 10-11). Next we add some random velocity outward from the exploding entity&#8217;s position to make it &#8220;explode&#8221; (line 12). Because the base shapes are centered around the origin, we can just use one of the vertex positions to determine the approximate outward direction from the center. Normalizing the first vertex vector &#8211; giving it a length of 1 &#8211; and multiplying it by a random value gives us the desired outward push. A bit of random rotation adds a little spice to the effect (line 13). Last, we set the color of the debris to the same as the original entity so they appear to be pieces of the original.</p>
+<p>To trigger the explosions, we simply need to change the base class of our <tt class="xref py py-class docutils literal"><span class="pre">PlayerShip</span></tt> and <tt class="xref py py-class docutils literal"><span class="pre">Asteroid</span></tt> classes to <tt class="xref py py-class docutils literal"><span class="pre">BlasteroidsEntity</span></tt> and add a call to <tt class="xref py py-meth docutils literal"><span class="pre">explode()</span></tt> in their <tt class="xref py py-meth docutils literal"><span class="pre">on_collide()</span></tt> methods:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">on_collide</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">,</span> <span class="n">point</span><span class="p">,</span> <span class="n">normal</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Collision response handler&quot;&quot;&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">explode</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">delete</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="section" id="cleaning-up-the-mess">
+<span id="index-4"></span><h3>Cleaning Up the Mess<a class="headerlink" href="#cleaning-up-the-mess" title="Permalink to this headline">¶</a></h3>
+<p>Blowing stuff up is great fun, of course, but at some point we need to clean up the debris. We&#8217;ll accomplish this by adding a custom <tt class="xref py py-class docutils literal"><span class="pre">Sweeper</span></tt> system:</p>
+<p>This is first system we&#8217;ve created from scratch, so let&#8217;s look a little deeper at what a system actually is. You&#8217;ll notice we are subclassing <a class="reference internal" href="../mod/grease.html#bGrease.System" title="bGrease.System"><tt class="xref py py-class docutils literal"><span class="pre">System</span></tt></a> an abstract base class defined by the framework. Subclassing <a class="reference internal" href="../mod/grease.html#bGrease.System" title="bGrease.System"><tt class="xref py py-class docutils literal"><span class="pre">System</span></tt></a> is optional, though it helps make it clear what type of part the class defines.</p>
+<p>The only method that a system must implement is <tt class="xref py py-meth docutils literal"><span class="pre">step()</span></tt>. The <tt class="xref py py-meth docutils literal"><span class="pre">step()</span></tt> method is called by the world every time step, passing in the time delta since the last time step as a float. This is where the system implements its business logic.</p>
+<p>Optionally a system can implement a <tt class="xref py py-meth docutils literal"><span class="pre">set_world()</span></tt> method. If defined, this method is called when the system is added to a world, passing the <a href="#id1"><span class="problematic" id="id2">|World|</span></a> instance as its argument. This can be a good place to do system initialization where you need a world object, such as we did with the <tt class="xref py py-class docutils literal"><span class="pre">GameWorld</span></tt> system implementation earlier. The <a class="reference internal" href="../mod/grease.html#bGrease.System" title="bGrease.System"><tt class="xref py py-class docutils literal"><span class="pre">System</span></tt></a> base class defines a simple implementation of <tt class="xref py py-meth docutils literal"><span class="pre">set_world()</span></tt> that stores a reference to the system&#8217;s world for convenient access to its entities, components or even other systems.</p>
+<p>The <tt class="xref py py-attr docutils literal"><span class="pre">SWEEP_TIME</span></tt> value defined on our class specifies the time debris will live before it is &#8220;swept up&#8221; by the system and deleted. As this time elapses, the alpha value of each debris entity&#8217;s color is slowly reduced, fading the debris away.</p>
+<p>We determine the amount to fade the debris for each time step by dividing the time delta <tt class="docutils literal"><span class="pre">dt</span></tt> by the <tt class="xref py py-attr docutils literal"><span class="pre">SWEEP_TIME</span></tt> (line 7 above). This works because the color component values are floating point numbers between 0 and 1.0:</p>
+<p>Next we loop iterating through the <tt class="xref py py-class docutils literal"><span class="pre">Debris</span></tt> entities. We do this by accessing the <em>entity extent</em> for <tt class="xref py py-class docutils literal"><span class="pre">Debris</span></tt>. This extent is accessed by using the <tt class="xref py py-class docutils literal"><span class="pre">Debris</span></tt> class as a key to the world:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="bp">self</span><span class="o">.</span><span class="n">world</span><span class="p">[</span><span class="n">Debris</span><span class="p">]</span><span class="o">.</span><span class="n">entities</span>
+</pre></div>
+</div>
+<p>The entity extent object returned by <tt class="docutils literal"><span class="pre">self.world[Debris]</span></tt> has an attribute <tt class="xref py py-attr docutils literal"><span class="pre">entities</span></tt> which is the set of all entities for that extent in the world. This conveniently gives us all of the debris entities in existence. You&#8217;ll notice that in the for loop on line 7, we turn this set of entities into a tuple:</p>
+<p>This makes a copy of the set to iterate over, so we can safely remove debris entities from the world inside the loop. Without making a copy, we might actually change the members of the <tt class="xref py py-attr docutils literal"><span class="pre">entities</span></tt> while iterating it, which at best would cause an exception, and at worst would result in some entities being skipped over. Any time you iterate over a mutable sequence, such as a list, set or dict, you need to be careful about changes to that sequence while iterating it. This tends to be a common gotcha in Python game development.</p>
+<p>Inside the loop things are pretty straightforward. For each debris entity, we get the color from the renderable component (line 9). Color objects have the attributes <tt class="xref py py-attr docutils literal"><span class="pre">r</span></tt>, <tt class="xref py py-attr docutils literal"><span class="pre">g</span></tt>, <tt class="xref py py-attr docutils literal"><span class="pre">b</span></tt>, and <tt class="xref py py-attr docutils literal"><span class="pre">a</span></tt> for their red, green, blue, and alpha values. We only care about the alpha in this system. For alpha values greater than 0.2, we fade it a bit to a minimum value of zero. If the alpha value is not greater than 0.2, we delete the debris entity entirely (lines 10-13).</p>
+<p>Now that the <tt class="xref py py-class docutils literal"><span class="pre">Sweeper</span></tt> class is implemented, the last thing we need to do is add it to our game world. We just need to add this line to the <tt class="xref py py-meth docutils literal"><span class="pre">configure()</span></tt> method of the <tt class="xref py py-class docutils literal"><span class="pre">GameoWorld</span></tt> class:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="bp">self</span><span class="o">.</span><span class="n">systems</span><span class="o">.</span><span class="n">sweeper</span> <span class="o">=</span> <span class="n">Sweeper</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Now the debris fragments fade away and disappear a short time after the entity explodes.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">What&#8217;s powerful about systems is their ability to define behavioral aspects of the world. With this simple system, we now control the behavior and lifespan of all debris, regardless of where, why or how they are created. If we add new sources of debris later, this system will automatically handle them without additional effort.</p>
+</div>
+</div>
+</div>
+<div class="section" id="shoot-me-now">
+<h2>Shoot Me Now<a class="headerlink" href="#shoot-me-now" title="Permalink to this headline">¶</a></h2>
+<p>Alright, so now we have collisions and explosions working, what more could we want in a game? Well, there&#8217;s a big problem: The only way to blow things up is to use the ship as a battering ram. We need a way to destroy things without also committing suicide. If only there was a game mechanic we could use....hmmm.</p>
+<p>Ok, enough fooling around, we need to be able to shoot stuff! To do that we need some sort of gun. For our purposes, a gun is a device that can shoot out <tt class="xref py py-class docutils literal"><span class="pre">Shot</span></tt> entities. Since such a &#8220;device&#8221; might be useful for other entities besides the <tt class="xref py py-class docutils literal"><span class="pre">PlayerShip</span></tt>, it would be useful to implement as a behavioral aspect of the game.</p>
+<p>The best way to implement such aspects, as we&#8217;ve seen, is to use a system. It might not seem obvious when a feature should be implemented using a system, versus just a method on the entity class, like <tt class="xref py py-meth docutils literal"><span class="pre">explode()</span></tt> above. Of course, these things are not cut and dried and there is no right or wrong way, but systems offer some advantages in certain situations:</p>
+<ol class="arabic simple">
+<li>The behavior is tied to specific components.</li>
+<li>The behavior is continuous or recurs over time.</li>
+<li>The behavior is not specific to a particular entity.</li>
+</ol>
+<p>If any one of the above is true, you should consider implementing the behavior as a system. In our case, we will be defining a custom <tt class="xref py py-obj docutils literal"><span class="pre">gun</span></tt> component to store some state for guns, and the behavior recurs periodically over time (If you hold down fire). Right now #3 above is not true, but if we were to implement alien ships that could shoot at the player later, it would be. All in all I think that makes a compelling case for using a system here.</p>
+<span class="target" id="custom-component-example"></span><p id="index-5">The first thing we need is a component to store some gun state. This will be used to determine when the gun can shoot. Three pieces of information are needed for this: a flag to determine if the gun should fire, the last time the gun was shot, and the minimum &#8220;cool down&#8221; time between shots. We can add a custom component to the <tt class="xref py py-class docutils literal"><span class="pre">GameWorld</span></tt> to store this information in three fields:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="bp">self</span><span class="o">.</span><span class="n">components</span><span class="o">.</span><span class="n">gun</span> <span class="o">=</span> <span class="n">component</span><span class="o">.</span><span class="n">Component</span><span class="p">(</span>
+    <span class="n">firing</span><span class="o">=</span><span class="nb">bool</span><span class="p">,</span>
+    <span class="n">last_fire_time</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span>
+    <span class="n">cool_down</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The <a class="reference internal" href="../mod/component.html#bGrease.component.Component" title="bGrease.component.Component"><tt class="xref py py-class docutils literal"><span class="pre">Component</span></tt></a> class lets us create custom components with user-defined fields. To construct a custom component, we specify the fields as keyword arguments. The names of the arguments specify the names of the fields. The value of each argument specifies the data type for each field. Since the data type is fixed, this makes component fields more rigid than conventional Python attributes, but it provides some important benefits:</p>
+<ol class="arabic simple">
+<li>Component values can be stored in compact data structures using native data types where possible (int, float, Vec2d, etc).</li>
+<li>Component data can be stored in contiguous data blocks for much faster batch operations.</li>
+<li>Fields have sensible default values.</li>
+<li>Input values can be automatically cast to the proper field type
+(e.g., 2-tuples to <a class="reference internal" href="../mod/geometry.html#bGrease.geometry.Vec2d" title="bGrease.geometry.Vec2d"><tt class="xref py py-class docutils literal"><span class="pre">Vec2d</span></tt></a>, hex strings to <a class="reference internal" href="../mod/color.html#bGrease.color.RGBA" title="bGrease.color.RGBA"><tt class="xref py py-class docutils literal"><span class="pre">RGBA</span></tt></a>)</li>
+<li>Systems and other users of component data know exactly what type of data to expect
+for each field.</li>
+</ol>
+<p>An important drawback to this arrangement is that fields must always have a value of the proper type. So it is not possible to assign a value of <tt class="docutils literal"><span class="pre">None</span></tt> to a float field, for instance.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The only difference between custom and built-in components is that the fields for the former are already specified for convenience. Using custom components has no drawbacks other than the additional configuration required.</p>
+</div>
+<p>With the <tt class="xref py py-obj docutils literal"><span class="pre">gun</span></tt> component in place, lets modify the <tt class="xref py py-class docutils literal"><span class="pre">PlayerShip</span></tt> class to initialize the gun data:</p>
+<p>We add a class attribute on line 12 to specify a one half second cooldown for the gun. On line 24 we set this value in the <tt class="xref py py-obj docutils literal"><span class="pre">gun</span></tt> component. We do not have to explicitly set the <tt class="xref py py-attr docutils literal"><span class="pre">firing</span></tt> and <tt class="xref py py-attr docutils literal"><span class="pre">last_fire_time</span></tt> fields. They will automatically default to <tt class="docutils literal"><span class="pre">False</span></tt> and <tt class="docutils literal"><span class="pre">0</span></tt> respectively.</p>
+<div class="section" id="shot-class">
+<span id="index-6"></span><h3>Shot Class<a class="headerlink" href="#shot-class" title="Permalink to this headline">¶</a></h3>
+<p>Now let&#8217;s implement the <tt class="xref py py-class docutils literal"><span class="pre">Shot</span></tt> entity class for our bullets:</p>
+<p>We start with some class attributes (line 4-5) to specify the shot&#8217;s speed and time-to-live. The latter is an indirect way to specify the range for the shot.</p>
+<p>Next we define the constructor, which in addition to the required <tt class="xref py py-obj docutils literal"><span class="pre">world</span></tt> argument, takes a <tt class="xref py py-obj docutils literal"><span class="pre">shooter</span></tt> entity and <tt class="xref py py-obj docutils literal"><span class="pre">angle</span></tt> value. The shooter is the entity that the shot is being fired from. The angle determines the direction of the shot.</p>
+<p>Inside the constructor, we first determine the initial position of the shot (lines 8-10). This is done by computing an offset based on the shooter&#8217;s collision radius and the input angle. This way the shot appears to come from the surface of the shooter, rather than the center. The velocity is calculated by multiplying the angle&#8217;s unit vector by the shot&#8217;s speed, plus the shooter&#8217;s velocity. Without including the shooter&#8217;s velocity, the shooter could actually outrun his own shots, and strafing would feel very unnatural. Would-be skeptics out there should try it with and without adding the shooter&#8217;s velocity to see what I mean.</p>
+<p>The shape of the shot is set to a small triangle (line 13). This is small enough so that it will appear to be a small dot when rendered.  Collision is setup with a small radius and a mask specifically designed to collide with everything except for the shooter (<tt class="docutils literal"><span class="pre">~</span></tt> is Python&#8217;s bit-invert operator). Setting the color ensures the shot is rendered.</p>
+<p>On line 17 we schedule the shot to expire at the proper time. The world&#8217;s clock will call the expire method (defined below) when the time-to-live elapses, deleting the entity automatically. This means that we do not need to keep track of when each shot will expire ourselves, which is convenient.</p>
+<p>We have two more methods to implement for <tt class="xref py py-class docutils literal"><span class="pre">Shot</span></tt>: an <tt class="xref py py-meth docutils literal"><span class="pre">on_collide()</span></tt> handler for collision and an <tt class="xref py py-meth docutils literal"><span class="pre">expire()</span></tt> method for handling the shot expiration. Both will simply delete the entity:</p>
+</div>
+<div class="section" id="gun-system">
+<span id="index-7"></span><h3>Gun System<a class="headerlink" href="#gun-system" title="Permalink to this headline">¶</a></h3>
+<p>With the <tt class="xref py py-obj docutils literal"><span class="pre">gun</span></tt> component and <tt class="xref py py-class docutils literal"><span class="pre">Shot</span></tt> class implemented, we can finally finish things off by implementing the <tt class="xref py py-class docutils literal"><span class="pre">Gun</span></tt> system:</p>
+<p>This is even shorter than the <tt class="xref py py-class docutils literal"><span class="pre">Sweeper</span></tt> system that we implemented previously, but there are some new things here that bear explanation, in particular on line 5. In the <tt class="xref py py-class docutils literal"><span class="pre">Sweeper</span></tt> implementation, we discussed how to use entity classes as keys on the world to retrieve entity extents. In many cases though, you want to get the extent containing all entities instead of just one particular type. To do this you use the special Python ellipsis symbol (<tt class="docutils literal"><span class="pre">...</span></tt>) as a key:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">world</span><span class="p">[</span><span class="o">...</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>This means: &#8220;give me the extent of all entities in the world.&#8221;</p>
+<p>In <tt class="xref py py-class docutils literal"><span class="pre">Sweeper</span></tt>, we used the extent just to get a set of entities of a particular type. But extents can do far more than that, they can also be used to create query expressions.</p>
+<p>You can think of extents as a batch of entities, and like individual entities you can access components as attributes of extents. Only instead of accessing a single component record for an entity, an extent accessor selects them for the entire extent. For instance:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">world</span><span class="p">[</span><span class="o">...</span><span class="p">]</span><span class="o">.</span><span class="n">gun</span>
+</pre></div>
+</div>
+<p>This returns a special set of all entities in the <tt class="xref py py-obj docutils literal"><span class="pre">gun</span></tt> component. It&#8217;s special because we can use it to query fields in the component. For example:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">world</span><span class="p">[</span><span class="o">...</span><span class="p">]</span><span class="o">.</span><span class="n">gun</span><span class="o">.</span><span class="n">firing</span> <span class="o">==</span> <span class="bp">True</span>
+</pre></div>
+</div>
+<p>That looks like an ordinary boolean expression, but it is actually much more than that. This expression returns a set of all entities where the component field <tt class="docutils literal"><span class="pre">gun.firing</span></tt> matches the value <tt class="docutils literal"><span class="pre">True</span></tt>. So this expression returns the set of all entities currently firing their gun. We can iterate this set, as we do in line 5 above, to perform the necessary logic in our system.</p>
+<p>On line 6 we check if the entity&#8217;s gun is ready to fire. <tt class="docutils literal"><span class="pre">self.world.time</span></tt> is the local timestamp of the world object, updated every time step. If the gun is ready to fire, we create a <tt class="xref py py-class docutils literal"><span class="pre">Shot</span></tt> entity and update the <tt class="docutils literal"><span class="pre">last_fire_time</span></tt> so the gun can begin its cool down cycle again.</p>
+<p>As you may have guessed, now that we have our <tt class="xref py py-class docutils literal"><span class="pre">Gun</span></tt> system class implemented, we need to add an instance of it to the <tt class="xref py py-class docutils literal"><span class="pre">GameWorld</span></tt>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="bp">self</span><span class="o">.</span><span class="n">systems</span><span class="o">.</span><span class="n">gun</span> <span class="o">=</span> <span class="n">Gun</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>In addition, we need to add some methods to the <tt class="xref py py-class docutils literal"><span class="pre">GameSystem</span></tt> class to fire the player ship&#8217;s gun when the space bar is pressed:</p>
+<p>These methods simply set the <tt class="xref py py-attr docutils literal"><span class="pre">gun.ship</span></tt> flag when space is pressed, and reset it when space is released.</p>
+<p>With all of this in place we can finally blast those asteroids to smithereens!</p>
+<img alt="../_images/blast_em.png" src="../_images/blast_em.png" />
+<span class="target" id="tut-system-example"></span></div>
+</div>
+<div class="section" id="wrapping-things-up">
+<span id="index-8"></span><h2>Wrapping Things Up<a class="headerlink" href="#wrapping-things-up" title="Permalink to this headline">¶</a></h2>
+<p>We&#8217;ve now implemented all of the major game mechanics, save one. You&#8217;ll notice if you fly around for a few seconds, all of the asteroids fly off the screen and disappear. And so will the player&#8217;s ship if you accelerate it in one direction. We forgot to implement the all-important toroidal spatial topology! That&#8217;s fancy-talk for making objects wrap around when they fly off the edge of the screen.</p>
+<p>So, how do you suppose we&#8217;re gonna fix this? Surprise! Another system! This is a textbook example of a behavioral aspect of the application:</p>
+<p>The constructor (lines 4-6) pre-calculates the half width and height of the window for convenience later. Remember that the origin is in centered in the window, so these values are handy for finding the edges.</p>
+<p>The <tt class="xref py py-meth docutils literal"><span class="pre">step()</span></tt> method performs four entity extent queries, in the same spirit as in the <tt class="xref py py-class docutils literal"><span class="pre">Gun</span></tt> system. Here we are querying the edges of the entities using their collision bounding boxes, comparing them to the window edges. In the first loop (line 9-10) we iterate over all entities whose right edge has moved left beyond the left edge of the window. This extent query does the job:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="bp">self</span><span class="o">.</span><span class="n">world</span><span class="p">[</span><span class="o">...</span><span class="p">]</span><span class="o">.</span><span class="n">collision</span><span class="o">.</span><span class="n">aabb</span><span class="o">.</span><span class="n">right</span> <span class="o">&lt;</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">half_width</span>
+</pre></div>
+</div>
+<p>For all of the entities matched by this expression, we move them to the right the full width of the window plus the width of the entity which we can also conveniently get using the bounding box.</p>
+<p>The remaining 3 loops are essentially the same except each handles a different window edge.</p>
+<p>Naturally once we have this class implemented, you guessed it, we need to add it to the <tt class="xref py py-class docutils literal"><span class="pre">GameWorld</span></tt>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="bp">self</span><span class="o">.</span><span class="n">systems</span><span class="o">.</span><span class="n">wrapper</span> <span class="o">=</span> <span class="n">PositionWrapper</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>With this now in place, all of the entities in the collision component (asteroids, the player ship, shots) will automatically wrap around when they fly offscreen.</p>
+<p><tt class="xref download docutils literal"><span class="pre">blasteroids2.py</span></tt> contains the full source of the second revision of the game.</p>
+<p><strong>Next:</strong> <a class="reference internal" href="tutorial3.html#tut-chapter-3"><em>Grease Tutorial Part III: Spit and Polish</em></a></p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="tutorial3.html" title="Grease Tutorial Part III"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="tutorial1.html" title="Grease Tutorial Part I"
+             >previous</a> |</li>
+        <li><a href="../index.html">Grease 0.3 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2010, Casey Duncan.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,471 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>bGrease.mode – Modal Framework &mdash; Grease 0.3 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="Grease 0.3 documentation" href="../index.html" />
+    <link rel="next" title="bGrease.renderer – World Presentation" href="renderer.html" />
+    <link rel="prev" title="bGrease – Base Classes" href="grease.html" />
+        <link rel="stylesheet" href="../_static/grease.css" type="text/css" />
+
+  </head>
+  <body>
+<div style="background-color: white; text-align: left; padding: 10px 10px 15px 15px">
+<img src="../_static/grease.png" alt="Grease logo" />
+</div>
+
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="renderer.html" title="bGrease.renderer – World Presentation"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="grease.html" title="bGrease – Base Classes"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">Grease 0.3 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="grease.html"
+                        title="previous chapter"><tt class="docutils literal docutils literal docutils literal"><span class="pre">bGrease</span></tt> &#8211; Base Classes</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="renderer.html"
+                        title="next chapter"><tt class="docutils literal"><span class="pre">bGrease.renderer</span></tt> &#8211; World Presentation</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/mod/mode.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="bgrease-mode-modal-framework">
+<h1><a class="reference internal" href="#module-bGrease.mode" title="bGrease.mode: Application modes"><tt class="xref py py-mod docutils literal"><span class="pre">bGrease.mode</span></tt></a> &#8211; Modal Framework<a class="headerlink" href="#bgrease-mode-modal-framework" title="Permalink to this headline">¶</a></h1>
+<span class="target" id="module-bGrease.mode"></span><p>Modes manage the state and transition between different application modes.
+Typically such modes are presented as different screens that the user can
+navigate between, similar to the way a browser navigates web pages. Individual
+modes may be things like:</p>
+<ul class="simple">
+<li>Title screen</li>
+<li>Options dialog</li>
+<li>About screen</li>
+<li>In-progress game</li>
+<li>Inventory interface</li>
+</ul>
+<p>The modal framework provides a simple mechanism to ensure that modes are
+activated and deactivated properly. An activated mode is running and receives
+events. A deactivated mode is paused and does not receive events.</p>
+<p>Modes may be managed as a <em>last-in-first-out</em> stack, or as a list, or ring
+of modes in sequence, or some combination of all.</p>
+<p>For example usage see: <a class="reference internal" href="../tutorial/tutorial3.html#tut-mode-section"><em>the mode section of the tutorial</em></a>.</p>
+<dl class="class">
+<dt id="bGrease.mode.BaseManager">
+<em class="property">class </em><tt class="descclassname">bGrease.mode.</tt><tt class="descname">BaseManager</tt><a class="reference internal" href="../_modules/bGrease/mode.html#BaseManager"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bGrease.mode.BaseManager" title="Permalink to this definition">¶</a></dt>
+<dd><p>Mode manager abstract base class.</p>
+<p>The mode manager keeps a stack of modes where a single mode
+is active at one time. As modes are pushed on and popped from 
+the stack, the mode at the top is always active. The current
+active mode receives events from the manager&#8217;s event dispatcher.</p>
+<dl class="method">
+<dt id="bGrease.mode.BaseManager.activate_mode">
+<tt class="descname">activate_mode</tt><big>(</big><em>mode</em><big>)</big><a class="reference internal" href="../_modules/bGrease/mode.html#BaseManager.activate_mode"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bGrease.mode.BaseManager.activate_mode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Perform actions to activate a node</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>mode</strong> &#8211; The :class: &#8216;Mode&#8217; object to activate</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="bGrease.mode.BaseManager.deactivate_mode">
+<tt class="descname">deactivate_mode</tt><big>(</big><em>mode</em><big>)</big><a class="reference internal" href="../_modules/bGrease/mode.html#BaseManager.deactivate_mode"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bGrease.mode.BaseManager.deactivate_mode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Perform actions to deactivate a node</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>mode</strong> &#8211; The :class: &#8216;Mode&#8217; object to deactivate</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="bGrease.mode.BaseManager.on_last_mode_pop">
+<tt class="descname">on_last_mode_pop</tt><big>(</big><em>mode</em><big>)</big><a class="reference internal" href="../_modules/bGrease/mode.html#BaseManager.on_last_mode_pop"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bGrease.mode.BaseManager.on_last_mode_pop" title="Permalink to this definition">¶</a></dt>
+<dd><p>Hook executed when the last mode is popped from the manager.
+Implementing this method is optional for subclasses.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>mode</strong> &#8211; The <tt class="xref py py-class docutils literal"><span class="pre">Mode</span></tt> object just popped from the manager</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="bGrease.mode.BaseManager.pop_mode">
+<tt class="descname">pop_mode</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/bGrease/mode.html#BaseManager.pop_mode"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bGrease.mode.BaseManager.pop_mode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pop the current mode off the top of the stack and deactivate it.
+The mode now at the top of the stack, if any is then activated.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>mode</strong> &#8211; The <tt class="xref py py-class docutils literal"><span class="pre">Mode</span></tt> object popped from the stack</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="bGrease.mode.BaseManager.push_mode">
+<tt class="descname">push_mode</tt><big>(</big><em>mode</em><big>)</big><a class="reference internal" href="../_modules/bGrease/mode.html#BaseManager.push_mode"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bGrease.mode.BaseManager.push_mode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Push a mode to the top of the mode stack and make it active</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>mode</strong> &#8211; The <tt class="xref py py-class docutils literal"><span class="pre">Mode</span></tt> object to make active</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="bGrease.mode.BaseManager.remove_mode">
+<tt class="descname">remove_mode</tt><big>(</big><em>mode</em><big>)</big><a class="reference internal" href="../_modules/bGrease/mode.html#BaseManager.remove_mode"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bGrease.mode.BaseManager.remove_mode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove the specified mode. If the mode is at the top of the stack,
+this is equivilent to <a class="reference internal" href="#bGrease.mode.BaseManager.pop_mode" title="bGrease.mode.BaseManager.pop_mode"><tt class="xref py py-meth docutils literal"><span class="pre">pop_mode()</span></tt></a>. If not, no other modes
+are affected. If the mode is not in the manager, do nothing.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>mode</strong> &#8211; The <tt class="xref py py-class docutils literal"><span class="pre">Mode</span></tt> object to remove from the manager.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="bGrease.mode.BaseManager.swap_modes">
+<tt class="descname">swap_modes</tt><big>(</big><em>mode</em><big>)</big><a class="reference internal" href="../_modules/bGrease/mode.html#BaseManager.swap_modes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bGrease.mode.BaseManager.swap_modes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Exchange the specified mode with the mode at the top of the stack.
+This is similar to popping the current mode and pushing the specified
+one, but without activating the previous mode on the stack or
+executing <a class="reference internal" href="#bGrease.mode.BaseManager.on_last_mode_pop" title="bGrease.mode.BaseManager.on_last_mode_pop"><tt class="xref py py-meth docutils literal"><span class="pre">on_last_mode_pop()</span></tt></a> if there is no previous mode.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>mode</strong> &#8211; The <tt class="xref py py-class docutils literal"><span class="pre">Mode</span></tt> object that was deactivated and replaced.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bGrease.mode.BaseManager.current_mode">
+<tt class="descname">current_mode</tt><a class="reference internal" href="../_modules/bGrease/mode.html#BaseManager.current_mode"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bGrease.mode.BaseManager.current_mode" title="Permalink to this definition">¶</a></dt>
+<dd><p>The current active mode or <tt class="docutils literal"><span class="pre">None</span></tt>. Read-only</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bGrease.mode.BaseManager.modes">
+<tt class="descname">modes</tt><em class="property"> = ()</em><a class="headerlink" href="#bGrease.mode.BaseManager.modes" title="Permalink to this definition">¶</a></dt>
+<dd><p>The mode stack sequence. The last mode in the stack is
+the current active mode. Read-only.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="bGrease.mode.BaseMode">
+<em class="property">class </em><tt class="descclassname">bGrease.mode.</tt><tt class="descname">BaseMode</tt><a class="reference internal" href="../_modules/bGrease/mode.html#BaseMode"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bGrease.mode.BaseMode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Application mode very abstract base class</p>
+<dl class="method">
+<dt id="bGrease.mode.BaseMode.activate">
+<tt class="descname">activate</tt><big>(</big><em>mode_manager</em><big>)</big><a class="reference internal" href="../_modules/bGrease/mode.html#BaseMode.activate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bGrease.mode.BaseMode.activate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Activate the mode for the given mode manager, if the mode is already active, 
+do nothing</p>
+<p>The default implementation schedules time steps at <tt class="xref py py-attr docutils literal"><span class="pre">step_rate</span></tt> per
+second, sets the <a class="reference internal" href="#bGrease.mode.BaseMode.manager" title="bGrease.mode.BaseMode.manager"><tt class="xref py py-attr docutils literal"><span class="pre">manager</span></tt></a> and sets the <tt class="xref py py-attr docutils literal"><span class="pre">active</span></tt> flag to True.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="bGrease.mode.BaseMode.deactivate">
+<tt class="descname">deactivate</tt><big>(</big><em>mode_manager</em><big>)</big><a class="reference internal" href="../_modules/bGrease/mode.html#BaseMode.deactivate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bGrease.mode.BaseMode.deactivate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Deactivate the mode, if the mode is not active, do nothing</p>
+<p>The default implementation unschedules time steps for the mode and
+sets the <tt class="xref py py-attr docutils literal"><span class="pre">active</span></tt> flag to False.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="bGrease.mode.BaseMode.on_activate">
+<tt class="descname">on_activate</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/bGrease/mode.html#BaseMode.on_activate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bGrease.mode.BaseMode.on_activate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Being called when the Mode is activated</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="bGrease.mode.BaseMode.on_deactivate">
+<tt class="descname">on_deactivate</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/bGrease/mode.html#BaseMode.on_deactivate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bGrease.mode.BaseMode.on_deactivate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Being called when the Mode is deactivated</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bGrease.mode.BaseMode.manager">
+<tt class="descname">manager</tt><em class="property"> = None</em><a class="headerlink" href="#bGrease.mode.BaseMode.manager" title="Permalink to this definition">¶</a></dt>
+<dd><p>The <a class="reference internal" href="#bGrease.mode.BaseManager" title="bGrease.mode.BaseManager"><tt class="xref py py-class docutils literal"><span class="pre">BaseManager</span></tt></a> that manages this mode</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="bGrease.mode.BaseMulti">
+<em class="property">class </em><tt class="descclassname">bGrease.mode.</tt><tt class="descname">BaseMulti</tt><big>(</big><em>*submodes</em><big>)</big><a class="reference internal" href="../_modules/bGrease/mode.html#BaseMulti"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bGrease.mode.BaseMulti" title="Permalink to this definition">¶</a></dt>
+<dd><p>A mode with multiple submodes. One submode is active at one time.
+Submodes can be switched to directly or switched in sequence. If
+the Multi is active, then one submode is always active.</p>
+<p>Multis are useful when modes can switch in an order other than
+a LIFO stack, such as in &#8220;hotseat&#8221; multiplayer games, a
+&#8220;wizard&#8221; style ui, or a sequence of slides.</p>
+<p>Note unlike a normal <tt class="xref py py-class docutils literal"><span class="pre">Mode</span></tt>, a <tt class="xref py py-class docutils literal"><span class="pre">Multi</span></tt> doesn&#8217;t have it&#8217;s own
+<tt class="xref py py-attr docutils literal"><span class="pre">clock</span></tt> and <tt class="xref py py-attr docutils literal"><span class="pre">step_rate</span></tt>. The active submode&#8217;s are used
+instead.</p>
+<dl class="method">
+<dt id="bGrease.mode.BaseMulti.activate">
+<tt class="descname">activate</tt><big>(</big><em>mode_manager</em><big>)</big><a class="reference internal" href="../_modules/bGrease/mode.html#BaseMulti.activate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bGrease.mode.BaseMulti.activate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Activate the <tt class="xref py py-class docutils literal"><span class="pre">Multi</span></tt> for the specified manager. The
+previously active submode of the <tt class="xref py py-class docutils literal"><span class="pre">Multi</span></tt> is activated. If there
+is no previously active submode, then the first submode is made active. 
+A <tt class="xref py py-class docutils literal"><span class="pre">Multi</span></tt> with no submodes cannot be activated</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="bGrease.mode.BaseMulti.activate_next">
+<tt class="descname">activate_next</tt><big>(</big><em>loop=True</em><big>)</big><a class="reference internal" href="../_modules/bGrease/mode.html#BaseMulti.activate_next"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bGrease.mode.BaseMulti.activate_next" title="Permalink to this definition">¶</a></dt>
+<dd><p>Activate the submode after the current submode in order.  If there
+is no current submode, the first submode is activated.</p>
+<p>Note if there is only one submode, it&#8217;s active, and <cite>loop</cite> is True
+(the default), then this method does nothing and the subnode remains
+active.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>loop</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a>) &#8211; When <a class="reference internal" href="#bGrease.mode.BaseMulti.activate_next" title="bGrease.mode.BaseMulti.activate_next"><tt class="xref py py-meth docutils literal"><span class="pre">activate_next()</span></tt></a> is called 
+when the last submode is active, a True value for <tt class="docutils literal"><span class="pre">loop</span></tt> will
+cause the first submode to be activated.  Otherwise the
+<tt class="xref py py-class docutils literal"><span class="pre">Multi</span></tt> is removed from its manager.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">The submode that was activated or None if there is no
+other submode to activate.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="bGrease.mode.BaseMulti.activate_previous">
+<tt class="descname">activate_previous</tt><big>(</big><em>loop=True</em><big>)</big><a class="reference internal" href="../_modules/bGrease/mode.html#BaseMulti.activate_previous"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bGrease.mode.BaseMulti.activate_previous" title="Permalink to this definition">¶</a></dt>
+<dd><p>Activate the submode before the current submode in order.  If there
+is no current submode, the last submode is activated.</p>
+<p>Note if there is only one submode, it&#8217;s active, and <cite>loop</cite> is True
+(the default), then this method does nothing and the subnode remains
+active.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>loop</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a>) &#8211; When <a class="reference internal" href="#bGrease.mode.BaseMulti.activate_previous" title="bGrease.mode.BaseMulti.activate_previous"><tt class="xref py py-meth docutils literal"><span class="pre">activate_previous()</span></tt></a> is called 
+when the first submode is active, a True value for <tt class="docutils literal"><span class="pre">loop</span></tt> will
+cause the last submode to be activated.  Otherwise the
+<tt class="xref py py-class docutils literal"><span class="pre">Multi</span></tt> is removed from its manager.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">The submode that was activated or None if there is no
+other submode to activate.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="bGrease.mode.BaseMulti.activate_subnode">
+<tt class="descname">activate_subnode</tt><big>(</big><em>mode</em>, <em>before=None</em>, <em>index=None</em><big>)</big><a class="reference internal" href="../_modules/bGrease/mode.html#BaseMulti.activate_subnode"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bGrease.mode.BaseMulti.activate_subnode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Activate the specified mode, adding it as a subnode
+if it is not already. If the mode is already the active
+submode, do nothing.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>mode</strong> &#8211; The mode to activate, and add as necesary.</li>
+<li><strong>before</strong> &#8211; The existing mode to insert the mode before
+if it is not already a submode.  If the mode specified is not
+a submode, raise ValueError.</li>
+<li><strong>index</strong> &#8211; <p>The place to insert the mode in the mode list
+if it is not already a submode.  Only one of <tt class="docutils literal"><span class="pre">before</span></tt> or
+<tt class="docutils literal"><span class="pre">index</span></tt> may be specified.</p>
+<p>If the mode is already a submode, the <tt class="docutils literal"><span class="pre">before</span></tt> and <tt class="docutils literal"><span class="pre">index</span></tt>
+arguments are ignored.</p>
+</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="bGrease.mode.BaseMulti.add_submode">
+<tt class="descname">add_submode</tt><big>(</big><em>mode</em>, <em>before=None</em>, <em>index=None</em><big>)</big><a class="reference internal" href="../_modules/bGrease/mode.html#BaseMulti.add_submode"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bGrease.mode.BaseMulti.add_submode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add the submode, but do not make it active.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>mode</strong> &#8211; The <tt class="xref py py-class docutils literal"><span class="pre">Mode</span></tt> object to add.</li>
+<li><strong>before</strong> &#8211; The existing mode to insert the mode before. 
+If the mode specified is not a submode, raise
+ValueError.</li>
+<li><strong>index</strong> &#8211; <p>The place to insert the mode in the mode list.
+Only one of <tt class="docutils literal"><span class="pre">before</span></tt> or <tt class="docutils literal"><span class="pre">index</span></tt> may be specified.</p>
+<p>If neither <tt class="docutils literal"><span class="pre">before</span></tt> or <tt class="docutils literal"><span class="pre">index</span></tt> are specified, the
+mode is appended to the end of the list.</p>
+</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="bGrease.mode.BaseMulti.clear_subnode">
+<tt class="descname">clear_subnode</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/bGrease/mode.html#BaseMulti.clear_subnode"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bGrease.mode.BaseMulti.clear_subnode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Clear any subnmode data</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="bGrease.mode.BaseMulti.deactivate">
+<tt class="descname">deactivate</tt><big>(</big><em>mode_manager</em><big>)</big><a class="reference internal" href="../_modules/bGrease/mode.html#BaseMulti.deactivate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bGrease.mode.BaseMulti.deactivate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Deactivate the <tt class="xref py py-class docutils literal"><span class="pre">Multi</span></tt> for the specified manager.
+The <cite>active_submode</cite>, if any, is deactivated.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="bGrease.mode.BaseMulti.remove_submode">
+<tt class="descname">remove_submode</tt><big>(</big><em>mode=None</em><big>)</big><a class="reference internal" href="../_modules/bGrease/mode.html#BaseMulti.remove_submode"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bGrease.mode.BaseMulti.remove_submode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove the submode.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>mode</strong> &#8211; The submode to remove, if omitted the active submode
+is removed. If the mode is not present, do nothing.  If the
+mode is active, it is deactivated, and the next mode, if any
+is activated. If the last mode is removed, the <tt class="xref py py-class docutils literal"><span class="pre">Multi</span></tt>
+is removed from its manager.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bGrease.mode.BaseMulti.active_submode">
+<tt class="descname">active_submode</tt><em class="property"> = None</em><a class="headerlink" href="#bGrease.mode.BaseMulti.active_submode" title="Permalink to this definition">¶</a></dt>
+<dd><p>The currently active submode</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="renderer.html" title="bGrease.renderer – World Presentation"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="grease.html" title="bGrease – Base Classes"
+             >previous</a> |</li>
+        <li><a href="../index.html">Grease 0.3 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2010, Casey Duncan.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

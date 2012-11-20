@@ -1,0 +1,408 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Grease Tutorial Part III &mdash; Grease 0.3 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="Grease 0.3 documentation" href="../index.html" />
+    <link rel="next" title="bGrease.collision – Collision Detection" href="../mod/collision.html" />
+    <link rel="prev" title="Grease Tutorial Part II" href="tutorial2.html" />
+        <link rel="stylesheet" href="../_static/grease.css" type="text/css" />
+
+  </head>
+  <body>
+<div style="background-color: white; text-align: left; padding: 10px 10px 15px 15px">
+<img src="../_static/grease.png" alt="Grease logo" />
+</div>
+
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../mod/collision.html" title="bGrease.collision – Collision Detection"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="tutorial2.html" title="Grease Tutorial Part II"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">Grease 0.3 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Grease Tutorial Part III</a><ul>
+<li><a class="reference internal" href="#crash-bang-boom">Crash, Bang, Boom!</a></li>
+<li><a class="reference internal" href="#he-shoots-he-scores">He Shoots, He Scores!</a><ul>
+<li><a class="reference internal" href="#scoring-and-levels">Scoring and Levels</a></li>
+<li><a class="reference internal" href="#three-lives-to-live">Three Lives to Live</a></li>
+<li><a class="reference internal" href="#heads-up">Heads Up!</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#en-title-ment">En-&#8220;title&#8221;-ment</a><ul>
+<li><a class="reference internal" href="#windows-managers-worlds-and-modes">Windows, Managers, Worlds, and Modes</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#getting-in-the-hotseat">Getting in the Hotseat</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="tutorial2.html"
+                        title="previous chapter">Grease Tutorial Part II</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="../mod/collision.html"
+                        title="next chapter"><tt class="docutils literal docutils literal docutils literal"><span class="pre">bGrease.collision</span></tt> &#8211; Collision Detection</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/tutorial/tutorial3.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="grease-tutorial-part-iii">
+<span id="tut-chapter-3"></span><h1>Grease Tutorial Part III<a class="headerlink" href="#grease-tutorial-part-iii" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="crash-bang-boom">
+<span id="index-0"></span><h2>Crash, Bang, Boom!<a class="headerlink" href="#crash-bang-boom" title="Permalink to this headline">¶</a></h2>
+<p>Let&#8217;s start by having some fun with some sound effects. The sound functionality itself is provided by Pyglet, but we will be seeing how to tie it into the game logic we already have. To start with, let&#8217;s define some helper functions to help with loading and configuring the sounds:</p>
+<p>First we define a constant <tt class="xref py py-obj docutils literal"><span class="pre">SCRIPT_DIR_PATH</span></tt> to store the path to the script&#8217;s directory. The <tt class="docutils literal"><span class="pre">__file__</span></tt> module global is set by Python to the file path of the running script. Using <a class="reference external" href="http://docs.python.org/library/os.path.html#os.path.dirname" title="(in Python v2.7)"><tt class="xref py py-func docutils literal"><span class="pre">os.path.dirname()</span></tt></a> we get the path to the containing directory so that we can construct file paths relative to it. This way we can find our sound files regardless of the current working directory when the script is run.</p>
+<p>The <tt class="xref py py-func docutils literal"><span class="pre">load_sound()</span></tt> function is a simple wrapper around <tt class="xref py py-func docutils literal"><span class="pre">pyglet.media.load()</span></tt> that loads sound files from the <tt class="docutils literal"><span class="pre">sfx</span></tt> directory adjacent to the script. The false default value for the <tt class="xref py py-attr docutils literal"><span class="pre">streaming</span></tt> argument means that by default the files will be preloaded into memory, which is best for short sound effects.</p>
+<p>The <tt class="xref py py-func docutils literal"><span class="pre">load_sound()</span></tt> function creates fire-and-forget sounds that always play all the way through. We also add a <tt class="xref py py-func docutils literal"><span class="pre">looping_sound()</span></tt> function for continuous-play sounds. This creates the sounds as streaming, which is suitable for longer sound effects or music. It also returns a full fledged <tt class="xref py py-class docutils literal"><span class="pre">pyglet.media.Player</span></tt> object which affords us more control than a simple sound object.</p>
+<p>For a simple game like this, with relatively few sounds, we can ensure that all the sounds are preloaded by storing them as class attributes in the entities that will use them. This will work because these class attributes are evaluated right after the script, or module, is first loaded by Python. In a more complex game with more assets to load, a more sophisticated preloading mechanism that provides feedback to the player is probably warranted.</p>
+<p>Let&#8217;s modify the <tt class="xref py py-class docutils literal"><span class="pre">PlayerShip</span></tt> class to load some sounds:</p>
+<p>We can play the death sound when the player&#8217;s ship is destroyed, by adding a line to the <tt class="xref py py-meth docutils literal"><span class="pre">on_collide()</span></tt> method:</p>
+<p>The thrust sound is a looping sound. It should loop continuously so long as the thrust is on and stop as soon as the thrust is off. This is accomplished by some simple modifications to the <tt class="xref py py-meth docutils literal"><span class="pre">thrust_on()</span></tt> and <tt class="xref py py-meth docutils literal"><span class="pre">thrust_off()</span></tt> methods to play and pause the thrust sound:</p>
+<p>The gun sound is a bit more involved. Since the <tt class="xref py py-class docutils literal"><span class="pre">PlayerShip</span></tt> class does not fire the gun directly, we will not actually play the sound here. We need to provide the sound to the <tt class="xref py py-class docutils literal"><span class="pre">Gun</span></tt> system, so that it can play it when the gun actually fires. A good way to do this is to store the sound in a field of the gun component. We can modify the <tt class="xref py py-class docutils literal"><span class="pre">PlayerShip</span></tt> constructor to do this like so:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">world</span><span class="p">):</span>
+    <span class="o">...</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">gun</span><span class="o">.</span><span class="n">cool_down</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">GUN_COOL_DOWN</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">gun</span><span class="o">.</span><span class="n">sound</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">GUN_SOUND</span>
+</pre></div>
+</div>
+<p>For this to work, we will need to reconfigure the gun component in the <tt class="xref py py-class docutils literal"><span class="pre">GameWorld</span></tt> class, adding a <tt class="xref py py-attr docutils literal"><span class="pre">sound</span></tt> field:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">GameWorld</span><span class="p">(</span><span class="n">bGrease</span><span class="o">.</span><span class="n">World</span><span class="p">):</span>
+
+        <span class="k">def</span> <span class="nf">configure</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+                <span class="sd">&quot;&quot;&quot;Configure the game world&#39;s components, systems and renderers&quot;&quot;&quot;</span>
+                <span class="o">...</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">components</span><span class="o">.</span><span class="n">gun</span> <span class="o">=</span> <span class="n">component</span><span class="o">.</span><span class="n">Component</span><span class="p">(</span>
+                        <span class="n">firing</span><span class="o">=</span><span class="nb">bool</span><span class="p">,</span>
+                        <span class="n">last_fire_time</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span>
+                        <span class="n">cool_down</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span>
+                        <span class="n">sound</span><span class="o">=</span><span class="nb">object</span><span class="p">)</span>
+                <span class="o">...</span>
+</pre></div>
+</div>
+<p>By assigning a type of <tt class="docutils literal"><span class="pre">object</span></tt> to the <tt class="xref py py-attr docutils literal"><span class="pre">sound</span></tt> field, we can assign any Python object to it, which is perfect for this purpose.</p>
+<p>Last we need to modify the <tt class="xref py py-class docutils literal"><span class="pre">Gun</span></tt> system to play the sound when the gun is fired (lines 8-9 below):</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Another viable solution would be to add this sound to the <tt class="xref py py-class docutils literal"><span class="pre">Shot</span></tt> entity, but using the component is more flexible and illustrates how you can leverage object fields.</p>
+</div>
+<p>With some simple modifications to the <tt class="xref py py-class docutils literal"><span class="pre">Asteroid</span></tt> entity class, we can add sounds when they explode. First let&#8217;s load three hit sounds in a class attribute:</p>
+<p>Then play one of these sounds at random when the asteroid is hit:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">on_collide</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">,</span> <span class="n">point</span><span class="p">,</span> <span class="n">normal</span><span class="p">):</span>
+    <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">HIT_SOUNDS</span><span class="p">)</span><span class="o">.</span><span class="n">play</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">explode</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">delete</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>It&#8217;s amazing what an improvement these simple sound effects make to the game. These sounds were created using the brilliant, free 8-bit sound effect generator: <em>sfxr</em>. You can download it <a class="reference external" href="http://games.softpedia.com/get/Tools/sfxr.shtml">for Windows</a> , and <a class="reference external" href="http://mac.softpedia.com/get/Developer-Tools/cfxr.shtml">for Mac</a>.</p>
+</div>
+<div class="section" id="he-shoots-he-scores">
+<h2>He Shoots, He Scores!<a class="headerlink" href="#he-shoots-he-scores" title="Permalink to this headline">¶</a></h2>
+<p>No self-respecting arcade game can show its face in public without scoring. How am I to know how much better I am than the next guy? Obviously we need to implement some scoring before going any further.</p>
+<p>Currently when you shoot an asteroid, it is simply destroyed. This is not much of a challenge. Like the classic game, we need to make the asteroids break into fragments when they are hit. The smaller asteroid fragments will move faster than their parents and give the player more points when shot. Let&#8217;s refactor the <tt class="xref py py-class docutils literal"><span class="pre">Asteroid</span></tt> entity class to provide these features:</p>
+<p>First some arguments are added to the constructor: <tt class="xref py py-attr docutils literal"><span class="pre">position</span></tt>, <tt class="xref py py-attr docutils literal"><span class="pre">parent_velocity</span></tt>, and <tt class="xref py py-attr docutils literal"><span class="pre">points</span></tt> (line 14). If <tt class="xref py py-attr docutils literal"><span class="pre">position</span></tt> is provided, it is used as the initial asteroid position rather than always having a random initial position (line 20). If <tt class="xref py py-attr docutils literal"><span class="pre">parent_velocity</span></tt> is provided, it is added to the random velocity vector (line 22-23), this way fragments are influenced by their parent&#8217;s movement. Last, we store the point value for the asteroid in a new <tt class="xref py py-attr docutils literal"><span class="pre">award</span></tt> component (line 32). Of course we&#8217;ll need to add this component to our <tt class="xref py py-class docutils literal"><span class="pre">GameWorld</span></tt>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">GameWorld</span><span class="p">(</span><span class="n">bGrease</span><span class="o">.</span><span class="n">World</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">configure</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Configure the game world&#39;s components, systems and renderers&quot;&quot;&quot;</span>
+        <span class="o">...</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">components</span><span class="o">.</span><span class="n">award</span> <span class="o">=</span> <span class="n">component</span><span class="o">.</span><span class="n">Component</span><span class="p">(</span><span class="n">points</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+        <span class="o">...</span>
+</pre></div>
+</div>
+<p>There&#8217;s also some changes to <tt class="xref py py-meth docutils literal"><span class="pre">on_collide()</span></tt> above. On line 35, we check the size of the asteroid that was hit. If the asteroid is large enough it is split into fragments, otherwise it is destroyed. The larger asteroids are split into 2 asteroids half the size at the same position. The smaller asteroids are worth double the points of their parents.</p>
+<div class="section" id="scoring-and-levels">
+<h3>Scoring and Levels<a class="headerlink" href="#scoring-and-levels" title="Permalink to this headline">¶</a></h3>
+<p>We now know how many points the asteroids are worth, but we still need to keep track of the game score for the player. Since the score goes with the game, we can add store it in the <tt class="xref py py-class docutils literal"><span class="pre">GameSystem</span></tt> where we bind the keyboard controls. If we had a game with multiple simultaneous players all with separate scores, we might choose to store the scores in a component instead.</p>
+<p>We refactor <tt class="xref py py-class docutils literal"><span class="pre">GameSystem</span></tt> adding some attributes and methods:</p>
+<p>While we&#8217;re at it, we&#8217;re going to add in some background chime sounds. The chime sounds will increase in frequency over time to build tension. At the beginning of each level, the frequency of the chimes is reset. We load the chime sounds and setup some other timing attributes in lines 8-13.</p>
+<p>In the <tt class="xref py py-meth docutils literal"><span class="pre">set_world()</span></tt> method (line 15), we add attributes for <tt class="xref py py-attr docutils literal"><span class="pre">level</span></tt> number, remaining <tt class="xref py py-attr docutils literal"><span class="pre">lives</span></tt> and accumulated <tt class="xref py py-attr docutils literal"><span class="pre">score</span></tt>. At the end we also call a new method <tt class="xref py py-meth docutils literal"><span class="pre">start_level()</span></tt>, which we define next.</p>
+<p><tt class="xref py py-meth docutils literal"><span class="pre">start_level()</span></tt> (line 23) does what its name implies. It increments the level number, creates some asteroids (3 more each increasing level), and resets the chime sounds. Using <a class="reference external" href="http://docs.python.org/library/itertools.html#itertools.cycle" title="(in Python v2.7)"><tt class="xref py py-func docutils literal"><span class="pre">itertools.cycle()</span></tt></a> is a simple way to create an infinite iterator that alternates between our two chime sounds.</p>
+<p>Next we define a <tt class="xref py py-meth docutils literal"><span class="pre">chime()</span></tt> method to sound the chimes (line 32). This method plays the next chime sound, slightly reduces the chime interval, and schedules the next chime sound. We also opportunistically check if all of the asteroids have been destroyed. If so, we start a new level. The reason to do that here is to provide a small time between when the last asteroid is destroyed and when the next level begins. Alternately, we could override the <tt class="xref py py-meth docutils literal"><span class="pre">step()</span></tt> method and put this logic there, but this is a bit simpler, if a little less tidy.</p>
+<p>The last new method we add here is <tt class="xref py py-meth docutils literal"><span class="pre">award_points()</span></tt> (line 41). This simply accepts an entity, checks if it provides any points, and adds it to the total score if so. The check on line 43 is a simple way to see if an entity has a particular component value. If the entity is not a member of the <tt class="xref py py-obj docutils literal"><span class="pre">award</span></tt> component, this will return <tt class="docutils literal"><span class="pre">False</span></tt>.</p>
+<p>We want to get points when the player shoots things. This means we need to call the <tt class="xref py py-meth docutils literal"><span class="pre">award_points()</span></tt> when a shot collides with something. Adding the call to the <tt class="xref py py-class docutils literal"><span class="pre">Shot</span></tt> class&#8217; <tt class="xref py py-meth docutils literal"><span class="pre">on_collide()</span></tt> method does the trick:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">Shot</span><span class="p">(</span><span class="n">bGrease</span><span class="o">.</span><span class="n">Entity</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Pew Pew!&quot;&quot;&quot;</span>
+    <span class="o">...</span>
+</pre></div>
+</div>
+<p>Remember that <tt class="xref py py-meth docutils literal"><span class="pre">award_points()</span></tt> does the right thing if the other entity has points associated with it or not. That means the caller can just pass in whatever entity the shot runs into without additional logic.</p>
+</div>
+<div class="section" id="three-lives-to-live">
+<h3>Three Lives to Live<a class="headerlink" href="#three-lives-to-live" title="Permalink to this headline">¶</a></h3>
+<p>Classic arcade games typically give you multiple lives to spend in a single game. Let&#8217;s implement that functionality here. In <tt class="xref py py-class docutils literal"><span class="pre">GameSystem</span></tt> we aleady initialize a <tt class="xref py py-attr docutils literal"><span class="pre">lives</span></tt> counter attribute, now lets add logic for when the player dies and respawns:</p>
+<p>This method will be called when the player&#8217;s ship is destroyed. It simply decrements the lives counter, deletes the player&#8217;s ship entity and schedules a call to <tt class="xref py py-meth docutils literal"><span class="pre">player_respawn()</span></tt> after a few seconds. Let&#8217;s look at that implementation next:</p>
+<p>This is a pretty trivial callback that creates a new <tt class="xref py py-class docutils literal"><span class="pre">PlayerShip</span></tt> if there are lives remaining. There are a couple of things to note here: one is the <tt class="xref py py-attr docutils literal"><span class="pre">dt</span></tt> parameter. This is needed because the clock always passes the time delta in when calling a scheduled method. We don&#8217;t use it, but we need to receive it for the callback to work. The second thing of note is the <tt class="xref py py-attr docutils literal"><span class="pre">invincibility</span></tt> parameter passed into the <tt class="xref py py-class docutils literal"><span class="pre">PlayerShip</span></tt> constructor. This will temporarily make the ship invulnerable when it respawns so the player can avoid instant death if the ship materializes and immediately collides with an asteroid. We will need to modify <tt class="xref py py-class docutils literal"><span class="pre">PlayerShip</span></tt> to support this:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">PlayerShip</span><span class="p">(</span><span class="n">BlasteroidsEntity</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Thrust ship piloted by the player&quot;&quot;&quot;</span>
+    <span class="o">...</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">world</span><span class="p">,</span> <span class="n">invincible</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+       <span class="o">...</span>
+       <span class="bp">self</span><span class="o">.</span><span class="n">set_invincible</span><span class="p">(</span><span class="n">invincible</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>First we add an <tt class="xref py py-attr docutils literal"><span class="pre">invincible</span></tt> parameter to the constructor, and call a new method <tt class="xref py py-meth docutils literal"><span class="pre">set_invincible()</span></tt> at the end. Now let&#8217;s define that method:</p>
+<p>If this is called with the <tt class="xref py py-attr docutils literal"><span class="pre">invincible</span></tt> parameter true, the collision masks are cleared so that nothing will collide with the ship. A new <tt class="xref py py-meth docutils literal"><span class="pre">blink()</span></tt> method is scheduled every 0.15 seconds. It also schedules another call to <tt class="xref py py-meth docutils literal"><span class="pre">set_invincible()</span></tt> to expire the invincibility in a few seconds.</p>
+<p>If the <tt class="xref py py-attr docutils literal"><span class="pre">invincible</span></tt> parameter is false, blinking is stopped by unscheduling the <tt class="xref py py-meth docutils literal"><span class="pre">blink()</span></tt> method, and the collision masks are restored so that the ship will collide with other entities.</p>
+<p>Now let&#8217;s define the <tt class="xref py py-meth docutils literal"><span class="pre">blink()</span></tt> callback method:</p>
+<p>This method hides the ship by removing it from the renderable component if it is visible, or makes it visible by setting the <tt class="docutils literal"><span class="pre">renderable.color</span></tt> if its currently invisible. Calling this repeatedly will alternately hide and show the ship. This is a visual indication to the player that the ship is invulnerable.</p>
+<p>To complete the circuit, we need to add a call to the <tt class="xref py py-meth docutils literal"><span class="pre">player_died()</span></tt> method we defined above when the ship collides with something and explodes:</p>
+<span class="target" id="tut-renderer-example"></span></div>
+<div class="section" id="heads-up">
+<span id="index-1"></span><h3>Heads Up!<a class="headerlink" href="#heads-up" title="Permalink to this headline">¶</a></h3>
+<p>The <tt class="xref py py-class docutils literal"><span class="pre">GameSystem</span></tt> now keeps track of the player&#8217;s score and remaining lives, but this information is not presented to the player yet. To remedy that, we&#8217;ll create a heads-up display. Since this is purely visual, we&#8217;ll implement it as a renderer:</p>
+<p>The methods above setup the <tt class="xref py py-class docutils literal"><span class="pre">Hud</span></tt> renderer. The <tt class="xref py py-meth docutils literal"><span class="pre">set_world()</span></tt> method here serves the same purpose as the same method of our system classes. It is called when the renderer is added to the world. Here we initialize some instance attributes and call <tt class="xref py py-meth docutils literal"><span class="pre">create_lives_entities()</span></tt>.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last"><a class="reference internal" href="../mod/grease.html#bGrease.Renderer" title="bGrease.Renderer"><tt class="xref py py-class docutils literal"><span class="pre">Renderer</span></tt></a> is an abstract base class much like <a class="reference internal" href="../mod/grease.html#bGrease.System" title="bGrease.System"><tt class="xref py py-class docutils literal"><span class="pre">System</span></tt></a> Like the latter, it not mandatory that custom renderers subclass <a class="reference internal" href="../mod/grease.html#bGrease.Renderer" title="bGrease.Renderer"><tt class="xref py py-class docutils literal"><span class="pre">Renderer</span></tt></a>, but it does serve to make the application code easier to understand.</p>
+</div>
+<p><tt class="xref py py-meth docutils literal"><span class="pre">create_lives_entities()</span></tt> describes its own purpose pretty well. It creates some stationary entities that look like the player&#8217;s ship to represent the extra lives remaining. These will be displayed at the top-left of the window.</p>
+<p>Below we get to the heart of the matter, the <tt class="xref py py-meth docutils literal"><span class="pre">draw()</span></tt> method. All renderers must implement this method, which is called whenever the display needs to be updated:</p>
+<p>Lines 3-9 update the color of the lives entities we created before. Remaining lives are colored the same as the player&#8217;s ship, making them visible. Additional life markers are made invisible to hide them.</p>
+<p>Lines 10-18 create or update the score label. This uses a <tt class="xref py py-class docutils literal"><span class="pre">pyglet.text.Label</span></tt>. Creating these objects is relatively expensive, so it is only done when the score actually changes. This is rare compared to the number of times the window must be redrawn.</p>
+<p>Lines 19-26 draw a &#8220;GAME OVER&#8221; label after the player loses their last life.</p>
+<p>The screenshots below show the heads-up display in action:</p>
+<img alt="../_images/heads_up.png" src="../_images/heads_up.png" />
+<img alt="../_images/game_over.png" src="../_images/game_over.png" />
+<span class="target" id="tut-mode-section"></span></div>
+</div>
+<div class="section" id="en-title-ment">
+<span id="index-2"></span><h2>En-&#8220;title&#8221;-ment<a class="headerlink" href="#en-title-ment" title="Permalink to this headline">¶</a></h2>
+<p>With all of the game mechanics in place, we can focus on another important part of the experience, launching the game itself. Currently the player is thrust right into a new game immediately when the application is launched. We need to add a title screen to give the player an opportunity to start the game when they are ready. When a game ends, the player should return to the title screen so they can play again. We can also add different game play modes here for the player to select.</p>
+<p>Grease provides a modal framework to aid in creating a user interface flow between different application screens. The main pieces of this framework are mode managers, and modes. <tt class="xref py py-class docutils literal"><span class="pre">Mode</span></tt> objects represent a specific application mode. Typically, at any given time, only one specific mode in an application is active. The active mode receives events and time steps so that it can run and the user can interact with it.</p>
+<p>Modes are managed by a mode <tt class="xref py py-class docutils literal"><span class="pre">Manager</span></tt>. A manager keeps track of modes in a stack. When a mode is <em>pushed</em> onto a manager stack, it becomes active and starts receiving events. Any mode that was active before is deactivated and no longer receives events, but it remains in the manager stack. If the active mode is <em>popped</em> off of the manager stack, it is deactivated and the previous active mode is reactivated. If the last mode in the manager stack is popped off, the manager can perform a special action, such as closing the active window or application.</p>
+<p>The basic utility of a mode stack is that the user can start in one mode, enter another, then return to the original mode when it&#8217;s complete and resume where it left off. This is perfect for our title screen. We want to present the title screen when the game application is launched, allow the player to start a game, then return to the title screen when the game is over.</p>
+<div class="section" id="windows-managers-worlds-and-modes">
+<h3>Windows, Managers, Worlds, and Modes<a class="headerlink" href="#windows-managers-worlds-and-modes" title="Permalink to this headline">¶</a></h3>
+<p>Although it is possible to create custom modes and managers in your application, there are two concrete implementations provided by Grease that should prove convenient. One, we are already familiar with: <a href="#id1"><span class="problematic" id="id2">|World|</span></a>. Worlds implement the mode interface so that they can be used directly as game modes. When a world is active in a mode manager, its clock receives ticks, its systems receive events, and it will invoke its renderers when the display needs to be redrawn. When a world is deactivated, it is &#8220;frozen&#8221;. Its clock no longer runs, its systems no longer receive events and its renderers are no longer invoked. When the world is later reactivated, it resumes right where it left off.</p>
+<p>Grease also provides a special mode manager, <tt class="xref py py-class docutils literal"><span class="pre">ManagerWindow</span></tt>. This class is a Pyglet window subclass that implements the mode manager interface. This allows you to push and pop modes, such as <a href="#id3"><span class="problematic" id="id4">|World|</span></a> objects, directly onto an application window. All of the OS events the window receives will go directly to the active mode. This makes implementing a user interface flow with push and pop semantics a breeze.</p>
+<p><tt class="xref py py-class docutils literal"><span class="pre">ManagerWindow</span></tt> objects also include some default behavior:</p>
+<ul class="simple">
+<li>When the <tt class="docutils literal"><span class="pre">Esc</span></tt> key is pressed, the current mode is popped.</li>
+<li>When the last mode is popped, the window closes.</li>
+</ul>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">A <tt class="xref py py-class docutils literal"><span class="pre">ManagerWindow</span></tt> object is both the mode manager and the source of events (i.e., the event dispatcher). Custom mode managers can be made by subclassing <a class="reference internal" href="../mod/mode.html#bGrease.mode.BaseManager" title="bGrease.mode.BaseManager"><tt class="xref py py-class docutils literal"><span class="pre">BaseManager</span></tt></a> to separate these two concerns, if desired. This can allow several mode managers to share a single window, or even use an application-defined event dispatcher.</p>
+</div>
+<p>We can create a custom world to use as our title screen. The title screen will have some text, will respond to some key commands, and will have some asteroids floating in the background to make it more interesting. It will need a very similar configuration of components and systems as our existing <tt class="xref py py-class docutils literal"><span class="pre">GameWorld</span></tt>, so let&#8217;s refactor the common parts into a shared base class:</p>
+<p>The <tt class="xref py py-meth docutils literal"><span class="pre">configure()</span></tt> methods sets up the parts common to both the <tt class="xref py py-class docutils literal"><span class="pre">Game</span></tt> and the <tt class="xref py py-class docutils literal"><span class="pre">TitleScreen</span></tt> world classes we will define below. This is lifted directly from the old <tt class="xref py py-class docutils literal"><span class="pre">GameWorld</span></tt> class. Let&#8217;s implement the new <tt class="xref py py-class docutils literal"><span class="pre">Game</span></tt> class based on the above:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">Game</span><span class="p">(</span><span class="n">BaseWorld</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Main game world and mode&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">configure</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">BaseWorld</span><span class="o">.</span><span class="n">configure</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">systems</span><span class="o">.</span><span class="n">game</span> <span class="o">=</span> <span class="n">GameSystem</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">renderers</span><span class="o">.</span><span class="n">hud</span> <span class="o">=</span> <span class="n">Hud</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>This only adds a <tt class="xref py py-class docutils literal"><span class="pre">GameSystem</span></tt> system and <tt class="xref py py-class docutils literal"><span class="pre">Hud</span></tt> renderer to the base world.</p>
+<p>Now let&#8217;s define the <tt class="xref py py-class docutils literal"><span class="pre">TitleScreen</span></tt> world and mode:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">TitleScreen</span><span class="p">(</span><span class="n">BaseWorld</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Game title screen world and mode&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">configure</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">BaseWorld</span><span class="o">.</span><span class="n">configure</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">renderers</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="n">pyglet</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">Label</span><span class="p">(</span>
+            <span class="s">&quot;Blasteroids&quot;</span><span class="p">,</span>
+            <span class="n">color</span><span class="o">=</span><span class="p">(</span><span class="mi">150</span><span class="p">,</span> <span class="mi">150</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">),</span>
+            <span class="n">font_name</span><span class="o">=</span><span class="s">&#39;Vector Battle&#39;</span><span class="p">,</span> <span class="n">font_size</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span> <span class="n">bold</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+            <span class="n">x</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">anchor_x</span><span class="o">=</span><span class="s">&#39;center&#39;</span><span class="p">,</span> <span class="n">anchor_y</span><span class="o">=</span><span class="s">&#39;bottom&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">renderers</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="n">pyglet</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">Label</span><span class="p">(</span>
+            <span class="s">&quot;A demo for the Grease game engine&quot;</span><span class="p">,</span>
+            <span class="n">color</span><span class="o">=</span><span class="p">(</span><span class="mi">150</span><span class="p">,</span> <span class="mi">150</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">),</span>
+            <span class="n">font_name</span><span class="o">=</span><span class="s">&#39;Vector Battle&#39;</span><span class="p">,</span> <span class="n">font_size</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span> <span class="n">bold</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+            <span class="n">x</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">anchor_x</span><span class="o">=</span><span class="s">&#39;center&#39;</span><span class="p">,</span> <span class="n">anchor_y</span><span class="o">=</span><span class="s">&#39;top&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">renderers</span><span class="o">.</span><span class="n">one_player</span> <span class="o">=</span> <span class="n">pyglet</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">Label</span><span class="p">(</span>
+            <span class="s">&quot;Press 1 to begin&quot;</span><span class="p">,</span>
+            <span class="n">color</span><span class="o">=</span><span class="p">(</span><span class="mi">150</span><span class="p">,</span> <span class="mi">150</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">),</span>
+            <span class="n">font_name</span><span class="o">=</span><span class="s">&#39;Vector Battle&#39;</span><span class="p">,</span> <span class="n">font_size</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span> <span class="n">bold</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+            <span class="n">x</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">y</span><span class="o">=-</span><span class="mi">100</span><span class="p">,</span> <span class="n">anchor_x</span><span class="o">=</span><span class="s">&#39;center&#39;</span><span class="p">,</span> <span class="n">anchor_y</span><span class="o">=</span><span class="s">&#39;top&#39;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">systems</span><span class="o">.</span><span class="n">controls</span> <span class="o">=</span> <span class="n">TitleScreenControls</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">15</span><span class="p">):</span>
+            <span class="n">Asteroid</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">45</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>You&#8217;ll notice above that we use <tt class="xref py py-class docutils literal"><span class="pre">pyglet.text.Label</span></tt> objects directly as renderers! This works because any object with a <tt class="xref py py-meth docutils literal"><span class="pre">draw()</span></tt> method can function as a renderer. This saves us from defining a separate renderer class.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Drawing <tt class="xref py py-class docutils literal"><span class="pre">pyglet.text.Label</span></tt> objects individually, as above, is not very efficient. In this case the performance is acceptable, but an application drawing many labels should draw them using a batch. Since Pyglet batch objects have a <tt class="xref py py-meth docutils literal"><span class="pre">draw()</span></tt> method, they can also serve as renderers in a world.</p>
+</div>
+<p id="index-3">After the renderers we add a <tt class="xref py py-class docutils literal"><span class="pre">TitleScreenControls</span></tt> system, followed by a few randomly sized asteroids. We haven&#8217;t defined the system class yet, so let&#8217;s do that now:</p>
+<p>The magic happens on line 6 above. When the player presses the <tt class="docutils literal"><span class="pre">1</span></tt> key on the title screen, this system instantiates a new <tt class="xref py py-class docutils literal"><span class="pre">Game</span></tt> world and pushes it onto the window. This activates and starts the game, and deactivates the title screen, but leaves it on the stack for when the player is done.</p>
+<p>One last thing is left to do, we need refactor our <tt class="xref py py-func docutils literal"><span class="pre">main()</span></tt> function to use a <tt class="xref py py-class docutils literal"><span class="pre">ManagerWindow</span></tt> and start the application at the title screen:</p>
+<p>Notice how tidy that makes our main function! All it has to do now is create the <tt class="xref py py-class docutils literal"><span class="pre">ManagerWindow</span></tt>, push a <tt class="xref py py-class docutils literal"><span class="pre">TitleScreen</span></tt> on it and enter the event loop. The mode management framework takes care of the rest.</p>
+</div>
+</div>
+<div class="section" id="getting-in-the-hotseat">
+<span id="index-4"></span><h2>Getting in the Hotseat<a class="headerlink" href="#getting-in-the-hotseat" title="Permalink to this headline">¶</a></h2>
+<p>Before we can fully capture the spirit of a classic arcade game, we need to implement the classic &#8220;hotseat&#8221; multiplayer mode that was so prevalent in coin-op games. In this mode two players alternate playing their games, changing seats when the current player loses a life. We will use modes to implement this, but it will require a different approach than the simple stack-based management used above.</p>
+<p>Grease provides a special <tt class="xref py py-class docutils literal"><span class="pre">Multi</span></tt> class we can leverage for this purpose. A <tt class="xref py py-class docutils literal"><span class="pre">Multi</span></tt> is a mode object that contains one or more submodes. These submodes are arranged logically in a list or a ring. As with a mode manager, only a single submode of a <tt class="xref py py-class docutils literal"><span class="pre">Multi</span></tt> is active at one time. Unlike a mode manager, a multi-mode can be used to cycle through a modes sequentially. This makes it ideal for implementing a series of screens that are navigated in sequence, or for alternating between screens. Also unlike a manager, if you move forward to a submode and then move back, the next submode is not popped off, it is just deactivated. If you move forward again, it will resume where it left off, allowing bi-directional navigation.</p>
+<p>Because multi-modes themselves are just modes, they allow a whole group of submodes to be pushed onto a manager at once. They also keep track of which submode is active. Submodes can also be added and removed from the multi-mode at any time.</p>
+<p>To implement hotseat multiplayer using a multi-mode is quite simple. When a two-player game is initiated, a <tt class="xref py py-class docutils literal"><span class="pre">Multi</span></tt> object will be created containing 2 game worlds. When this is pushed onto the mode manager, the first game world will be activated. We will add some code to activate the next game whenever the current player loses a life. When a player&#8217;s game is over, it will be removed from the multi-mode.</p>
+<p>Let&#8217;s start by seeing how we can initiate a two-player game from the title screen:</p>
+<p>We added the <tt class="xref py py-meth docutils literal"><span class="pre">start_two_player()</span></tt> method to the <tt class="xref py py-class docutils literal"><span class="pre">TitleScreenControls</span></tt> class (line 8 above). This creates the <tt class="xref py py-class docutils literal"><span class="pre">Multi</span></tt> mode containing two game worlds and pushes it onto the window. By default, when a multi-mode is first activated, it activates its first submode. This will begin the game for player one.</p>
+<p>Notice that we pass some label strings into the <tt class="xref py py-class docutils literal"><span class="pre">Game</span></tt> class constructor to identify each game. We&#8217;ll need to modify that class to support these labels:</p>
+<p>Games are only provided a label in multiplayer, so we use that fact to set an <tt class="xref py py-attr docutils literal"><span class="pre">is_multiplayer</span></tt> flag when a label is provided.</p>
+<p>We also override the mode&#8217;s <tt class="xref py py-class docutils literal"><span class="pre">activate</span></tt> method, starting the mode paused in multiplayer sessions by setting the world&#8217;s <tt class="xref py py-attr docutils literal"><span class="pre">running</span></tt> flag to false. Grease will not tick the world&#8217;s clock until the flag is set to true. This gives the next player time to get situated before their turn begins.</p>
+<p>Next we need to modify the <tt class="xref py py-meth docutils literal"><span class="pre">player_respawn()</span></tt> method of our <tt class="xref py py-class docutils literal"><span class="pre">GameSystem</span></tt> to switch to the next game when the current player loses their life:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">GameSystem</span><span class="p">(</span><span class="n">KeyControls</span><span class="p">):</span>
+    <span class="o">...</span>
+
+    <span class="k">def</span> <span class="nf">player_respawn</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dt</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Rise to fly again, with temporary invincibility&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">lives</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">player_ship</span> <span class="o">=</span> <span class="n">PlayerShip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">world</span><span class="p">,</span> <span class="n">invincible</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">world</span><span class="o">.</span><span class="n">is_multiplayer</span><span class="p">:</span>
+            <span class="c"># Switch to the next player</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">lives</span><span class="p">:</span>
+                <span class="n">window</span><span class="o">.</span><span class="n">current_mode</span><span class="o">.</span><span class="n">activate_next</span><span class="p">()</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">window</span><span class="o">.</span><span class="n">current_mode</span><span class="o">.</span><span class="n">remove_submode</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>If the current player has lives remaining, <tt class="xref py py-meth docutils literal"><span class="pre">activate_next()</span></tt> is simply called on the <tt class="xref py py-obj docutils literal"><span class="pre">current_mode</span></tt>, which is the multi-mode create in the <tt class="xref py py-func docutils literal"><span class="pre">main()</span></tt> function. This activates the next game world in revolving order. If the current player&#8217;s game is over than <tt class="xref py py-meth docutils literal"><span class="pre">remove_subnode()</span></tt> is called, removing their game world altogether. Note that when all of the subnodes of a multi-node are removed, the multi-node automatically pops itself from its mode manager. In our case, this will automatically return to the title screen when both players&#8217; games are over:</p>
+<div class="figure">
+<img alt="../_images/modes.png" src="../_images/modes.png" />
+<p class="caption"><strong>Game mode flow</strong></p>
+</div>
+<p>We also need to add some methods here to pause and resume the game:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="nd">@KeyControls.key_press</span><span class="p">(</span><span class="n">key</span><span class="o">.</span><span class="n">P</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">pause</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">world</span><span class="o">.</span><span class="n">running</span> <span class="o">=</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">world</span><span class="o">.</span><span class="n">running</span>
+
+<span class="k">def</span> <span class="nf">on_key_press</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">modifiers</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Start the world with any key if paused&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">world</span><span class="o">.</span><span class="n">running</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">world</span><span class="o">.</span><span class="n">running</span> <span class="o">=</span> <span class="bp">True</span>
+    <span class="n">KeyControls</span><span class="o">.</span><span class="n">on_key_press</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">modifiers</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The <tt class="xref py py-meth docutils literal"><span class="pre">pause()</span></tt> method simply toggles the <tt class="xref py py-attr docutils literal"><span class="pre">world.running</span></tt> flag when the <tt class="docutils literal"><span class="pre">P</span></tt> key is pressed.</p>
+<p>The <tt class="xref py py-meth docutils literal"><span class="pre">on_key_press()</span></tt> method implemented above overrides the method in the base class. It simply resumes the world if it isn&#8217;t running on any key press event. It doesn&#8217;t consume the key event, so it will also be passed along to any downstream handlers. This makes the game immediate responsive when it resumes.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">When developing games, resist the temptation to make the world objects global variables. Always reference them as instance variables as above (i.e., <tt class="docutils literal"><span class="pre">self.world</span></tt>). This makes supporting multiple worlds independently as we do here, effortless.</p>
+</div>
+<p>The give a visual indication when the game is paused, we can modify the heads-up display, adding some additional code to the <tt class="xref py py-class docutils literal"><span class="pre">Hud</span></tt> class&#8217; <tt class="xref py py-meth docutils literal"><span class="pre">draw()</span></tt> method:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">Hud</span><span class="p">(</span><span class="n">bGrease</span><span class="o">.</span><span class="n">Renderer</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Heads-up display renderer&quot;&quot;&quot;</span>
+    <span class="o">...</span>
+
+    <span class="k">def</span> <span class="nf">draw</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="o">...</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">world</span><span class="o">.</span><span class="n">running</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">paused_label</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">player_label</span> <span class="o">=</span> <span class="n">pyglet</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">Label</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">world</span><span class="o">.</span><span class="n">player_name</span><span class="p">,</span>
+                    <span class="n">color</span><span class="o">=</span><span class="p">(</span><span class="mi">150</span><span class="p">,</span> <span class="mi">150</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">),</span>
+                    <span class="n">font_name</span><span class="o">=</span><span class="s">&#39;Vector Battle&#39;</span><span class="p">,</span> <span class="n">font_size</span><span class="o">=</span><span class="mi">18</span><span class="p">,</span> <span class="n">bold</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+                    <span class="n">x</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="mi">20</span><span class="p">,</span> <span class="n">anchor_x</span><span class="o">=</span><span class="s">&#39;center&#39;</span><span class="p">,</span> <span class="n">anchor_y</span><span class="o">=</span><span class="s">&#39;bottom&#39;</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">paused_label</span> <span class="o">=</span> <span class="n">pyglet</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">Label</span><span class="p">(</span>
+                    <span class="s">&quot;press a key to begin&quot;</span><span class="p">,</span>
+                    <span class="n">color</span><span class="o">=</span><span class="p">(</span><span class="mi">150</span><span class="p">,</span> <span class="mi">150</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">),</span>
+                    <span class="n">font_name</span><span class="o">=</span><span class="s">&#39;Vector Battle&#39;</span><span class="p">,</span> <span class="n">font_size</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span> <span class="n">bold</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+                    <span class="n">x</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="o">-</span><span class="mi">20</span><span class="p">,</span> <span class="n">anchor_x</span><span class="o">=</span><span class="s">&#39;center&#39;</span><span class="p">,</span> <span class="n">anchor_y</span><span class="o">=</span><span class="s">&#39;top&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">player_label</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">paused_label</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>The final touch is to change the <tt class="xref py py-class docutils literal"><span class="pre">TitleScreen</span></tt> class to instruct the player how to start one and two player games (lines 16-25 below):</p>
+<p>The final title screen in its full glory:</p>
+<img alt="../_images/title.png" src="../_images/title.png" />
+<p>And I give you, the final revision of <tt class="xref download docutils literal"><span class="pre">blasteroids3.py</span></tt>. You made it, congratulations! You now have the basics under your belt to create your own games with <em>Grease</em>.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../mod/collision.html" title="bGrease.collision – Collision Detection"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="tutorial2.html" title="Grease Tutorial Part II"
+             >previous</a> |</li>
+        <li><a href="../index.html">Grease 0.3 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2010, Casey Duncan.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

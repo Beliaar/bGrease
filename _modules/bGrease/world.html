@@ -1,0 +1,403 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>bGrease.world &mdash; Grease 0.3 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="Grease 0.3 documentation" href="../../index.html" />
+    <link rel="up" title="bGrease" href="../bGrease.html" />
+        <link rel="stylesheet" href="../../_static/grease.css" type="text/css" />
+
+  </head>
+  <body>
+<div style="background-color: white; text-align: left; padding: 10px 10px 15px 15px">
+<img src="../../_static/grease.png" alt="Grease logo" />
+</div>
+
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../index.html">Grease 0.3 documentation</a> &raquo;</li>
+          <li><a href="../index.html" >Module code</a> &raquo;</li>
+          <li><a href="../bGrease.html" accesskey="U">bGrease</a> &raquo;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for bGrease.world</h1><div class="highlight"><pre>
+<span class="c">#############################################################################</span>
+<span class="c">#</span>
+<span class="c"># Copyright (c) 2010 by Casey Duncan and contributors</span>
+<span class="c"># All Rights Reserved.</span>
+<span class="c">#</span>
+<span class="c"># This software is subject to the provisions of the MIT License</span>
+<span class="c"># A copy of the license should accompany this distribution.</span>
+<span class="c"># THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR</span>
+<span class="c"># IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,</span>
+<span class="c"># FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.</span>
+<span class="c">#</span>
+<span class="c">#############################################################################</span>
+<span class="sd">&quot;&quot;&quot;Worlds are environments described by a configuration of components, systems and </span>
+<span class="sd">renderers. These parts describe the data, behavioral and presentation aspects</span>
+<span class="sd">of the world respectively.</span>
+
+<span class="sd">The world environment is the context within which entities exist. A typical</span>
+<span class="sd">application consists of one or more worlds containing entities that evolve</span>
+<span class="sd">over time and react to internal and external interaction.</span>
+
+<span class="sd">See :ref:`an example of world configuration in the tutorial &lt;tut-world-example&gt;`.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="n">__version__</span> <span class="o">=</span> <span class="s">&#39;$Id$&#39;</span>
+
+<span class="kn">import</span> <span class="nn">itertools</span>
+<span class="kn">from</span> <span class="nn">bGrease</span> <span class="kn">import</span> <span class="n">mode</span>
+<span class="kn">from</span> <span class="nn">bGrease.component</span> <span class="kn">import</span> <span class="n">ComponentError</span>
+<span class="kn">from</span> <span class="nn">bGrease.entity</span> <span class="kn">import</span> <span class="n">Entity</span><span class="p">,</span> <span class="n">ComponentEntitySet</span>
+
+
+<div class="viewcode-block" id="BaseWorld"><a class="viewcode-back" href="../../mod/world.html#bGrease.world.BaseWorld">[docs]</a><span class="k">class</span> <span class="nc">BaseWorld</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;A coordinated collection of components, systems and entities</span>
+<span class="sd">	</span>
+<span class="sd">	A world is also a mode that may be pushed onto a </span>
+<span class="sd">	:class:`bGrease.mode.Manager`</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+
+	<span class="n">components</span> <span class="o">=</span> <span class="bp">None</span>
+	<span class="sd">&quot;&quot;&quot;:class:`ComponentParts` object containing all world components.</span>
+<span class="sd">	:class:`bGrease.component.Component` objects define and contain all entity data</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+
+	<span class="n">systems</span> <span class="o">=</span> <span class="bp">None</span>
+	<span class="sd">&quot;&quot;&quot;:class:`Parts` object containing all world systems. </span>
+<span class="sd">	:class:`bGrease.System` objects define world and entity behavior</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+
+	<span class="n">renderers</span> <span class="o">=</span> <span class="bp">None</span>
+	<span class="sd">&quot;&quot;&quot;:class:`Parts` object containing all world renderers. </span>
+<span class="sd">	:class:`bGrease.Renderer` objects define world presentation</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+
+	<span class="n">entities</span> <span class="o">=</span> <span class="bp">None</span>
+	<span class="sd">&quot;&quot;&quot;Set of all entities that exist in the world&quot;&quot;&quot;</span>
+
+	<span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">components</span> <span class="o">=</span> <span class="n">ComponentParts</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">systems</span> <span class="o">=</span> <span class="n">Parts</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">renderers</span> <span class="o">=</span> <span class="n">Parts</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">new_entity_id</span> <span class="o">=</span> <span class="n">itertools</span><span class="o">.</span><span class="n">count</span><span class="p">()</span><span class="o">.</span><span class="n">next</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">new_entity_id</span><span class="p">()</span> <span class="c"># skip id 0</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">entities</span> <span class="o">=</span> <span class="n">WorldEntitySet</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">_full_extent</span> <span class="o">=</span> <span class="n">EntityExtent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">entities</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">_extents</span> <span class="o">=</span> <span class="p">{}</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">configure</span><span class="p">()</span>
+
+<div class="viewcode-block" id="BaseWorld.configure"><a class="viewcode-back" href="../../mod/world.html#bGrease.world.BaseWorld.configure">[docs]</a>	<span class="k">def</span> <span class="nf">configure</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;Hook to configure the world after construction. This method</span>
+<span class="sd">		is called immediately after the world is initialized. Override</span>
+<span class="sd">		in a subclass to configure the world&#39;s components, systems,</span>
+<span class="sd">		and renderers.</span>
+
+<span class="sd">		The default implementation does nothing.</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+	</div>
+<div class="viewcode-block" id="BaseWorld.__getitem__"><a class="viewcode-back" href="../../mod/world.html#bGrease.world.BaseWorld.__getitem__">[docs]</a>	<span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">entity_class</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;Return an :class:`EntityExtent` for the given entity class. This extent</span>
+<span class="sd">		can be used to access the set of entities of that class in the world</span>
+<span class="sd">		or to query these entities via their components. </span>
+
+<span class="sd">		Examples::</span>
+
+<span class="sd">			world[MyEntity]</span>
+<span class="sd">			world[...]</span>
+
+<span class="sd">		:param entity_class: The entity class for the extent.</span>
+
+<span class="sd">			May also be a tuple of entity classes, in which case</span>
+<span class="sd">			the extent returned contains union of all entities of the classes</span>
+<span class="sd">			in the world.</span>
+
+<span class="sd">			May also be the special value ellipsis (``...``), which</span>
+<span class="sd">			returns an extent containing all entities in the world.  This allows</span>
+<span class="sd">			you to conveniently query all entities using ``world[...]``.</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">entity_class</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+			<span class="n">entities</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+			<span class="k">for</span> <span class="n">cls</span> <span class="ow">in</span> <span class="n">entity_class</span><span class="p">:</span>
+				<span class="k">if</span> <span class="n">cls</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extents</span><span class="p">:</span>
+					<span class="n">entities</span> <span class="o">|=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extents</span><span class="p">[</span><span class="n">cls</span><span class="p">]</span><span class="o">.</span><span class="n">entities</span>
+			<span class="k">return</span> <span class="n">EntityExtent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">entities</span><span class="p">)</span>
+		<span class="k">elif</span> <span class="n">entity_class</span> <span class="ow">is</span> <span class="bp">Ellipsis</span><span class="p">:</span>
+			<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_full_extent</span>
+		<span class="k">try</span><span class="p">:</span>
+			<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extents</span><span class="p">[</span><span class="n">entity_class</span><span class="p">]</span>
+		<span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+			<span class="n">extent</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extents</span><span class="p">[</span><span class="n">entity_class</span><span class="p">]</span> <span class="o">=</span> <span class="n">EntityExtent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">set</span><span class="p">())</span>
+			<span class="k">return</span> <span class="n">extent</span>
+	</div>
+<div class="viewcode-block" id="BaseWorld.draw_renderers"><a class="viewcode-back" href="../../mod/world.html#bGrease.world.BaseWorld.draw_renderers">[docs]</a>	<span class="k">def</span> <span class="nf">draw_renderers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;Draw all renderers&quot;&quot;&quot;</span>
+		<span class="k">for</span> <span class="n">renderer</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">renderers</span><span class="p">:</span>
+			<span class="n">renderer</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
+</div></div>
+<span class="k">class</span> <span class="nc">WorldEntitySet</span><span class="p">(</span><span class="nb">set</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;Entity set for a :class:`World`&quot;&quot;&quot;</span>
+
+	<span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">world</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">world</span> <span class="o">=</span> <span class="n">world</span>
+	
+	<span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">entity</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;Add the entity to the set and all necessary class sets</span>
+<span class="sd">		Return the unique entity id for the entity, creating one</span>
+<span class="sd">		as needed.</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="nb">super</span><span class="p">(</span><span class="n">WorldEntitySet</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">entity</span><span class="p">)</span>
+		<span class="k">for</span> <span class="n">cls</span> <span class="ow">in</span> <span class="n">entity</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__mro__</span><span class="p">:</span>
+			<span class="k">if</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">Entity</span><span class="p">):</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">world</span><span class="p">[</span><span class="n">cls</span><span class="p">]</span><span class="o">.</span><span class="n">entities</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">entity</span><span class="p">)</span>
+
+	<span class="k">def</span> <span class="nf">remove</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">entity</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;Remove the entity from the set and, world components,</span>
+<span class="sd">		and all necessary class sets</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="nb">super</span><span class="p">(</span><span class="n">WorldEntitySet</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">entity</span><span class="p">)</span>
+		<span class="k">for</span> <span class="n">component</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">world</span><span class="o">.</span><span class="n">components</span><span class="p">:</span>
+			<span class="k">try</span><span class="p">:</span>
+				<span class="k">del</span> <span class="n">component</span><span class="p">[</span><span class="n">entity</span><span class="p">]</span>
+			<span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+				<span class="k">pass</span>
+		<span class="k">for</span> <span class="n">cls</span> <span class="ow">in</span> <span class="n">entity</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__mro__</span><span class="p">:</span>
+			<span class="k">if</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">Entity</span><span class="p">):</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">world</span><span class="p">[</span><span class="n">cls</span><span class="p">]</span><span class="o">.</span><span class="n">entities</span><span class="o">.</span><span class="n">discard</span><span class="p">(</span><span class="n">entity</span><span class="p">)</span>
+	
+	<span class="k">def</span> <span class="nf">discard</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">entity</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;Remove the entity from the set if it exists, if not,</span>
+<span class="sd">		do nothing</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">try</span><span class="p">:</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">entity</span><span class="p">)</span>
+		<span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+			<span class="k">pass</span>
+
+
+<div class="viewcode-block" id="EntityExtent"><a class="viewcode-back" href="../../mod/world.html#bGrease.world.EntityExtent">[docs]</a><span class="k">class</span> <span class="nc">EntityExtent</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;Encapsulates a set of entities queriable by component. Extents</span>
+<span class="sd">	are accessed by using an entity class as a key on the :class:`World`::</span>
+
+<span class="sd">		extent = world[MyEntity]</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+
+	<span class="n">entities</span> <span class="o">=</span> <span class="bp">None</span>
+	<span class="sd">&quot;&quot;&quot;The full set of entities in the extent&quot;&quot;&quot;</span> 
+
+	<span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">world</span><span class="p">,</span> <span class="n">entities</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">__world</span> <span class="o">=</span> <span class="n">world</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">entities</span> <span class="o">=</span> <span class="n">entities</span>
+
+<div class="viewcode-block" id="EntityExtent.__getattr__"><a class="viewcode-back" href="../../mod/world.html#bGrease.world.EntityExtent.__getattr__">[docs]</a>	<span class="k">def</span> <span class="nf">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;Return a queriable :class:`ComponentEntitySet` for the named component </span>
+
+<span class="sd">		Example::</span>
+
+<span class="sd">			world[MyEntity].movement.velocity &gt; (0, 0)</span>
+
+<span class="sd">		Returns a set of entities where the value of the :attr:`velocity` field</span>
+<span class="sd">		of the :attr:`movement` component is greater than ``(0, 0)``.</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="n">component</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__world</span><span class="o">.</span><span class="n">components</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+		<span class="k">return</span> <span class="n">ComponentEntitySet</span><span class="p">(</span><span class="n">component</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">entities</span> <span class="o">&amp;</span> <span class="n">component</span><span class="o">.</span><span class="n">entities</span><span class="p">)</span>
+
+</div></div>
+<div class="viewcode-block" id="Parts"><a class="viewcode-back" href="../../mod/world.html#bGrease.world.Parts">[docs]</a><span class="k">class</span> <span class="nc">Parts</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;Maps world parts to attributes. The parts are kept in the</span>
+<span class="sd">	order they are set. Parts may also be inserted out of order.</span>
+<span class="sd">	</span>
+<span class="sd">	Used for:</span>
+<span class="sd">	</span>
+<span class="sd">	- :attr:`World.systems`</span>
+<span class="sd">	- :attr:`World.renderers`</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+
+	<span class="n">_world</span> <span class="o">=</span> <span class="bp">None</span>
+	<span class="n">_parts</span> <span class="o">=</span> <span class="bp">None</span>
+	<span class="n">_reserved_names</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;entities&#39;</span><span class="p">,</span> <span class="s">&#39;entity_id&#39;</span><span class="p">,</span> <span class="s">&#39;world&#39;</span><span class="p">)</span>
+
+	<span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">world</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">_world</span> <span class="o">=</span> <span class="n">world</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">_parts</span> <span class="o">=</span> <span class="p">[]</span>
+	
+	<span class="k">def</span> <span class="nf">_validate_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+		<span class="k">if</span> <span class="p">(</span><span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reserved_names</span> <span class="ow">or</span> <span class="n">name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&#39;_&#39;</span><span class="p">)</span> 
+			<span class="ow">or</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="p">,</span> <span class="n">name</span><span class="p">)):</span>
+			<span class="k">raise</span> <span class="n">ComponentError</span><span class="p">(</span><span class="s">&#39;illegal part name: </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">name</span><span class="p">)</span>
+		<span class="k">return</span> <span class="n">name</span>
+
+	<span class="k">def</span> <span class="nf">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">part</span><span class="p">):</span>
+		<span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">_validate_name</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+			<span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">_parts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">part</span><span class="p">)</span>
+			<span class="k">else</span><span class="p">:</span>
+				<span class="n">old_part</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">_parts</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_parts</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">old_part</span><span class="p">)]</span> <span class="o">=</span> <span class="n">part</span>
+			<span class="nb">super</span><span class="p">(</span><span class="n">Parts</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__setattr__</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">part</span><span class="p">)</span>
+			<span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">part</span><span class="p">,</span> <span class="s">&#39;set_world&#39;</span><span class="p">):</span>
+				<span class="n">part</span><span class="o">.</span><span class="n">set_world</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_world</span><span class="p">)</span>
+		<span class="k">elif</span> <span class="n">name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&quot;_&quot;</span><span class="p">):</span>
+			<span class="nb">super</span><span class="p">(</span><span class="n">Parts</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__setattr__</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">part</span><span class="p">)</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s">&quot;</span><span class="si">%s</span><span class="s"> attribute is read only&quot;</span> <span class="o">%</span> <span class="n">name</span><span class="p">)</span>
+	
+	<span class="k">def</span> <span class="nf">__delattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">_validate_name</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+		<span class="n">part</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">_parts</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">part</span><span class="p">)</span>
+		<span class="nb">super</span><span class="p">(</span><span class="n">Parts</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__delattr__</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Parts.insert"><a class="viewcode-back" href="../../mod/world.html#bGrease.world.Parts.insert">[docs]</a>	<span class="k">def</span> <span class="nf">insert</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">part</span><span class="p">,</span> <span class="n">before</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;Add a part with a particular name at a particular index.</span>
+<span class="sd">		If a part by that name already exists, it is replaced.</span>
+<span class="sd">			</span>
+<span class="sd">		:arg name: The name of the part.</span>
+<span class="sd">		:type name: str</span>
+
+<span class="sd">		:arg part: The component, system, or renderer part to insert</span>
+<span class="sd">	</span>
+<span class="sd">		:arg before: A part object or name. If specified, the part is</span>
+<span class="sd">			inserted before the specified part in order.</span>
+
+<span class="sd">		:arg index: If specified, the part is inserted in the position</span>
+<span class="sd">			specified. You cannot specify both before and index.</span>
+<span class="sd">		:type index: int</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">assert</span> <span class="n">before</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">or</span> <span class="n">index</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">,</span> <span class="p">(</span>
+			<span class="s">&quot;Must specify a value for &#39;before&#39; or &#39;index&#39;&quot;</span><span class="p">)</span>
+		<span class="k">assert</span> <span class="n">before</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">or</span> <span class="n">index</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">,</span> <span class="p">(</span>
+			<span class="s">&quot;Cannot specify both &#39;before&#39; and &#39;index&#39; arguments when inserting&quot;</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">_validate_name</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+		<span class="k">if</span> <span class="n">before</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+			<span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">before</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+				<span class="n">before</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">before</span><span class="p">)</span>
+			<span class="n">index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parts</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">before</span><span class="p">)</span>
+		<span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+			<span class="n">old_part</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">_parts</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">old_part</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">_parts</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">part</span><span class="p">)</span>
+		<span class="nb">super</span><span class="p">(</span><span class="n">Parts</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__setattr__</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">part</span><span class="p">)</span>
+		<span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">part</span><span class="p">,</span> <span class="s">&#39;set_world&#39;</span><span class="p">):</span>
+			<span class="n">part</span><span class="o">.</span><span class="n">set_world</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_world</span><span class="p">)</span>
+</div>
+	<span class="k">def</span> <span class="nf">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;Iterate the parts in order&quot;&quot;&quot;</span>
+		<span class="k">return</span> <span class="nb">iter</span><span class="p">(</span><span class="nb">tuple</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_parts</span><span class="p">))</span>
+	
+	<span class="k">def</span> <span class="nf">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_parts</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="ComponentParts"><a class="viewcode-back" href="../../mod/world.html#bGrease.world.ComponentParts">[docs]</a><span class="k">class</span> <span class="nc">ComponentParts</span><span class="p">(</span><span class="n">Parts</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;Maps world components to attributes. The components are kept in the</span>
+<span class="sd">	order they are set. Components may also be inserted out of order.</span>
+
+<span class="sd">	Used for: :attr:`World.components`</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="ComponentParts.join"><a class="viewcode-back" href="../../mod/world.html#bGrease.world.ComponentParts.join">[docs]</a>	<span class="k">def</span> <span class="nf">join</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">component_names</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;Join and iterate entity data from multiple components together.</span>
+
+<span class="sd">		For each entity in all of the components named, yield a tuple containing</span>
+<span class="sd">		the entity data from each component specified.</span>
+
+<span class="sd">		This is useful in systems that pull data from multiple components.</span>
+<span class="sd">		</span>
+<span class="sd">		Typical Usage::</span>
+
+<span class="sd">			for position, movement in world.components.join(&quot;position&quot;, &quot;movement&quot;):</span>
+<span class="sd">				# Do something with each entity&#39;s position and movement data</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">if</span> <span class="n">component_names</span><span class="p">:</span>
+			<span class="n">components</span> <span class="o">=</span> <span class="p">[</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_validate_name</span><span class="p">(</span><span class="n">name</span><span class="p">))</span> 
+				<span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">component_names</span><span class="p">]</span>
+			<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">components</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+				<span class="n">entities</span> <span class="o">=</span> <span class="n">components</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">entities</span> <span class="o">&amp;</span> <span class="n">components</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">entities</span>
+				<span class="k">for</span> <span class="n">comp</span> <span class="ow">in</span> <span class="n">components</span><span class="p">[</span><span class="mi">2</span><span class="p">:]:</span>
+					<span class="n">entities</span> <span class="o">&amp;=</span> <span class="n">comp</span><span class="o">.</span><span class="n">entities</span>
+			<span class="k">else</span><span class="p">:</span>
+				<span class="n">entities</span> <span class="o">=</span> <span class="n">components</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">entities</span>
+			<span class="k">for</span> <span class="n">entity</span> <span class="ow">in</span> <span class="n">entities</span><span class="p">:</span>
+				<span class="k">yield</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">comp</span><span class="p">[</span><span class="n">entity</span><span class="p">]</span> <span class="k">for</span> <span class="n">comp</span> <span class="ow">in</span> <span class="n">components</span><span class="p">)</span>
+</pre></div></div></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../index.html">Grease 0.3 documentation</a> &raquo;</li>
+          <li><a href="../index.html" >Module code</a> &raquo;</li>
+          <li><a href="../bGrease.html" >bGrease</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2010, Casey Duncan.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,206 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>bGrease – Base Classes &mdash; Grease 0.3 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="Grease 0.3 documentation" href="../index.html" />
+    <link rel="next" title="bGrease.mode – Modal Framework" href="mode.html" />
+    <link rel="prev" title="bGrease.geometry – 2D Geometry" href="geometry.html" />
+        <link rel="stylesheet" href="../_static/grease.css" type="text/css" />
+
+  </head>
+  <body>
+<div style="background-color: white; text-align: left; padding: 10px 10px 15px 15px">
+<img src="../_static/grease.png" alt="Grease logo" />
+</div>
+
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="mode.html" title="bGrease.mode – Modal Framework"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="geometry.html" title="bGrease.geometry – 2D Geometry"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">Grease 0.3 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#"><tt class="docutils literal"><span class="pre">bGrease</span></tt> &#8211; Base Classes</a><ul>
+<li><a class="reference internal" href="#other-base-classes">Other Base Classes</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="geometry.html"
+                        title="previous chapter"><tt class="docutils literal docutils literal docutils literal"><span class="pre">bGrease.geometry</span></tt> &#8211; 2D Geometry</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="mode.html"
+                        title="next chapter"><tt class="docutils literal"><span class="pre">bGrease.mode</span></tt> &#8211; Modal Framework</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/mod/grease.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="bgrease-base-classes">
+<h1><a class="reference internal" href="#module-bGrease" title="bGrease: Base Classes"><tt class="xref py py-mod docutils literal"><span class="pre">bGrease</span></tt></a> &#8211; Base Classes<a class="headerlink" href="#bgrease-base-classes" title="Permalink to this headline">¶</a></h1>
+<span class="target" id="module-bGrease"></span><dl class="class">
+<dt id="bGrease.System">
+<em class="property">class </em><tt class="descclassname">bGrease.</tt><tt class="descname">System</tt><a class="reference internal" href="../_modules/bGrease.html#System"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bGrease.System" title="Permalink to this definition">¶</a></dt>
+<dd><p>Grease system abstract base class. Systems define behaviorial aspects
+of a <a class="reference internal" href="world.html#bGrease.world.BaseWorld" title="bGrease.world.BaseWorld"><tt class="xref py py-class docutils literal"><span class="pre">BaseWorld</span></tt></a>. All systems must define a <a class="reference internal" href="#bGrease.System.step" title="bGrease.System.step"><tt class="xref py py-meth docutils literal"><span class="pre">step()</span></tt></a>
+method that is invoked by the world each timestep.  User-defined systems
+are not required to subclass this class.</p>
+<p>See <a class="reference internal" href="../tutorial/tutorial2.html#tut-system-example"><em>an example system from the tutorial</em></a>.</p>
+<dl class="method">
+<dt id="bGrease.System.set_world">
+<tt class="descname">set_world</tt><big>(</big><em>world</em><big>)</big><a class="reference internal" href="../_modules/bGrease.html#System.set_world"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bGrease.System.set_world" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bind the system to a world</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="bGrease.System.step">
+<tt class="descname">step</tt><big>(</big><em>dt</em><big>)</big><a class="reference internal" href="../_modules/bGrease.html#System.step"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bGrease.System.step" title="Permalink to this definition">¶</a></dt>
+<dd><p>Execute a time step for the system. Must be defined
+by all system classes.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>dt</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; Time since last step invocation</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bGrease.System.world">
+<tt class="descname">world</tt><em class="property"> = None</em><a class="headerlink" href="#bGrease.System.world" title="Permalink to this definition">¶</a></dt>
+<dd><p>The <a class="reference internal" href="world.html#bGrease.world.BaseWorld" title="bGrease.world.BaseWorld"><tt class="xref py py-class docutils literal"><span class="pre">BaseWorld</span></tt></a> this system belongs to</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="bGrease.Renderer">
+<em class="property">class </em><tt class="descclassname">bGrease.</tt><tt class="descname">Renderer</tt><a class="reference internal" href="../_modules/bGrease.html#Renderer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bGrease.Renderer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Grease renderer abstract base class. Renderers define the presentation
+of a <a class="reference internal" href="world.html#bGrease.world.BaseWorld" title="bGrease.world.BaseWorld"><tt class="xref py py-class docutils literal"><span class="pre">BaseWorld</span></tt></a>. All renderers must define a <a class="reference internal" href="#bGrease.Renderer.draw" title="bGrease.Renderer.draw"><tt class="xref py py-meth docutils literal"><span class="pre">draw()</span></tt></a>
+method that is invoked by the world when the display needs to be redrawn.
+User-defined renderers are not required to subclass this class.</p>
+<p>See <a class="reference internal" href="../tutorial/tutorial3.html#tut-renderer-example"><em>an example renderer from the tutorial</em></a>.</p>
+<dl class="method">
+<dt id="bGrease.Renderer.draw">
+<tt class="descname">draw</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/bGrease.html#Renderer.draw"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bGrease.Renderer.draw" title="Permalink to this definition">¶</a></dt>
+<dd><p>Issue drawing commands for this renderer. Must be defined
+for all renderer classes.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="bGrease.Renderer.set_world">
+<tt class="descname">set_world</tt><big>(</big><em>world</em><big>)</big><a class="reference internal" href="../_modules/bGrease.html#Renderer.set_world"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bGrease.Renderer.set_world" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bind the system to a world</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bGrease.Renderer.world">
+<tt class="descname">world</tt><em class="property"> = None</em><a class="headerlink" href="#bGrease.Renderer.world" title="Permalink to this definition">¶</a></dt>
+<dd><p>The <a class="reference internal" href="world.html#bGrease.world.BaseWorld" title="bGrease.world.BaseWorld"><tt class="xref py py-class docutils literal"><span class="pre">BaseWorld</span></tt></a> this renderer belongs to</p>
+</dd></dl>
+
+</dd></dl>
+
+<div class="section" id="other-base-classes">
+<h2>Other Base Classes<a class="headerlink" href="#other-base-classes" title="Permalink to this headline">¶</a></h2>
+<p>The following other common base classes can be imported from here for convenience:</p>
+<ul class="simple">
+<li><a class="reference internal" href="world.html#bGrease.world.BaseWorld" title="bGrease.world.BaseWorld"><tt class="xref py py-class docutils literal"><span class="pre">BaseWorld</span></tt></a></li>
+<li><a class="reference internal" href="entity.html#bGrease.entity.Entity" title="bGrease.entity.Entity"><tt class="xref py py-class docutils literal"><span class="pre">Entity</span></tt></a></li>
+</ul>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="mode.html" title="bGrease.mode – Modal Framework"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="geometry.html" title="bGrease.geometry – 2D Geometry"
+             >previous</a> |</li>
+        <li><a href="../index.html">Grease 0.3 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2010, Casey Duncan.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>
