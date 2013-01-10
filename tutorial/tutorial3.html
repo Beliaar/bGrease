@@ -112,13 +112,73 @@
 <div class="section" id="crash-bang-boom">
 <span id="index-0"></span><h2>Crash, Bang, Boom!<a class="headerlink" href="#crash-bang-boom" title="Permalink to this headline">¶</a></h2>
 <p>Let&#8217;s start by having some fun with some sound effects. The sound functionality itself is provided by Pyglet, but we will be seeing how to tie it into the game logic we already have. To start with, let&#8217;s define some helper functions to help with loading and configuring the sounds:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">SCRIPT_DIR_PATH</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">__file__</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">load_sound</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">streaming</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Load a sound from the `sfx` directory&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">pyglet</span><span class="o">.</span><span class="n">media</span><span class="o">.</span><span class="n">load</span><span class="p">(</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">SCRIPT_DIR_PATH</span><span class="p">,</span> <span class="s">&#39;sfx&#39;</span><span class="p">,</span> <span class="n">name</span><span class="p">),</span> <span class="n">streaming</span><span class="o">=</span><span class="n">streaming</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">looping_sound</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Load a sound from the `sfx` directory and configure it too loop</span>
+<span class="sd">    continuously</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">player</span> <span class="o">=</span> <span class="n">pyglet</span><span class="o">.</span><span class="n">media</span><span class="o">.</span><span class="n">Player</span><span class="p">()</span>
+    <span class="n">player</span><span class="o">.</span><span class="n">queue</span><span class="p">(</span><span class="n">load_sound</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">streaming</span><span class="o">=</span><span class="bp">True</span><span class="p">))</span>
+    <span class="n">player</span><span class="o">.</span><span class="n">eos_action</span> <span class="o">=</span> <span class="n">player</span><span class="o">.</span><span class="n">EOS_LOOP</span>
+    <span class="k">return</span> <span class="n">player</span>
+
+<span class="c">## Define entity classes ##</span>
+</pre></div>
+</div>
 <p>First we define a constant <tt class="xref py py-obj docutils literal"><span class="pre">SCRIPT_DIR_PATH</span></tt> to store the path to the script&#8217;s directory. The <tt class="docutils literal"><span class="pre">__file__</span></tt> module global is set by Python to the file path of the running script. Using <a class="reference external" href="http://docs.python.org/library/os.path.html#os.path.dirname" title="(in Python v2.7)"><tt class="xref py py-func docutils literal"><span class="pre">os.path.dirname()</span></tt></a> we get the path to the containing directory so that we can construct file paths relative to it. This way we can find our sound files regardless of the current working directory when the script is run.</p>
 <p>The <tt class="xref py py-func docutils literal"><span class="pre">load_sound()</span></tt> function is a simple wrapper around <tt class="xref py py-func docutils literal"><span class="pre">pyglet.media.load()</span></tt> that loads sound files from the <tt class="docutils literal"><span class="pre">sfx</span></tt> directory adjacent to the script. The false default value for the <tt class="xref py py-attr docutils literal"><span class="pre">streaming</span></tt> argument means that by default the files will be preloaded into memory, which is best for short sound effects.</p>
 <p>The <tt class="xref py py-func docutils literal"><span class="pre">load_sound()</span></tt> function creates fire-and-forget sounds that always play all the way through. We also add a <tt class="xref py py-func docutils literal"><span class="pre">looping_sound()</span></tt> function for continuous-play sounds. This creates the sounds as streaming, which is suitable for longer sound effects or music. It also returns a full fledged <tt class="xref py py-class docutils literal"><span class="pre">pyglet.media.Player</span></tt> object which affords us more control than a simple sound object.</p>
 <p>For a simple game like this, with relatively few sounds, we can ensure that all the sounds are preloaded by storing them as class attributes in the entities that will use them. This will work because these class attributes are evaluated right after the script, or module, is first loaded by Python. In a more complex game with more assets to load, a more sophisticated preloading mechanism that provides feedback to the player is probably warranted.</p>
 <p>Let&#8217;s modify the <tt class="xref py py-class docutils literal"><span class="pre">PlayerShip</span></tt> class to load some sounds:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">PlayerShip</span><span class="p">(</span><span class="n">BlasteroidsEntity</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Thrust ship piloted by the player&quot;&quot;&quot;</span>
+
+    <span class="n">THRUST_ACCEL</span> <span class="o">=</span> <span class="mi">75</span>
+    <span class="n">TURN_RATE</span> <span class="o">=</span> <span class="mi">240</span>
+    <span class="n">SHAPE_VERTS</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="p">(</span><span class="o">-</span><span class="mi">8</span><span class="p">,</span> <span class="o">-</span><span class="mi">12</span><span class="p">),</span> <span class="p">(</span><span class="o">-</span><span class="mi">4</span><span class="p">,</span> <span class="o">-</span><span class="mi">10</span><span class="p">),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">8</span><span class="p">),</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="o">-</span><span class="mi">10</span><span class="p">),</span> <span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="o">-</span><span class="mi">12</span><span class="p">),</span> <span class="c"># flame</span>
+        <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">12</span><span class="p">),</span> <span class="p">(</span><span class="o">-</span><span class="mi">8</span><span class="p">,</span> <span class="o">-</span><span class="mi">12</span><span class="p">),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">8</span><span class="p">),</span> <span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="o">-</span><span class="mi">12</span><span class="p">)]</span>
+    <span class="n">COLOR</span> <span class="o">=</span> <span class="s">&quot;#7f7&quot;</span>
+    <span class="n">COLLISION_RADIUS</span> <span class="o">=</span> <span class="mf">7.5</span>
+    <span class="n">COLLIDE_INTO_MASK</span> <span class="o">=</span> <span class="mh">0x1</span>
+    <span class="n">GUN_COOL_DOWN</span> <span class="o">=</span> <span class="mf">0.5</span>
+    <span class="n">GUN_SOUND</span> <span class="o">=</span> <span class="n">load_sound</span><span class="p">(</span><span class="s">&#39;pewpew.wav&#39;</span><span class="p">)</span>
+    <span class="n">THRUST_SOUND</span> <span class="o">=</span> <span class="n">looping_sound</span><span class="p">(</span><span class="s">&#39;thrust.wav&#39;</span><span class="p">)</span>
+    <span class="n">DEATH_SOUND</span> <span class="o">=</span> <span class="n">load_sound</span><span class="p">(</span><span class="s">&#39;dead.wav&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
 <p>We can play the death sound when the player&#8217;s ship is destroyed, by adding a line to the <tt class="xref py py-meth docutils literal"><span class="pre">on_collide()</span></tt> method:</p>
+<div class="highlight-python"><div class="highlight"><pre>    <span class="k">def</span> <span class="nf">on_collide</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">,</span> <span class="n">point</span><span class="p">,</span> <span class="n">normal</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">explode</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">THRUST_SOUND</span><span class="o">.</span><span class="n">pause</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">DEATH_SOUND</span><span class="o">.</span><span class="n">play</span><span class="p">()</span>
+</pre></div>
+</div>
 <p>The thrust sound is a looping sound. It should loop continuously so long as the thrust is on and stop as soon as the thrust is off. This is accomplished by some simple modifications to the <tt class="xref py py-meth docutils literal"><span class="pre">thrust_on()</span></tt> and <tt class="xref py py-meth docutils literal"><span class="pre">thrust_off()</span></tt> methods to play and pause the thrust sound:</p>
+<div class="highlight-python"><div class="highlight"><pre>    <span class="k">def</span> <span class="nf">thrust_on</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">thrust_vec</span> <span class="o">=</span> <span class="n">geometry</span><span class="o">.</span><span class="n">Vec2d</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">THRUST_ACCEL</span><span class="p">)</span>
+        <span class="n">thrust_vec</span><span class="o">.</span><span class="n">rotate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">position</span><span class="o">.</span><span class="n">angle</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">movement</span><span class="o">.</span><span class="n">accel</span> <span class="o">=</span> <span class="n">thrust_vec</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="o">.</span><span class="n">verts</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">16</span> <span class="o">-</span> <span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">()</span> <span class="o">*</span> <span class="mi">16</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">THRUST_SOUND</span><span class="o">.</span><span class="n">play</span><span class="p">()</span>
+    
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre>    <span class="k">def</span> <span class="nf">thrust_off</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">movement</span><span class="o">.</span><span class="n">accel</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="o">.</span><span class="n">verts</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">8</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">THRUST_SOUND</span><span class="o">.</span><span class="n">pause</span><span class="p">()</span>
+    
+</pre></div>
+</div>
 <p>The gun sound is a bit more involved. Since the <tt class="xref py py-class docutils literal"><span class="pre">PlayerShip</span></tt> class does not fire the gun directly, we will not actually play the sound here. We need to provide the sound to the <tt class="xref py py-class docutils literal"><span class="pre">Gun</span></tt> system, so that it can play it when the gun actually fires. A good way to do this is to store the sound in a field of the gun component. We can modify the <tt class="xref py py-class docutils literal"><span class="pre">PlayerShip</span></tt> constructor to do this like so:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">world</span><span class="p">):</span>
     <span class="o">...</span>
@@ -142,11 +202,43 @@
 </div>
 <p>By assigning a type of <tt class="docutils literal"><span class="pre">object</span></tt> to the <tt class="xref py py-attr docutils literal"><span class="pre">sound</span></tt> field, we can assign any Python object to it, which is perfect for this purpose.</p>
 <p>Last we need to modify the <tt class="xref py py-class docutils literal"><span class="pre">Gun</span></tt> system to play the sound when the gun is fired (lines 8-9 below):</p>
+<div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">class</span> <span class="nc">Gun</span><span class="p">(</span><span class="n">bGrease</span><span class="o">.</span><span class="n">System</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Fires Shot entities&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dt</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">entity</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">world</span><span class="p">[</span><span class="o">...</span><span class="p">]</span><span class="o">.</span><span class="n">gun</span><span class="o">.</span><span class="n">firing</span> <span class="o">==</span> <span class="bp">True</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">world</span><span class="o">.</span><span class="n">time</span> <span class="o">&gt;=</span> <span class="n">entity</span><span class="o">.</span><span class="n">gun</span><span class="o">.</span><span class="n">last_fire_time</span> <span class="o">+</span> <span class="n">entity</span><span class="o">.</span><span class="n">gun</span><span class="o">.</span><span class="n">cool_down</span><span class="p">:</span>
+                <span class="n">Shot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">world</span><span class="p">,</span> <span class="n">entity</span><span class="p">,</span> <span class="n">entity</span><span class="o">.</span><span class="n">position</span><span class="o">.</span><span class="n">angle</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">entity</span><span class="o">.</span><span class="n">gun</span><span class="o">.</span><span class="n">sound</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                    <span class="n">entity</span><span class="o">.</span><span class="n">gun</span><span class="o">.</span><span class="n">sound</span><span class="o">.</span><span class="n">play</span><span class="p">()</span>
+                <span class="n">entity</span><span class="o">.</span><span class="n">gun</span><span class="o">.</span><span class="n">last_fire_time</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">world</span><span class="o">.</span><span class="n">time</span>
+</pre></div>
+</td></tr></table></div>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p class="last">Another viable solution would be to add this sound to the <tt class="xref py py-class docutils literal"><span class="pre">Shot</span></tt> entity, but using the component is more flexible and illustrates how you can leverage object fields.</p>
 </div>
 <p>With some simple modifications to the <tt class="xref py py-class docutils literal"><span class="pre">Asteroid</span></tt> entity class, we can add sounds when they explode. First let&#8217;s load three hit sounds in a class attribute:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">Asteroid</span><span class="p">(</span><span class="n">BlasteroidsEntity</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Big floating space rock&quot;&quot;&quot;</span>
+
+    <span class="n">COLLIDE_INTO_MASK</span> <span class="o">=</span> <span class="mh">0x2</span>
+    <span class="n">HIT_SOUNDS</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">load_sound</span><span class="p">(</span><span class="s">&#39;hit1.wav&#39;</span><span class="p">),</span>
+        <span class="n">load_sound</span><span class="p">(</span><span class="s">&#39;hit2.wav&#39;</span><span class="p">),</span>
+        <span class="n">load_sound</span><span class="p">(</span><span class="s">&#39;hit3.wav&#39;</span><span class="p">),</span>
+    <span class="p">]</span>
+</pre></div>
+</div>
 <p>Then play one of these sounds at random when the asteroid is hit:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">on_collide</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">,</span> <span class="n">point</span><span class="p">,</span> <span class="n">normal</span><span class="p">):</span>
     <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">HIT_SOUNDS</span><span class="p">)</span><span class="o">.</span><span class="n">play</span><span class="p">()</span>
@@ -160,6 +252,91 @@
 <h2>He Shoots, He Scores!<a class="headerlink" href="#he-shoots-he-scores" title="Permalink to this headline">¶</a></h2>
 <p>No self-respecting arcade game can show its face in public without scoring. How am I to know how much better I am than the next guy? Obviously we need to implement some scoring before going any further.</p>
 <p>Currently when you shoot an asteroid, it is simply destroyed. This is not much of a challenge. Like the classic game, we need to make the asteroids break into fragments when they are hit. The smaller asteroid fragments will move faster than their parents and give the player more points when shot. Let&#8217;s refactor the <tt class="xref py py-class docutils literal"><span class="pre">Asteroid</span></tt> entity class to provide these features:</p>
+<div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">class</span> <span class="nc">Asteroid</span><span class="p">(</span><span class="n">BlasteroidsEntity</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Big floating space rock&quot;&quot;&quot;</span>
+
+    <span class="n">COLLIDE_INTO_MASK</span> <span class="o">=</span> <span class="mh">0x2</span>
+    <span class="n">HIT_SOUNDS</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">load_sound</span><span class="p">(</span><span class="s">&#39;hit1.wav&#39;</span><span class="p">),</span>
+        <span class="n">load_sound</span><span class="p">(</span><span class="s">&#39;hit2.wav&#39;</span><span class="p">),</span>
+        <span class="n">load_sound</span><span class="p">(</span><span class="s">&#39;hit3.wav&#39;</span><span class="p">),</span>
+    <span class="p">]</span>
+
+    <span class="n">UNIT_CIRCLE</span> <span class="o">=</span> <span class="p">[(</span><span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">a</span><span class="p">)),</span> <span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">a</span><span class="p">)))</span> 
+        <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">360</span><span class="p">,</span> <span class="mi">18</span><span class="p">)]</span>
+    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">world</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="mi">45</span><span class="p">,</span> <span class="n">position</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">parent_velocity</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">points</span><span class="o">=</span><span class="mi">25</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">position</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">position</span><span class="o">.</span><span class="n">position</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">([</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span> <span class="o">*</span> <span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">50</span><span class="p">,</span> <span class="n">window</span><span class="o">.</span><span class="n">width</span> <span class="o">/</span> <span class="mi">2</span><span class="p">),</span> 
+                <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">([</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span> <span class="o">*</span> <span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">50</span><span class="p">,</span> <span class="n">window</span><span class="o">.</span><span class="n">height</span> <span class="o">/</span> <span class="mi">2</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">position</span><span class="o">.</span><span class="n">position</span> <span class="o">=</span> <span class="n">position</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">movement</span><span class="o">.</span><span class="n">velocity</span> <span class="o">=</span> <span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">gauss</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">700</span> <span class="o">/</span> <span class="n">radius</span><span class="p">),</span> <span class="n">random</span><span class="o">.</span><span class="n">gauss</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">700</span> <span class="o">/</span> <span class="n">radius</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">parent_velocity</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">movement</span><span class="o">.</span><span class="n">velocity</span> <span class="o">+=</span> <span class="n">parent_velocity</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">movement</span><span class="o">.</span><span class="n">rotation</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">gauss</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">15</span><span class="p">)</span>
+        <span class="n">verts</span> <span class="o">=</span> <span class="p">[(</span><span class="n">random</span><span class="o">.</span><span class="n">gauss</span><span class="p">(</span><span class="n">x</span><span class="o">*</span><span class="n">radius</span><span class="p">,</span> <span class="n">radius</span> <span class="o">/</span> <span class="mi">7</span><span class="p">),</span> <span class="n">random</span><span class="o">.</span><span class="n">gauss</span><span class="p">(</span><span class="n">y</span><span class="o">*</span><span class="n">radius</span><span class="p">,</span> <span class="n">radius</span> <span class="o">/</span> <span class="mi">7</span><span class="p">))</span>
+            <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">UNIT_CIRCLE</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="o">.</span><span class="n">verts</span> <span class="o">=</span> <span class="n">verts</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">renderable</span><span class="o">.</span><span class="n">color</span> <span class="o">=</span> <span class="s">&quot;#aaa&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">collision</span><span class="o">.</span><span class="n">radius</span> <span class="o">=</span> <span class="n">radius</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">collision</span><span class="o">.</span><span class="n">from_mask</span> <span class="o">=</span> <span class="n">PlayerShip</span><span class="o">.</span><span class="n">COLLIDE_INTO_MASK</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">collision</span><span class="o">.</span><span class="n">into_mask</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">COLLIDE_INTO_MASK</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">award</span><span class="o">.</span><span class="n">points</span> <span class="o">=</span> <span class="n">points</span>
+
+    <span class="k">def</span> <span class="nf">on_collide</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">,</span> <span class="n">point</span><span class="p">,</span> <span class="n">normal</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">collision</span><span class="o">.</span><span class="n">radius</span> <span class="o">&gt;</span> <span class="mi">15</span><span class="p">:</span>
+            <span class="n">chunk_size</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">collision</span><span class="o">.</span><span class="n">radius</span> <span class="o">/</span> <span class="mf">2.0</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">):</span>
+                <span class="n">Asteroid</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">world</span><span class="p">,</span> <span class="n">chunk_size</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">position</span><span class="o">.</span><span class="n">position</span><span class="p">,</span> 
+                    <span class="bp">self</span><span class="o">.</span><span class="n">movement</span><span class="o">.</span><span class="n">velocity</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">award</span><span class="o">.</span><span class="n">points</span> <span class="o">*</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">HIT_SOUNDS</span><span class="p">)</span><span class="o">.</span><span class="n">play</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">explode</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">delete</span><span class="p">()</span>    
+</pre></div>
+</td></tr></table></div>
 <p>First some arguments are added to the constructor: <tt class="xref py py-attr docutils literal"><span class="pre">position</span></tt>, <tt class="xref py py-attr docutils literal"><span class="pre">parent_velocity</span></tt>, and <tt class="xref py py-attr docutils literal"><span class="pre">points</span></tt> (line 14). If <tt class="xref py py-attr docutils literal"><span class="pre">position</span></tt> is provided, it is used as the initial asteroid position rather than always having a random initial position (line 20). If <tt class="xref py py-attr docutils literal"><span class="pre">parent_velocity</span></tt> is provided, it is added to the random velocity vector (line 22-23), this way fragments are influenced by their parent&#8217;s movement. Last, we store the point value for the asteroid in a new <tt class="xref py py-attr docutils literal"><span class="pre">award</span></tt> component (line 32). Of course we&#8217;ll need to add this component to our <tt class="xref py py-class docutils literal"><span class="pre">GameWorld</span></tt>:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">GameWorld</span><span class="p">(</span><span class="n">bGrease</span><span class="o">.</span><span class="n">World</span><span class="p">):</span>
 
@@ -175,6 +352,97 @@
 <h3>Scoring and Levels<a class="headerlink" href="#scoring-and-levels" title="Permalink to this headline">¶</a></h3>
 <p>We now know how many points the asteroids are worth, but we still need to keep track of the game score for the player. Since the score goes with the game, we can add store it in the <tt class="xref py py-class docutils literal"><span class="pre">GameSystem</span></tt> where we bind the keyboard controls. If we had a game with multiple simultaneous players all with separate scores, we might choose to store the scores in a component instead.</p>
 <p>We refactor <tt class="xref py py-class docutils literal"><span class="pre">GameSystem</span></tt> adding some attributes and methods:</p>
+<div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">class</span> <span class="nc">GameSystem</span><span class="p">(</span><span class="n">KeyControls</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Main game logic system</span>
+
+<span class="sd">    This subclass KeyControls so that the controls can be bound</span>
+<span class="sd">    directly to the game logic here</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">CHIME_SOUNDS</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">load_sound</span><span class="p">(</span><span class="s">&#39;chime1.wav&#39;</span><span class="p">),</span> 
+        <span class="n">load_sound</span><span class="p">(</span><span class="s">&#39;chime2.wav&#39;</span><span class="p">),</span>
+    <span class="p">]</span>
+    <span class="n">MAX_CHIME_TIME</span> <span class="o">=</span> <span class="mf">2.0</span>
+    <span class="n">MIN_CHIME_TIME</span> <span class="o">=</span> <span class="mf">0.6</span>
+
+    <span class="k">def</span> <span class="nf">set_world</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">world</span><span class="p">):</span>
+        <span class="n">KeyControls</span><span class="o">.</span><span class="n">set_world</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">world</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">level</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lives</span> <span class="o">=</span> <span class="mi">3</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">score</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">player_ship</span> <span class="o">=</span> <span class="n">PlayerShip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">world</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">start_level</span><span class="p">()</span>
+    
+    <span class="k">def</span> <span class="nf">start_level</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">level</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">level</span> <span class="o">*</span> <span class="mi">3</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="n">Asteroid</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">world</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">chime_time</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">MAX_CHIME_TIME</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">chimes</span> <span class="o">=</span> <span class="n">itertools</span><span class="o">.</span><span class="n">cycle</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">CHIME_SOUNDS</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">level</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">chime</span><span class="p">()</span>
+    
+    <span class="k">def</span> <span class="nf">chime</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dt</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Play tension building chime sounds&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">lives</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">chimes</span><span class="o">.</span><span class="n">next</span><span class="p">()</span><span class="o">.</span><span class="n">play</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">chime_time</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">chime_time</span> <span class="o">-</span> <span class="n">dt</span> <span class="o">*</span> <span class="mf">0.01</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">MIN_CHIME_TIME</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">world</span><span class="p">[</span><span class="n">Asteroid</span><span class="p">]</span><span class="o">.</span><span class="n">entities</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">start_level</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">world</span><span class="o">.</span><span class="n">clock</span><span class="o">.</span><span class="n">schedule_once</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">chime</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">chime_time</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">award_points</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">entity</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get points for destroying stuff&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">entity</span><span class="o">.</span><span class="n">award</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">score</span> <span class="o">+=</span> <span class="n">entity</span><span class="o">.</span><span class="n">award</span><span class="o">.</span><span class="n">points</span>
+    
+</pre></div>
+</td></tr></table></div>
 <p>While we&#8217;re at it, we&#8217;re going to add in some background chime sounds. The chime sounds will increase in frequency over time to build tension. At the beginning of each level, the frequency of the chimes is reset. We load the chime sounds and setup some other timing attributes in lines 8-13.</p>
 <p>In the <tt class="xref py py-meth docutils literal"><span class="pre">set_world()</span></tt> method (line 15), we add attributes for <tt class="xref py py-attr docutils literal"><span class="pre">level</span></tt> number, remaining <tt class="xref py py-attr docutils literal"><span class="pre">lives</span></tt> and accumulated <tt class="xref py py-attr docutils literal"><span class="pre">score</span></tt>. At the end we also call a new method <tt class="xref py py-meth docutils literal"><span class="pre">start_level()</span></tt>, which we define next.</p>
 <p><tt class="xref py py-meth docutils literal"><span class="pre">start_level()</span></tt> (line 23) does what its name implies. It increments the level number, creates some asteroids (3 more each increasing level), and resets the chime sounds. Using <a class="reference external" href="http://docs.python.org/library/itertools.html#itertools.cycle" title="(in Python v2.7)"><tt class="xref py py-func docutils literal"><span class="pre">itertools.cycle()</span></tt></a> is a simple way to create an infinite iterator that alternates between our two chime sounds.</p>
@@ -186,12 +454,31 @@
     <span class="o">...</span>
 </pre></div>
 </div>
+<div class="highlight-python"><div class="highlight"><pre>    <span class="k">def</span> <span class="nf">on_collide</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">,</span> <span class="n">point</span><span class="p">,</span> <span class="n">normal</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">world</span><span class="o">.</span><span class="n">systems</span><span class="o">.</span><span class="n">game</span><span class="o">.</span><span class="n">award_points</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">delete</span><span class="p">()</span>
+    
+</pre></div>
+</div>
 <p>Remember that <tt class="xref py py-meth docutils literal"><span class="pre">award_points()</span></tt> does the right thing if the other entity has points associated with it or not. That means the caller can just pass in whatever entity the shot runs into without additional logic.</p>
 </div>
 <div class="section" id="three-lives-to-live">
 <h3>Three Lives to Live<a class="headerlink" href="#three-lives-to-live" title="Permalink to this headline">¶</a></h3>
 <p>Classic arcade games typically give you multiple lives to spend in a single game. Let&#8217;s implement that functionality here. In <tt class="xref py py-class docutils literal"><span class="pre">GameSystem</span></tt> we aleady initialize a <tt class="xref py py-attr docutils literal"><span class="pre">lives</span></tt> counter attribute, now lets add logic for when the player dies and respawns:</p>
+<div class="highlight-python"><div class="highlight"><pre>    <span class="k">def</span> <span class="nf">player_died</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lives</span> <span class="o">-=</span> <span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">player_ship</span><span class="o">.</span><span class="n">delete</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">world</span><span class="o">.</span><span class="n">clock</span><span class="o">.</span><span class="n">schedule_once</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">player_respawn</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">)</span>
+        
+</pre></div>
+</div>
 <p>This method will be called when the player&#8217;s ship is destroyed. It simply decrements the lives counter, deletes the player&#8217;s ship entity and schedules a call to <tt class="xref py py-meth docutils literal"><span class="pre">player_respawn()</span></tt> after a few seconds. Let&#8217;s look at that implementation next:</p>
+<div class="highlight-python"><div class="highlight"><pre>    <span class="k">def</span> <span class="nf">player_respawn</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dt</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Rise to fly again, with temporary invincibility&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">lives</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">player_ship</span> <span class="o">=</span> <span class="n">PlayerShip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">world</span><span class="p">,</span> <span class="n">invincible</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+</pre></div>
+</div>
 <p>This is a pretty trivial callback that creates a new <tt class="xref py py-class docutils literal"><span class="pre">PlayerShip</span></tt> if there are lives remaining. There are a couple of things to note here: one is the <tt class="xref py py-attr docutils literal"><span class="pre">dt</span></tt> parameter. This is needed because the clock always passes the time delta in when calling a scheduled method. We don&#8217;t use it, but we need to receive it for the callback to work. The second thing of note is the <tt class="xref py py-attr docutils literal"><span class="pre">invincibility</span></tt> parameter passed into the <tt class="xref py py-class docutils literal"><span class="pre">PlayerShip</span></tt> constructor. This will temporarily make the ship invulnerable when it respawns so the player can avoid instant death if the ship materializes and immediately collides with an asteroid. We will need to modify <tt class="xref py py-class docutils literal"><span class="pre">PlayerShip</span></tt> to support this:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">PlayerShip</span><span class="p">(</span><span class="n">BlasteroidsEntity</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Thrust ship piloted by the player&quot;&quot;&quot;</span>
@@ -203,15 +490,97 @@
 </pre></div>
 </div>
 <p>First we add an <tt class="xref py py-attr docutils literal"><span class="pre">invincible</span></tt> parameter to the constructor, and call a new method <tt class="xref py py-meth docutils literal"><span class="pre">set_invincible()</span></tt> at the end. Now let&#8217;s define that method:</p>
+<div class="highlight-python"><div class="highlight"><pre>    <span class="k">def</span> <span class="nf">set_invincible</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">invincible</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Set the invincibility status of the ship. If invincible is</span>
+<span class="sd">        True then the ship will not collide with any obstacles and will</span>
+<span class="sd">        blink to indicate this. If False, then the normal collision </span>
+<span class="sd">        behavior is restored</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">invincible</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">collision</span><span class="o">.</span><span class="n">into_mask</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">collision</span><span class="o">.</span><span class="n">from_mask</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">world</span><span class="o">.</span><span class="n">clock</span><span class="o">.</span><span class="n">schedule_interval</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">blink</span><span class="p">,</span> <span class="mf">0.15</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">world</span><span class="o">.</span><span class="n">clock</span><span class="o">.</span><span class="n">schedule_once</span><span class="p">(</span><span class="k">lambda</span> <span class="n">dt</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">set_invincible</span><span class="p">(</span><span class="bp">False</span><span class="p">),</span> <span class="mi">3</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">world</span><span class="o">.</span><span class="n">clock</span><span class="o">.</span><span class="n">unschedule</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">blink</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">renderable</span><span class="o">.</span><span class="n">color</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">COLOR</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">collision</span><span class="o">.</span><span class="n">from_mask</span> <span class="o">=</span> <span class="mh">0xffffffff</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">collision</span><span class="o">.</span><span class="n">into_mask</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">COLLIDE_INTO_MASK</span>
+    
+</pre></div>
+</div>
 <p>If this is called with the <tt class="xref py py-attr docutils literal"><span class="pre">invincible</span></tt> parameter true, the collision masks are cleared so that nothing will collide with the ship. A new <tt class="xref py py-meth docutils literal"><span class="pre">blink()</span></tt> method is scheduled every 0.15 seconds. It also schedules another call to <tt class="xref py py-meth docutils literal"><span class="pre">set_invincible()</span></tt> to expire the invincibility in a few seconds.</p>
 <p>If the <tt class="xref py py-attr docutils literal"><span class="pre">invincible</span></tt> parameter is false, blinking is stopped by unscheduling the <tt class="xref py py-meth docutils literal"><span class="pre">blink()</span></tt> method, and the collision masks are restored so that the ship will collide with other entities.</p>
 <p>Now let&#8217;s define the <tt class="xref py py-meth docutils literal"><span class="pre">blink()</span></tt> callback method:</p>
+<div class="highlight-python"><div class="highlight"><pre>    <span class="k">def</span> <span class="nf">blink</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dt</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Blink the ship to show invincibility&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">renderable</span><span class="p">:</span>
+            <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">renderable</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">renderable</span><span class="o">.</span><span class="n">color</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">COLOR</span>
+    
+</pre></div>
+</div>
 <p>This method hides the ship by removing it from the renderable component if it is visible, or makes it visible by setting the <tt class="docutils literal"><span class="pre">renderable.color</span></tt> if its currently invisible. Calling this repeatedly will alternately hide and show the ship. This is a visual indication to the player that the ship is invulnerable.</p>
 <p>To complete the circuit, we need to add a call to the <tt class="xref py py-meth docutils literal"><span class="pre">player_died()</span></tt> method we defined above when the ship collides with something and explodes:</p>
+<div class="highlight-python"><pre>    def on_collide(self, other, point, normal):
+        self.explode()
+        self.THRUST_SOUND.pause()
+        self.DEATH_SOUND.play()
+        self.world.systems.game.player_died()
+
+
+</pre>
+</div>
 <span class="target" id="tut-renderer-example"></span></div>
 <div class="section" id="heads-up">
 <span id="index-1"></span><h3>Heads Up!<a class="headerlink" href="#heads-up" title="Permalink to this headline">¶</a></h3>
 <p>The <tt class="xref py py-class docutils literal"><span class="pre">GameSystem</span></tt> now keeps track of the player&#8217;s score and remaining lives, but this information is not presented to the player yet. To remedy that, we&#8217;ll create a heads-up display. Since this is purely visual, we&#8217;ll implement it as a renderer:</p>
+<div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">class</span> <span class="nc">Hud</span><span class="p">(</span><span class="n">bGrease</span><span class="o">.</span><span class="n">Renderer</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Heads-up display renderer&quot;&quot;&quot;</span>
+    
+    <span class="k">def</span> <span class="nf">set_world</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">world</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">world</span> <span class="o">=</span> <span class="n">world</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">last_lives</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">last_score</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">game_over_label</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">paused_label</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">create_lives_entities</span><span class="p">()</span>
+    
+    <span class="k">def</span> <span class="nf">create_lives_entities</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Create entities to represent the remaining lives&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lives</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">verts</span> <span class="o">=</span> <span class="n">geometry</span><span class="o">.</span><span class="n">Vec2dArray</span><span class="p">(</span><span class="n">PlayerShip</span><span class="o">.</span><span class="n">SHAPE_VERTS</span><span class="p">[</span><span class="mi">3</span><span class="p">:])</span>
+        <span class="n">left</span> <span class="o">=</span> <span class="o">-</span><span class="n">window</span><span class="o">.</span><span class="n">width</span> <span class="o">//</span> <span class="mi">2</span> <span class="o">+</span> <span class="mi">25</span>
+        <span class="n">top</span> <span class="o">=</span> <span class="n">window</span><span class="o">.</span><span class="n">height</span> <span class="o">//</span> <span class="mi">2</span> <span class="o">-</span> <span class="mi">25</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">20</span><span class="p">):</span>
+            <span class="n">entity</span> <span class="o">=</span> <span class="n">bGrease</span><span class="o">.</span><span class="n">Entity</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">world</span><span class="p">)</span>
+            <span class="n">entity</span><span class="o">.</span><span class="n">shape</span><span class="o">.</span><span class="n">verts</span> <span class="o">=</span> <span class="n">verts</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">scale</span><span class="o">=</span><span class="mf">0.75</span><span class="p">)</span>
+            <span class="n">entity</span><span class="o">.</span><span class="n">position</span><span class="o">.</span><span class="n">position</span> <span class="o">=</span> <span class="p">(</span><span class="n">i</span> <span class="o">*</span> <span class="mi">20</span> <span class="o">+</span> <span class="n">left</span><span class="p">,</span> <span class="n">top</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">lives</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">i</span><span class="p">,</span> <span class="n">entity</span><span class="p">))</span>
+</pre></div>
+</td></tr></table></div>
 <p>The methods above setup the <tt class="xref py py-class docutils literal"><span class="pre">Hud</span></tt> renderer. The <tt class="xref py py-meth docutils literal"><span class="pre">set_world()</span></tt> method here serves the same purpose as the same method of our system classes. It is called when the renderer is added to the world. Here we initialize some instance attributes and call <tt class="xref py py-meth docutils literal"><span class="pre">create_lives_entities()</span></tt>.</p>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
@@ -219,6 +588,59 @@
 </div>
 <p><tt class="xref py py-meth docutils literal"><span class="pre">create_lives_entities()</span></tt> describes its own purpose pretty well. It creates some stationary entities that look like the player&#8217;s ship to represent the extra lives remaining. These will be displayed at the top-left of the window.</p>
 <p>Below we get to the heart of the matter, the <tt class="xref py py-meth docutils literal"><span class="pre">draw()</span></tt> method. All renderers must implement this method, which is called whenever the display needs to be updated:</p>
+<div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26</pre></div></td><td class="code"><div class="highlight"><pre>    <span class="k">def</span> <span class="nf">draw</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">game</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">world</span><span class="o">.</span><span class="n">systems</span><span class="o">.</span><span class="n">game</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">last_lives</span> <span class="o">!=</span> <span class="n">game</span><span class="o">.</span><span class="n">lives</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">entity</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">lives</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">game</span><span class="o">.</span><span class="n">lives</span> <span class="o">&gt;</span> <span class="n">i</span><span class="p">:</span>
+                    <span class="n">entity</span><span class="o">.</span><span class="n">renderable</span><span class="o">.</span><span class="n">color</span> <span class="o">=</span> <span class="n">PlayerShip</span><span class="o">.</span><span class="n">COLOR</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">entity</span><span class="o">.</span><span class="n">renderable</span><span class="o">.</span><span class="n">color</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">last_lives</span> <span class="o">=</span> <span class="n">game</span><span class="o">.</span><span class="n">lives</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">last_score</span> <span class="o">!=</span> <span class="n">game</span><span class="o">.</span><span class="n">score</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">score_label</span> <span class="o">=</span> <span class="n">pyglet</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">Label</span><span class="p">(</span>
+                <span class="nb">str</span><span class="p">(</span><span class="n">game</span><span class="o">.</span><span class="n">score</span><span class="p">),</span>
+                <span class="n">color</span><span class="o">=</span><span class="p">(</span><span class="mi">180</span><span class="p">,</span> <span class="mi">180</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">),</span>
+                <span class="n">font_name</span><span class="o">=</span><span class="s">&#39;Vector Battle&#39;</span><span class="p">,</span> <span class="n">font_size</span><span class="o">=</span><span class="mi">14</span><span class="p">,</span> <span class="n">bold</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+                <span class="n">x</span><span class="o">=</span><span class="n">window</span><span class="o">.</span><span class="n">width</span> <span class="o">//</span> <span class="mi">2</span> <span class="o">-</span> <span class="mi">25</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">window</span><span class="o">.</span><span class="n">height</span> <span class="o">//</span> <span class="mi">2</span> <span class="o">-</span> <span class="mi">25</span><span class="p">,</span> 
+                <span class="n">anchor_x</span><span class="o">=</span><span class="s">&#39;right&#39;</span><span class="p">,</span> <span class="n">anchor_y</span><span class="o">=</span><span class="s">&#39;center&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">last_score</span> <span class="o">=</span> <span class="n">game</span><span class="o">.</span><span class="n">score</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">score_label</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">game</span><span class="o">.</span><span class="n">lives</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">game_over_label</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">game_over_label</span> <span class="o">=</span> <span class="n">pyglet</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">Label</span><span class="p">(</span>
+                    <span class="s">&quot;GAME OVER&quot;</span><span class="p">,</span>
+                    <span class="n">font_name</span><span class="o">=</span><span class="s">&#39;Vector Battle&#39;</span><span class="p">,</span> <span class="n">font_size</span><span class="o">=</span><span class="mi">36</span><span class="p">,</span> <span class="n">bold</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+                    <span class="n">color</span><span class="o">=</span><span class="p">(</span><span class="mi">255</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">),</span>
+                    <span class="n">x</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">anchor_x</span><span class="o">=</span><span class="s">&#39;center&#39;</span><span class="p">,</span> <span class="n">anchor_y</span><span class="o">=</span><span class="s">&#39;center&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">game_over_label</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
+</pre></div>
+</td></tr></table></div>
 <p>Lines 3-9 update the color of the lives entities we created before. Remaining lives are colored the same as the player&#8217;s ship, making them visible. Additional life markers are made invisible to hide them.</p>
 <p>Lines 10-18 create or update the score label. This uses a <tt class="xref py py-class docutils literal"><span class="pre">pyglet.text.Label</span></tt>. Creating these objects is relatively expensive, so it is only done when the score actually changes. This is rare compared to the number of times the window must be redrawn.</p>
 <p>Lines 19-26 draw a &#8220;GAME OVER&#8221; label after the player loses their last life.</p>
@@ -235,8 +657,8 @@
 <p>The basic utility of a mode stack is that the user can start in one mode, enter another, then return to the original mode when it&#8217;s complete and resume where it left off. This is perfect for our title screen. We want to present the title screen when the game application is launched, allow the player to start a game, then return to the title screen when the game is over.</p>
 <div class="section" id="windows-managers-worlds-and-modes">
 <h3>Windows, Managers, Worlds, and Modes<a class="headerlink" href="#windows-managers-worlds-and-modes" title="Permalink to this headline">¶</a></h3>
-<p>Although it is possible to create custom modes and managers in your application, there are two concrete implementations provided by Grease that should prove convenient. One, we are already familiar with: <a href="#id1"><span class="problematic" id="id2">|World|</span></a>. Worlds implement the mode interface so that they can be used directly as game modes. When a world is active in a mode manager, its clock receives ticks, its systems receive events, and it will invoke its renderers when the display needs to be redrawn. When a world is deactivated, it is &#8220;frozen&#8221;. Its clock no longer runs, its systems no longer receive events and its renderers are no longer invoked. When the world is later reactivated, it resumes right where it left off.</p>
-<p>Grease also provides a special mode manager, <tt class="xref py py-class docutils literal"><span class="pre">ManagerWindow</span></tt>. This class is a Pyglet window subclass that implements the mode manager interface. This allows you to push and pop modes, such as <a href="#id3"><span class="problematic" id="id4">|World|</span></a> objects, directly onto an application window. All of the OS events the window receives will go directly to the active mode. This makes implementing a user interface flow with push and pop semantics a breeze.</p>
+<p>Although it is possible to create custom modes and managers in your application, there are two concrete implementations provided by Grease that should prove convenient. One, we are already familiar with: <a class="reference internal" href="../mod/grease_pyglet.html#bGrease.grease_pyglet.World" title="bGrease.grease_pyglet.World"><tt class="xref py py-class docutils literal"><span class="pre">World</span></tt></a>. Worlds implement the mode interface so that they can be used directly as game modes. When a world is active in a mode manager, its clock receives ticks, its systems receive events, and it will invoke its renderers when the display needs to be redrawn. When a world is deactivated, it is &#8220;frozen&#8221;. Its clock no longer runs, its systems no longer receive events and its renderers are no longer invoked. When the world is later reactivated, it resumes right where it left off.</p>
+<p>Grease also provides a special mode manager, <tt class="xref py py-class docutils literal"><span class="pre">ManagerWindow</span></tt>. This class is a Pyglet window subclass that implements the mode manager interface. This allows you to push and pop modes, such as <a class="reference internal" href="../mod/grease_pyglet.html#bGrease.grease_pyglet.World" title="bGrease.grease_pyglet.World"><tt class="xref py py-class docutils literal"><span class="pre">World</span></tt></a> objects, directly onto an application window. All of the OS events the window receives will go directly to the active mode. This makes implementing a user interface flow with push and pop semantics a breeze.</p>
 <p><tt class="xref py py-class docutils literal"><span class="pre">ManagerWindow</span></tt> objects also include some default behavior:</p>
 <ul class="simple">
 <li>When the <tt class="docutils literal"><span class="pre">Esc</span></tt> key is pressed, the current mode is popped.</li>
@@ -247,6 +669,59 @@
 <p class="last">A <tt class="xref py py-class docutils literal"><span class="pre">ManagerWindow</span></tt> object is both the mode manager and the source of events (i.e., the event dispatcher). Custom mode managers can be made by subclassing <a class="reference internal" href="../mod/mode.html#bGrease.mode.BaseManager" title="bGrease.mode.BaseManager"><tt class="xref py py-class docutils literal"><span class="pre">BaseManager</span></tt></a> to separate these two concerns, if desired. This can allow several mode managers to share a single window, or even use an application-defined event dispatcher.</p>
 </div>
 <p>We can create a custom world to use as our title screen. The title screen will have some text, will respond to some key commands, and will have some asteroids floating in the background to make it more interesting. It will need a very similar configuration of components and systems as our existing <tt class="xref py py-class docutils literal"><span class="pre">GameWorld</span></tt>, so let&#8217;s refactor the common parts into a shared base class:</p>
+<div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">class</span> <span class="nc">BaseWorld</span><span class="p">(</span><span class="n">bGrease</span><span class="o">.</span><span class="n">grease_pyglet</span><span class="o">.</span><span class="n">World</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">configure</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Configure the game world&#39;s components, systems and renderers&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">components</span><span class="o">.</span><span class="n">position</span> <span class="o">=</span> <span class="n">component</span><span class="o">.</span><span class="n">Position</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">components</span><span class="o">.</span><span class="n">movement</span> <span class="o">=</span> <span class="n">component</span><span class="o">.</span><span class="n">Movement</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">components</span><span class="o">.</span><span class="n">shape</span> <span class="o">=</span> <span class="n">component</span><span class="o">.</span><span class="n">Shape</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">components</span><span class="o">.</span><span class="n">renderable</span> <span class="o">=</span> <span class="n">component</span><span class="o">.</span><span class="n">Renderable</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">components</span><span class="o">.</span><span class="n">collision</span> <span class="o">=</span> <span class="n">component</span><span class="o">.</span><span class="n">Collision</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">components</span><span class="o">.</span><span class="n">gun</span> <span class="o">=</span> <span class="n">component</span><span class="o">.</span><span class="n">Component</span><span class="p">(</span>
+            <span class="n">firing</span><span class="o">=</span><span class="nb">bool</span><span class="p">,</span> 
+            <span class="n">last_fire_time</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span> 
+            <span class="n">cool_down</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span> 
+            <span class="n">sound</span><span class="o">=</span><span class="nb">object</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">components</span><span class="o">.</span><span class="n">award</span> <span class="o">=</span> <span class="n">component</span><span class="o">.</span><span class="n">Component</span><span class="p">(</span><span class="n">points</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">systems</span><span class="o">.</span><span class="n">movement</span> <span class="o">=</span> <span class="n">controller</span><span class="o">.</span><span class="n">EulerMovement</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">systems</span><span class="o">.</span><span class="n">collision</span> <span class="o">=</span> <span class="n">collision</span><span class="o">.</span><span class="n">Circular</span><span class="p">(</span>
+            <span class="n">handlers</span><span class="o">=</span><span class="p">[</span><span class="n">collision</span><span class="o">.</span><span class="n">dispatch_events</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">systems</span><span class="o">.</span><span class="n">sweeper</span> <span class="o">=</span> <span class="n">Sweeper</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">systems</span><span class="o">.</span><span class="n">gun</span> <span class="o">=</span> <span class="n">Gun</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">systems</span><span class="o">.</span><span class="n">wrapper</span> <span class="o">=</span> <span class="n">PositionWrapper</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">renderers</span><span class="o">.</span><span class="n">camera</span> <span class="o">=</span> <span class="n">renderer</span><span class="o">.</span><span class="n">Camera</span><span class="p">(</span>
+            <span class="n">position</span><span class="o">=</span><span class="p">(</span><span class="n">window</span><span class="o">.</span><span class="n">width</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="n">window</span><span class="o">.</span><span class="n">height</span> <span class="o">/</span> <span class="mi">2</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">renderers</span><span class="o">.</span><span class="n">vector</span> <span class="o">=</span> <span class="n">renderer</span><span class="o">.</span><span class="n">Vector</span><span class="p">(</span><span class="n">line_width</span><span class="o">=</span><span class="mf">1.5</span><span class="p">)</span>
+</pre></div>
+</td></tr></table></div>
 <p>The <tt class="xref py py-meth docutils literal"><span class="pre">configure()</span></tt> methods sets up the parts common to both the <tt class="xref py py-class docutils literal"><span class="pre">Game</span></tt> and the <tt class="xref py py-class docutils literal"><span class="pre">TitleScreen</span></tt> world classes we will define below. This is lifted directly from the old <tt class="xref py py-class docutils literal"><span class="pre">GameWorld</span></tt> class. Let&#8217;s implement the new <tt class="xref py py-class docutils literal"><span class="pre">Game</span></tt> class based on the above:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">Game</span><span class="p">(</span><span class="n">BaseWorld</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Main game world and mode&quot;&quot;&quot;</span>
@@ -291,8 +766,31 @@
 <p class="last">Drawing <tt class="xref py py-class docutils literal"><span class="pre">pyglet.text.Label</span></tt> objects individually, as above, is not very efficient. In this case the performance is acceptable, but an application drawing many labels should draw them using a batch. Since Pyglet batch objects have a <tt class="xref py py-meth docutils literal"><span class="pre">draw()</span></tt> method, they can also serve as renderers in a world.</p>
 </div>
 <p id="index-3">After the renderers we add a <tt class="xref py py-class docutils literal"><span class="pre">TitleScreenControls</span></tt> system, followed by a few randomly sized asteroids. We haven&#8217;t defined the system class yet, so let&#8217;s do that now:</p>
+<div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5
+6
+7</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">class</span> <span class="nc">TitleScreenControls</span><span class="p">(</span><span class="n">KeyControls</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Title screen key event handler system&quot;&quot;&quot;</span>
+
+    <span class="nd">@KeyControls.key_press</span><span class="p">(</span><span class="n">key</span><span class="o">.</span><span class="n">_1</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">start_single_player</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">window</span><span class="o">.</span><span class="n">push_mode</span><span class="p">(</span><span class="n">Game</span><span class="p">())</span>
+    
+</pre></div>
+</td></tr></table></div>
 <p>The magic happens on line 6 above. When the player presses the <tt class="docutils literal"><span class="pre">1</span></tt> key on the title screen, this system instantiates a new <tt class="xref py py-class docutils literal"><span class="pre">Game</span></tt> world and pushes it onto the window. This activates and starts the game, and deactivates the title screen, but leaves it on the stack for when the player is done.</p>
 <p>One last thing is left to do, we need refactor our <tt class="xref py py-func docutils literal"><span class="pre">main()</span></tt> function to use a <tt class="xref py py-class docutils literal"><span class="pre">ManagerWindow</span></tt> and start the application at the title screen:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Initialize and run the game&quot;&quot;&quot;</span>
+    <span class="k">global</span> <span class="n">window</span>
+    <span class="n">window</span> <span class="o">=</span> <span class="n">mode</span><span class="o">.</span><span class="n">ManagerWindow</span><span class="p">()</span>
+    <span class="n">window</span><span class="o">.</span><span class="n">push_mode</span><span class="p">(</span><span class="n">TitleScreen</span><span class="p">())</span>
+    <span class="n">pyglet</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</pre></div>
+</div>
 <p>Notice how tidy that makes our main function! All it has to do now is create the <tt class="xref py py-class docutils literal"><span class="pre">ManagerWindow</span></tt>, push a <tt class="xref py py-class docutils literal"><span class="pre">TitleScreen</span></tt> on it and enter the event loop. The mode management framework takes care of the rest.</p>
 </div>
 </div>
@@ -303,8 +801,70 @@
 <p>Because multi-modes themselves are just modes, they allow a whole group of submodes to be pushed onto a manager at once. They also keep track of which submode is active. Submodes can also be added and removed from the multi-mode at any time.</p>
 <p>To implement hotseat multiplayer using a multi-mode is quite simple. When a two-player game is initiated, a <tt class="xref py py-class docutils literal"><span class="pre">Multi</span></tt> object will be created containing 2 game worlds. When this is pushed onto the mode manager, the first game world will be activated. We will add some code to activate the next game whenever the current player loses a life. When a player&#8217;s game is over, it will be removed from the multi-mode.</p>
 <p>Let&#8217;s start by seeing how we can initiate a two-player game from the title screen:</p>
+<div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">class</span> <span class="nc">TitleScreenControls</span><span class="p">(</span><span class="n">KeyControls</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Title screen key event handler system&quot;&quot;&quot;</span>
+
+    <span class="nd">@KeyControls.key_press</span><span class="p">(</span><span class="n">key</span><span class="o">.</span><span class="n">_1</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">start_single_player</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">window</span><span class="o">.</span><span class="n">push_mode</span><span class="p">(</span><span class="n">Game</span><span class="p">())</span>
+    
+    <span class="nd">@KeyControls.key_press</span><span class="p">(</span><span class="n">key</span><span class="o">.</span><span class="n">_2</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">start_two_player</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">window</span><span class="o">.</span><span class="n">push_mode</span><span class="p">(</span><span class="n">mode</span><span class="o">.</span><span class="n">Multi</span><span class="p">(</span>
+            <span class="n">Game</span><span class="p">(</span><span class="s">&#39;Player One&#39;</span><span class="p">),</span> 
+            <span class="n">Game</span><span class="p">(</span><span class="s">&#39;Player Two&#39;</span><span class="p">)))</span>
+</pre></div>
+</td></tr></table></div>
 <p>We added the <tt class="xref py py-meth docutils literal"><span class="pre">start_two_player()</span></tt> method to the <tt class="xref py py-class docutils literal"><span class="pre">TitleScreenControls</span></tt> class (line 8 above). This creates the <tt class="xref py py-class docutils literal"><span class="pre">Multi</span></tt> mode containing two game worlds and pushes it onto the window. By default, when a multi-mode is first activated, it activates its first submode. This will begin the game for player one.</p>
 <p>Notice that we pass some label strings into the <tt class="xref py py-class docutils literal"><span class="pre">Game</span></tt> class constructor to identify each game. We&#8217;ll need to modify that class to support these labels:</p>
+<div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">class</span> <span class="nc">Game</span><span class="p">(</span><span class="n">BaseWorld</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Main game world and mode&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">player_name</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">):</span>
+        <span class="n">BaseWorld</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">player_name</span> <span class="o">=</span> <span class="n">player_name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">is_multiplayer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">player_name</span> <span class="o">!=</span> <span class="s">&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">configure</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">BaseWorld</span><span class="o">.</span><span class="n">configure</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">systems</span><span class="o">.</span><span class="n">game</span> <span class="o">=</span> <span class="n">GameSystem</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">renderers</span><span class="o">.</span><span class="n">hud</span> <span class="o">=</span> <span class="n">Hud</span><span class="p">()</span>
+    
+    <span class="k">def</span> <span class="nf">activate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">manager</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Start paused in multiplayer&quot;&quot;&quot;</span>
+        <span class="n">BaseWorld</span><span class="o">.</span><span class="n">activate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">manager</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_multiplayer</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">running</span> <span class="o">=</span> <span class="bp">False</span>
+</pre></div>
+</td></tr></table></div>
 <p>Games are only provided a label in multiplayer, so we use that fact to set an <tt class="xref py py-attr docutils literal"><span class="pre">is_multiplayer</span></tt> flag when a label is provided.</p>
 <p>We also override the mode&#8217;s <tt class="xref py py-class docutils literal"><span class="pre">activate</span></tt> method, starting the mode paused in multiplayer sessions by setting the world&#8217;s <tt class="xref py py-attr docutils literal"><span class="pre">running</span></tt> flag to false. Grease will not tick the world&#8217;s clock until the flag is set to true. This gives the next player time to get situated before their turn begins.</p>
 <p>Next we need to modify the <tt class="xref py py-meth docutils literal"><span class="pre">player_respawn()</span></tt> method of our <tt class="xref py py-class docutils literal"><span class="pre">GameSystem</span></tt> to switch to the next game when the current player loses their life:</p>
@@ -370,9 +930,68 @@
 </pre></div>
 </div>
 <p>The final touch is to change the <tt class="xref py py-class docutils literal"><span class="pre">TitleScreen</span></tt> class to instruct the player how to start one and two player games (lines 16-25 below):</p>
+<div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">class</span> <span class="nc">TitleScreen</span><span class="p">(</span><span class="n">BaseWorld</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Game title screen world and mode&quot;&quot;&quot;</span>
+    
+    <span class="k">def</span> <span class="nf">configure</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">BaseWorld</span><span class="o">.</span><span class="n">configure</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">renderers</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="n">pyglet</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">Label</span><span class="p">(</span>
+            <span class="s">&quot;Blasteroids&quot;</span><span class="p">,</span>
+            <span class="n">color</span><span class="o">=</span><span class="p">(</span><span class="mi">150</span><span class="p">,</span> <span class="mi">150</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">),</span>
+            <span class="n">font_name</span><span class="o">=</span><span class="s">&#39;Vector Battle&#39;</span><span class="p">,</span> <span class="n">font_size</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span> <span class="n">bold</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+            <span class="n">x</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">anchor_x</span><span class="o">=</span><span class="s">&#39;center&#39;</span><span class="p">,</span> <span class="n">anchor_y</span><span class="o">=</span><span class="s">&#39;bottom&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">renderers</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="n">pyglet</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">Label</span><span class="p">(</span>
+            <span class="s">&quot;A demo for the Grease game engine&quot;</span><span class="p">,</span>
+            <span class="n">color</span><span class="o">=</span><span class="p">(</span><span class="mi">150</span><span class="p">,</span> <span class="mi">150</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">),</span>
+            <span class="n">font_name</span><span class="o">=</span><span class="s">&#39;Vector Battle&#39;</span><span class="p">,</span> <span class="n">font_size</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span> <span class="n">bold</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+            <span class="n">x</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">anchor_x</span><span class="o">=</span><span class="s">&#39;center&#39;</span><span class="p">,</span> <span class="n">anchor_y</span><span class="o">=</span><span class="s">&#39;top&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">renderers</span><span class="o">.</span><span class="n">one_player</span> <span class="o">=</span> <span class="n">pyglet</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">Label</span><span class="p">(</span>
+            <span class="s">&quot;Press 1 for one player&quot;</span><span class="p">,</span>
+            <span class="n">color</span><span class="o">=</span><span class="p">(</span><span class="mi">150</span><span class="p">,</span> <span class="mi">150</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">),</span>
+            <span class="n">font_name</span><span class="o">=</span><span class="s">&#39;Vector Battle&#39;</span><span class="p">,</span> <span class="n">font_size</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span> <span class="n">bold</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+            <span class="n">x</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">y</span><span class="o">=-</span><span class="mi">100</span><span class="p">,</span> <span class="n">anchor_x</span><span class="o">=</span><span class="s">&#39;center&#39;</span><span class="p">,</span> <span class="n">anchor_y</span><span class="o">=</span><span class="s">&#39;top&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">renderers</span><span class="o">.</span><span class="n">two_player</span> <span class="o">=</span> <span class="n">pyglet</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">Label</span><span class="p">(</span>
+            <span class="s">&quot;Press 2 for two players&quot;</span><span class="p">,</span>
+            <span class="n">color</span><span class="o">=</span><span class="p">(</span><span class="mi">150</span><span class="p">,</span> <span class="mi">150</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">),</span>
+            <span class="n">font_name</span><span class="o">=</span><span class="s">&#39;Vector Battle&#39;</span><span class="p">,</span> <span class="n">font_size</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span> <span class="n">bold</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+            <span class="n">x</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">y</span><span class="o">=-</span><span class="mi">130</span><span class="p">,</span> <span class="n">anchor_x</span><span class="o">=</span><span class="s">&#39;center&#39;</span><span class="p">,</span> <span class="n">anchor_y</span><span class="o">=</span><span class="s">&#39;top&#39;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">systems</span><span class="o">.</span><span class="n">controls</span> <span class="o">=</span> <span class="n">TitleScreenControls</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">15</span><span class="p">):</span>
+            <span class="n">Asteroid</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">45</span><span class="p">))</span>
+</pre></div>
+</td></tr></table></div>
 <p>The final title screen in its full glory:</p>
 <img alt="../_images/title.png" src="../_images/title.png" />
-<p>And I give you, the final revision of <tt class="xref download docutils literal"><span class="pre">blasteroids3.py</span></tt>. You made it, congratulations! You now have the basics under your belt to create your own games with <em>Grease</em>.</p>
+<p>And I give you, the final revision of <a class="reference download internal" href="../_downloads/blasteroids3.py"><tt class="xref download docutils literal"><span class="pre">blasteroids3.py</span></tt></a>. You made it, congratulations! You now have the basics under your belt to create your own games with <em>Grease</em>.</p>
 </div>
 </div>
 

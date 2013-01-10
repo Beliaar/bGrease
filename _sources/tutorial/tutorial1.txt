@@ -1,5 +1,5 @@
 .. Grease tutorial chapter 1
-.. include:: ../include.rst 
+.. include:: ../include.inc 
 
 .. _tut-chapter-1:
 
@@ -7,7 +7,7 @@
 Grease Tutorial Part I
 ######################
 
-In this tutorial, we will be creating a simple, but complete game. To make the most of this material, you should have a working Python 2.6 and Grease installation. The tutorial progresses through several revisions of an example game named *Blasteroids*. To keep things simple, all of the code in this game is in a single file. Each of the three tutorial parts builds a new revision of the game code. You can find the complete revisions of the tutorial game code for each part in the *doc/tutorial* subdirectory of the Grease source package.  
+In this tutorial, we will be creating a simple, but complete game. To make the most of this material, you should have a working Python 2.6 and Grease installation. The tutorial progresses through several revisions of an example game named *Blasteroids*. To keep things simple, all of the code in this game is in a single file. Each of the three tutorial parts builds a new revision of the game code. You can find the complete revisions of the tutorial game code for each part in the *doc/tutorial* subdirectory of the Grease source package.
 
 This tutorial assumes basic to intermediate knowledge and experience with the Python language. You should be comfortable with concepts like defining classes, and using decorators to get the most out of it.
 
@@ -55,7 +55,7 @@ If you have not seen it before, the ``if`` statement at the end may appear a bit
 The World of Grease
 ===================
 
-Now that we have a window, we can move on to setting up our game environment. Grease provides a |World| class to organize and orchestrate all of the basic parts that we need. A convenient way to specify a world configuration is the subclass |World| and override the :meth:`configure()` method. This method gets called after the world is instantiated so that the application can configure it as desired. We need to configure the world with three different types of parts: components, systems and renderers. We'll start with components.
+Now that we have a window, we can move on to setting up our game environment. Grease provides a |PygletWorld| class to organize and orchestrate all of the basic parts that we need. A convenient way to specify a world configuration is the subclass |PygletWorld| and override the :meth:`configure()` method. This method gets called after the world is instantiated so that the application can configure it as desired. We need to configure the world with three different types of parts: components, systems and renderers. We'll start with components.
 
 .. index::
    single: Component (tutorial overview)
@@ -65,7 +65,7 @@ Components
 
 Components specify the data fields for the entities in the game and store all of their data. If you are familiar with relational databases, components can be thought of like tables with entities as their primary keys. Don't worry too much about what an entity is just yet, once we get the world configuration setup, we'll delve more deeply into how they work.
 
-Below is the first part of our world configuration that subclasses the |World| base class and configures some basic components:
+Below is the first part of our world configuration that subclasses the |PygletWorld| base class and configures some basic components:
 
 .. literalinclude:: blasteroids1.py
    :pyobject: GameWorld
@@ -120,7 +120,7 @@ The last piece of the world configuration puzzle are the renderers. Their role i
 .. literalinclude:: blasteroids1.py
    :pyobject: GameWorld
 
-Like systems, renderer order is important. Renderers are always invoked in the order they are configured. 
+Like systems, renderer order is important. Renderers are always invoked in the order they are configured.
 
 Although renderers typically make an immediate visual change to the window, some, like :class:`renderer.Camera` change the drawing state for subsequent renderers to use. A camera renderer is a high-level way to setup the OpenGL state for further rendering. Setting the position of the camera translates all of the subsequent drawing. In our example, we position the origin point (0, 0) in the center of the window instead of the Pyglet default, which is the lower left corner. You can also set a zoom and angle for the camera to scale and rotate respectively. The camera's settings may also be changed at run time to easily implement features like panning and zooming.
 
@@ -140,7 +140,7 @@ Defining an Entity Class
 
 In the abstract, entities represent the actionable items in a game. Anything that can interact or be interacted with is typically an entity. Entities are usually visible to the player and may have dynamic behavior such as movement, collision, or animation. In our example game we will be defining entities for several game objects, starting with one of the stars of the show: asteroids.
 
-In concrete terms, Grease entities are rather simple things. Grease entities are instances of the |Entity| class. Typically applications will define various entity types by subclassing |Entity|. Since entity data is stored in components, they have only two instance attributes: :attr:`entity_id` and :attr:`world`. The entity id is a unique identifier for the entity in the world. This is automatically assigned when the entity is created, and is usually invisible to application. The world is of course the |World| object where the entity resides. Entities are really just typed identifiers, so they are only meaningful in the context of a world, and actually cannot be created independently of a world.
+In concrete terms, Grease entities are rather simple things. Grease entities are instances of the |Entity| class. Typically applications will define various entity types by subclassing |Entity|. Since entity data is stored in components, they have only two instance attributes: :attr:`entity_id` and :attr:`world`. The entity id is a unique identifier for the entity in the world. This is automatically assigned when the entity is created, and is usually invisible to application. The world is of course the |PygletWorld| object where the entity resides. Entities are really just typed identifiers, so they are only meaningful in the context of a world, and actually cannot be created independently of a world.
 
 Now let's put this theory into practice and define the :class:`Asteroid` entity class. Since asteroids are fairly static objects, we just need to establish their initial state. This is done in the conventional pythonic way by defining an :meth:`__init__()` method:
 

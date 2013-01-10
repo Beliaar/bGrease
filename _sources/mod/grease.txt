@@ -1,7 +1,7 @@
-.. include:: ../include.rst
+.. include:: ../include.inc
 
 :mod:`bGrease` -- Base Classes
-=============================
+==============================
 
 .. automodule:: bGrease
    :synopsis: Base Classes

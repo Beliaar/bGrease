@@ -114,6 +114,49 @@
 <h2>Making a Game of it<a class="headerlink" href="#making-a-game-of-it" title="Permalink to this headline">¶</a></h2>
 <p id="index-0">In <a class="reference internal" href="tutorial1.html#tut-chapter-1"><em>part 1</em></a> of the tutorial the basis was laid for the <em>Blasteroids</em> game, but it is far from complete or even playable. By the end of this chapter, we&#8217;ll have rectified that. To start with, let&#8217;s build on the techniques we used to create the <tt class="xref py py-class docutils literal"><span class="pre">Asteroid</span></tt> class, and create an entity for the player&#8217;s ship.</p>
 <p>The start should look pretty familiar, and even a bit simpler than the asteroids:</p>
+<div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">class</span> <span class="nc">PlayerShip</span><span class="p">(</span><span class="n">BlasteroidsEntity</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Thrust ship piloted by the player&quot;&quot;&quot;</span>
+
+    <span class="n">THRUST_ACCEL</span> <span class="o">=</span> <span class="mi">75</span>
+    <span class="n">TURN_RATE</span> <span class="o">=</span> <span class="mi">240</span>
+    <span class="n">SHAPE_VERTS</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="p">(</span><span class="o">-</span><span class="mi">8</span><span class="p">,</span> <span class="o">-</span><span class="mi">12</span><span class="p">),</span> <span class="p">(</span><span class="o">-</span><span class="mi">4</span><span class="p">,</span> <span class="o">-</span><span class="mi">10</span><span class="p">),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">8</span><span class="p">),</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="o">-</span><span class="mi">10</span><span class="p">),</span> <span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="o">-</span><span class="mi">12</span><span class="p">),</span> <span class="c"># flame</span>
+        <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">12</span><span class="p">),</span> <span class="p">(</span><span class="o">-</span><span class="mi">8</span><span class="p">,</span> <span class="o">-</span><span class="mi">12</span><span class="p">),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">8</span><span class="p">),</span> <span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="o">-</span><span class="mi">12</span><span class="p">)]</span>
+    <span class="n">COLOR</span> <span class="o">=</span> <span class="s">&quot;#7f7&quot;</span>
+    <span class="n">COLLISION_RADIUS</span> <span class="o">=</span> <span class="mf">7.5</span>
+    <span class="n">COLLIDE_INTO_MASK</span> <span class="o">=</span> <span class="mh">0x1</span>
+    <span class="n">GUN_COOL_DOWN</span> <span class="o">=</span> <span class="mf">0.5</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">world</span><span class="p">,</span> <span class="n">invincible</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">position</span><span class="o">.</span><span class="n">position</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">position</span><span class="o">.</span><span class="n">angle</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">movement</span><span class="o">.</span><span class="n">velocity</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">movement</span><span class="o">.</span><span class="n">rotation</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="o">.</span><span class="n">verts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">SHAPE_VERTS</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="o">.</span><span class="n">closed</span> <span class="o">=</span> <span class="bp">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">renderable</span><span class="o">.</span><span class="n">color</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">COLOR</span>
+</pre></div>
+</td></tr></table></div>
 <p>First we have some class attributes that configure various aspects of the ship, including thrust acceleration, turn rate, shape (vertex points) and color. Separating these values out of the code makes them easier to tweak while testing the game, and also will allow us to refer to them from other code, which can be convenient.</p>
 <p>It&#8217;s probably difficult to envision the shape from just the vertex coordinates, so here&#8217;s what the ship will look like rendered:</p>
 <div class="figure align-left" style="width: 100">
@@ -122,12 +165,31 @@
 <p>The shape has some intentionally overlapping vertices (the part labelled <cite>flame</cite> on line 7), so we can easily create a simple animated flame effect coming from the rear of the ship when the thrust is activated.</p>
 <p>In the constructor, we setup the initial position and angle (centered and pointing up), stationary movement and rotation (lines 15-18). Next the shape is initialized, this time with the <tt class="xref py py-attr docutils literal"><span class="pre">closed</span></tt> field set to false since we have overlapping vertices in the shape. Last, we set the color. This puts the ship entity into all of the components we need for movement and rendering.</p>
 <p>Unlike asteroids, the player&#8217;s ship needs to be able to move dynamically in response to player inputs. Specifically, the ship needs to be able to turn (rotate) left and right, and accelerate forward in the direction it is facing to simulate thrust. Let&#8217;s start with the turn method:</p>
+<div class="highlight-python"><div class="highlight"><pre>    <span class="k">def</span> <span class="nf">turn</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">direction</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">movement</span><span class="o">.</span><span class="n">rotation</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">TURN_RATE</span> <span class="o">*</span> <span class="n">direction</span>
+    
+</pre></div>
+</div>
 <p>This simple method lets us turn the ship left or right by supplying the proper direction value: <tt class="docutils literal"><span class="pre">-1</span></tt> for turn left, <tt class="docutils literal"><span class="pre">1</span></tt> for turn right, <tt class="docutils literal"><span class="pre">0</span></tt> for straight ahead.</p>
 <p>Let&#8217;s move on to the thrust method:</p>
+<div class="highlight-python"><pre>    def thrust_on(self):
+        thrust_vec = geometry.Vec2d(0, self.THRUST_ACCEL)
+        thrust_vec.rotate(self.position.angle)
+        self.movement.accel = thrust_vec
+        self.shape.verts[2] = (0, -16 - random.random() * 16)        
+
+</pre>
+</div>
 <p>This method accelerates the ship in the direction it is facing. We start by defining an upward-facing vector with a magnitude set to the class&#8217;s <tt class="xref py py-attr docutils literal"><span class="pre">THRUST_ACCEL</span></tt> value. This vector is then rotated in-place to face the direction of the ship using <tt class="xref py py-meth docutils literal"><span class="pre">Vec2d.rotate()</span></tt>. The <tt class="xref py py-attr docutils literal"><span class="pre">accel</span></tt> field of the entity&#8217;s movment component is then set to the rotated thrust vector. The <a class="reference internal" href="../mod/controller.html#bGrease.controller.EulerMovement" title="bGrease.controller.EulerMovement"><tt class="xref py py-class docutils literal"><span class="pre">EulerMovement</span></tt></a> system, already in the world takes care of calculating the ship&#8217;s velocity and position over time based on the acceleration.</p>
 <p>The last line changes one of the shape vertices, moving it to a random position behind the ship. This will create a simple flickering flame animation that will act as an import cue to the player that the thrust is active. Notice that the vertex is simply moved to a random position vertically relative to the origin, the renderer will automatically take care of translating and rotating the vertex to the proper window coordinates according to the ship&#8217;s current position and rotation, as well as the current camera settings.</p>
 <p>We will be wiring the <tt class="xref py py-meth docutils literal"><span class="pre">thrust()</span></tt> method to fire every frame that the thrust key is held down. That way the acceleration vector will always be pointing in the right direction if the ship is also turning and the thrust flame will continuously flicker.</p>
 <p>The last thing we need is a method to turn the ship&#8217;s thrust off. We&#8217;ll wire this up to fire when the thrust key is released:</p>
+<div class="highlight-python"><pre>    def thrust_off(self):
+        self.movement.accel = (0, 0)
+        self.shape.verts[2] = (0, -8)
+
+</pre>
+</div>
 <p>This resets the ship&#8217;s acceleration and flame tip vertex back to their original values.</p>
 <span class="target" id="tut-controls-example"></span></div>
 <div class="section" id="controlling-the-ship">
@@ -135,24 +197,206 @@
 <p>None of the capabilities we&#8217;ve coded for the player&#8217;s ship mean anything unless the player can control them. Here we are going to see how easy it is to wire up our game logic to the keyboard.</p>
 <p>To do this, we are going to create our own custom <a class="reference internal" href="../mod/grease.html#bGrease.System" title="bGrease.System"><tt class="xref py py-class docutils literal"><span class="pre">System</span></tt></a> to house our top-level game state, logic, and keyboard bindings. Because the example game is simple, we can easily fit all of these things into a single system class. In a more complex games, it may be more appropriate to separate these things into separate systems.</p>
 <p>Remember that systems are behavioral aspects of our application, and are invoked each time step. So they are the perfect place to define and glue together the logic for the game.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">GameSystem</span><span class="p">(</span><span class="n">KeyControls</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Main game logic system</span>
+
+<span class="sd">    This subclass KeyControls so that the controls can be bound</span>
+<span class="sd">    directly to the game logic here</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">set_world</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">world</span><span class="p">):</span>
+        <span class="n">KeyControls</span><span class="o">.</span><span class="n">set_world</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">world</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">player_ship</span> <span class="o">=</span> <span class="n">PlayerShip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">world</span><span class="p">)</span>
+</pre></div>
+</div>
 <p>We start by defining our <tt class="xref py py-class docutils literal"><span class="pre">GameSystem</span></tt> as a subclass of <tt class="xref py py-class docutils literal"><span class="pre">KeyControls</span></tt>. <tt class="xref py py-class docutils literal"><span class="pre">KeyControls</span></tt> is a system subclass that provides a convenient mechanism for binding its methods to keyboard events.</p>
 <p>The <tt class="xref py py-meth docutils literal"><span class="pre">set_world()</span></tt> method is overridden to include a call to create a <tt class="xref py py-class docutils literal"><span class="pre">PlayerShip</span></tt> entity and store it in the system as game state. Since there is only one player ship, this is an easy way to keep track of it so that we can call it&#8217;s methods in response to particular key presses. We make the entity here in this method &#8211; instead of, say <tt class="xref py py-meth docutils literal"><span class="pre">__init__()</span></tt> &#8211; because this method is called when the system is added to the world. Since we need a reference to the world in order to create an entity, this is the most convenient place to do so.</p>
 <p>Next let&#8217;s add a method to turn the ship left when either the &#8220;a&#8221; or left arrow keys are pressed:</p>
+<div class="highlight-python"><pre>
+    @KeyControls.key_press(key.LEFT)
+    @KeyControls.key_press(key.A)
+    def start_turn_left(self):
+        if self.player_ship.exists:
+            self.player_ship.turn(-1)
+
+</pre>
+</div>
 <p>The first thing of interest are the two decorators at the top. The <tt class="xref py py-meth docutils literal"><span class="pre">KeyControls.key_press()</span></tt> decorator binds a method to a key press event for a specific key. As you can see from the code, we can have multiple key binding decorators for a given method to bind it to multiple keys. The decorator method takes one or two arguments. The first argument is the Pyglet key code from <tt class="xref py py-obj docutils literal"><span class="pre">pyglet.window.key</span></tt>. The second optional argument is to specify modifier keys (shift, alt, etc). By default, no modifier keys are assumed.</p>
 <p>The logic in this method is quite simple. First we check that the <tt class="xref py py-obj docutils literal"><span class="pre">player_ship</span></tt> entity exists. This ensures that the entity has not been deleted from the world before we use it. Just holding a reference to an entity does not prevent it from being deleted. In this way entity references in your code are like weak references. This check will prove useful when the player ship can be destroyed later on. Next we call the ship entity&#8217;s <tt class="xref py py-meth docutils literal"><span class="pre">turn_left()</span></tt> method we defined earlier passing it a direction of <tt class="docutils literal"><span class="pre">-1</span></tt>.</p>
 <p>Next we add a complimentary method to stop turning left:</p>
+<div class="highlight-python"><pre>
+    @KeyControls.key_release(key.LEFT)
+    @KeyControls.key_release(key.A)
+    def stop_turn_left(self):
+        if self.player_ship.exists and self.player_ship.movement.rotation &lt; 0:
+            self.player_ship.turn(0)
+
+</pre>
+</div>
 <p>The decorators here bind this method to the key release event for the same keys. The methods check for the existence of the entity as above, but also that it is currently turning left (negative rotation). This is to properly handle simultaneous key presses, e.g., left down, right down, then left up.</p>
 <p>The methods for handling turning right are the same as above with the direction reversed:</p>
+<div class="highlight-python"><pre>
+    @KeyControls.key_press(key.RIGHT)
+    @KeyControls.key_press(key.D)
+    def start_turn_right(self):
+        if self.player_ship.exists:
+            self.player_ship.turn(1)
+
+    @KeyControls.key_release(key.RIGHT)
+    @KeyControls.key_release(key.D)
+    def stop_turn_right(self):
+        if self.player_ship.exists and self.player_ship.movement.rotation &gt; 0:
+            self.player_ship.turn(0)
+    
+    @KeyControls.key_hold(key.UP)
+    @KeyControls.key_hold(key.W)
+    def thrust(self, dt):
+        if self.player_ship.exists:
+            self.player_ship.thrust_on()
+        
+    @KeyControls.key_release(key.UP)
+    @KeyControls.key_release(key.W)
+    def stop_thrust(self):
+        if self.player_ship.exists:
+            self.player_ship.thrust_off()
+            
+</pre>
+</div>
 <p>For activating thrust, we use the <tt class="xref py py-meth docutils literal"><span class="pre">key_hold()</span></tt> decorator. This works differently than the key press and release decorators we used for turning. The press and release decorators configure a method to fire once for each specific key event. The key hold decorator configures a method to fire continuously, once per time step, as long as the specified key is held down. This is perfect for thrust, which needs to be adjusted continuously as the ship turns, and runs a continuous animation while activated.</p>
 <p>The <tt class="xref py py-meth docutils literal"><span class="pre">stop_thrust()</span></tt> method is simply bound to key release, to ensure the thrust is deactivated at the proper time.</p>
 <p>With the key control logic code in place, the next step is to add the <tt class="xref py py-class docutils literal"><span class="pre">GameSystem</span></tt> to our <tt class="xref py py-class docutils literal"><span class="pre">GameWorld</span></tt>&#8216;s systems (Line 16 below):</p>
+<div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">class</span> <span class="nc">GameWorld</span><span class="p">(</span><span class="n">bGrease</span><span class="o">.</span><span class="n">grease_pyglet</span><span class="o">.</span><span class="n">World</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">configure</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Configure the game world&#39;s components, systems and renderers&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">components</span><span class="o">.</span><span class="n">position</span> <span class="o">=</span> <span class="n">component</span><span class="o">.</span><span class="n">Position</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">components</span><span class="o">.</span><span class="n">movement</span> <span class="o">=</span> <span class="n">component</span><span class="o">.</span><span class="n">Movement</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">components</span><span class="o">.</span><span class="n">shape</span> <span class="o">=</span> <span class="n">component</span><span class="o">.</span><span class="n">Shape</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">components</span><span class="o">.</span><span class="n">renderable</span> <span class="o">=</span> <span class="n">component</span><span class="o">.</span><span class="n">Renderable</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">components</span><span class="o">.</span><span class="n">collision</span> <span class="o">=</span> <span class="n">component</span><span class="o">.</span><span class="n">Collision</span><span class="p">()</span>        
+        <span class="bp">self</span><span class="o">.</span><span class="n">components</span><span class="o">.</span><span class="n">gun</span> <span class="o">=</span> <span class="n">component</span><span class="o">.</span><span class="n">Component</span><span class="p">(</span>
+            <span class="n">firing</span><span class="o">=</span><span class="nb">bool</span><span class="p">,</span> 
+            <span class="n">last_fire_time</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span> 
+            <span class="n">cool_down</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">systems</span><span class="o">.</span><span class="n">movement</span> <span class="o">=</span> <span class="n">controller</span><span class="o">.</span><span class="n">EulerMovement</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">systems</span><span class="o">.</span><span class="n">game</span> <span class="o">=</span> <span class="n">GameSystem</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">systems</span><span class="o">.</span><span class="n">collision</span> <span class="o">=</span> <span class="n">collision</span><span class="o">.</span><span class="n">Circular</span><span class="p">(</span>
+            <span class="n">handlers</span><span class="o">=</span><span class="p">[</span><span class="n">collision</span><span class="o">.</span><span class="n">dispatch_events</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">systems</span><span class="o">.</span><span class="n">sweeper</span> <span class="o">=</span> <span class="n">Sweeper</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">systems</span><span class="o">.</span><span class="n">gun</span> <span class="o">=</span> <span class="n">Gun</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">systems</span><span class="o">.</span><span class="n">wrapper</span> <span class="o">=</span> <span class="n">PositionWrapper</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">renderers</span><span class="o">.</span><span class="n">camera</span> <span class="o">=</span> <span class="n">renderer</span><span class="o">.</span><span class="n">Camera</span><span class="p">(</span>
+            <span class="n">position</span><span class="o">=</span><span class="p">(</span><span class="n">window</span><span class="o">.</span><span class="n">width</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="n">window</span><span class="o">.</span><span class="n">height</span> <span class="o">/</span> <span class="mi">2</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">renderers</span><span class="o">.</span><span class="n">vector</span> <span class="o">=</span> <span class="n">renderer</span><span class="o">.</span><span class="n">Vector</span><span class="p">(</span><span class="n">line_width</span><span class="o">=</span><span class="mf">1.5</span><span class="p">)</span>
+</pre></div>
+</td></tr></table></div>
 <p>We also modify the <tt class="xref py py-func docutils literal"><span class="pre">main()</span></tt> function to push the system&#8217;s event handler onto the game window so that it receives the key events (Line #7 below):</p>
+<div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Initialize and run the game&quot;&quot;&quot;</span>
+    <span class="k">global</span> <span class="n">window</span>
+    <span class="n">window</span> <span class="o">=</span> <span class="n">pyglet</span><span class="o">.</span><span class="n">window</span><span class="o">.</span><span class="n">Window</span><span class="p">()</span>
+    <span class="n">world</span> <span class="o">=</span> <span class="n">GameWorld</span><span class="p">()</span>
+    <span class="n">pyglet</span><span class="o">.</span><span class="n">clock</span><span class="o">.</span><span class="n">schedule</span><span class="p">(</span><span class="n">world</span><span class="o">.</span><span class="n">tick</span><span class="p">)</span>
+    <span class="n">window</span><span class="o">.</span><span class="n">push_handlers</span><span class="p">(</span><span class="n">world</span><span class="p">)</span>
+    <span class="n">window</span><span class="o">.</span><span class="n">push_handlers</span><span class="p">(</span><span class="n">world</span><span class="o">.</span><span class="n">systems</span><span class="o">.</span><span class="n">game</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">8</span><span class="p">):</span>
+        <span class="n">Asteroid</span><span class="p">(</span><span class="n">world</span><span class="p">)</span>
+    <span class="n">pyglet</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</pre></div>
+</td></tr></table></div>
 <p>Now we can control the ship and fly it around the screen.</p>
 <img alt="../_images/flying_around.png" src="../_images/flying_around.png" />
 </div>
 <div class="section" id="running-into-stuff">
 <span id="index-2"></span><h2>Running Into Stuff<a class="headerlink" href="#running-into-stuff" title="Permalink to this headline">¶</a></h2>
 <p>Flying around is way too safe at the moment, since you can&#8217;t actually run into anything! Let&#8217;s see what we can do about that. Implementing collision requires that we add a component and a system to the <tt class="xref py py-class docutils literal"><span class="pre">GameWorld</span></tt>:</p>
+<div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">class</span> <span class="nc">GameWorld</span><span class="p">(</span><span class="n">bGrease</span><span class="o">.</span><span class="n">grease_pyglet</span><span class="o">.</span><span class="n">World</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">configure</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Configure the game world&#39;s components, systems and renderers&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">components</span><span class="o">.</span><span class="n">position</span> <span class="o">=</span> <span class="n">component</span><span class="o">.</span><span class="n">Position</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">components</span><span class="o">.</span><span class="n">movement</span> <span class="o">=</span> <span class="n">component</span><span class="o">.</span><span class="n">Movement</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">components</span><span class="o">.</span><span class="n">shape</span> <span class="o">=</span> <span class="n">component</span><span class="o">.</span><span class="n">Shape</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">components</span><span class="o">.</span><span class="n">renderable</span> <span class="o">=</span> <span class="n">component</span><span class="o">.</span><span class="n">Renderable</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">components</span><span class="o">.</span><span class="n">collision</span> <span class="o">=</span> <span class="n">component</span><span class="o">.</span><span class="n">Collision</span><span class="p">()</span>        
+        <span class="bp">self</span><span class="o">.</span><span class="n">components</span><span class="o">.</span><span class="n">gun</span> <span class="o">=</span> <span class="n">component</span><span class="o">.</span><span class="n">Component</span><span class="p">(</span>
+            <span class="n">firing</span><span class="o">=</span><span class="nb">bool</span><span class="p">,</span> 
+            <span class="n">last_fire_time</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span> 
+            <span class="n">cool_down</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">systems</span><span class="o">.</span><span class="n">movement</span> <span class="o">=</span> <span class="n">controller</span><span class="o">.</span><span class="n">EulerMovement</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">systems</span><span class="o">.</span><span class="n">game</span> <span class="o">=</span> <span class="n">GameSystem</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">systems</span><span class="o">.</span><span class="n">collision</span> <span class="o">=</span> <span class="n">collision</span><span class="o">.</span><span class="n">Circular</span><span class="p">(</span>
+            <span class="n">handlers</span><span class="o">=</span><span class="p">[</span><span class="n">collision</span><span class="o">.</span><span class="n">dispatch_events</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">systems</span><span class="o">.</span><span class="n">sweeper</span> <span class="o">=</span> <span class="n">Sweeper</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">systems</span><span class="o">.</span><span class="n">gun</span> <span class="o">=</span> <span class="n">Gun</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">systems</span><span class="o">.</span><span class="n">wrapper</span> <span class="o">=</span> <span class="n">PositionWrapper</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">renderers</span><span class="o">.</span><span class="n">camera</span> <span class="o">=</span> <span class="n">renderer</span><span class="o">.</span><span class="n">Camera</span><span class="p">(</span>
+            <span class="n">position</span><span class="o">=</span><span class="p">(</span><span class="n">window</span><span class="o">.</span><span class="n">width</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="n">window</span><span class="o">.</span><span class="n">height</span> <span class="o">/</span> <span class="mi">2</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">renderers</span><span class="o">.</span><span class="n">vector</span> <span class="o">=</span> <span class="n">renderer</span><span class="o">.</span><span class="n">Vector</span><span class="p">(</span><span class="n">line_width</span><span class="o">=</span><span class="mf">1.5</span><span class="p">)</span>
+</pre></div>
+</td></tr></table></div>
 <p>The <a class="reference internal" href="../mod/component.html#bGrease.component.Collision" title="bGrease.component.Collision"><tt class="xref py py-class docutils literal"><span class="pre">Collision</span></tt></a> component (line 9 above) has the fields we need to make the collision system (line 13-14 above) work. The fields in this component are:</p>
 <dl class="docutils">
 <dt><cite>aabb</cite></dt>
@@ -163,10 +407,104 @@
 <dd>Not all entities in the collision component need to be able to collide with each other. These two mask fields let you specify which entities can collide. Both mask fields are 32 bit integer bitmasks. When two entities are compared for collision, the <tt class="xref py py-attr docutils literal"><span class="pre">from_mask</span></tt> value from each entity is bit-anded with the <tt class="xref py py-attr docutils literal"><span class="pre">into_mask</span></tt> of the other. If this bit-and operation returns a non-zero result, then a collision is possible, if the result is zero, the entities cannot collide. Note that this check happens in both directions, so a collision can occur between entity A and B if <tt class="docutils literal"><span class="pre">A.collision.from_mask</span> <span class="pre">&amp;</span> <span class="pre">B.collision.into_mask</span> <span class="pre">!=</span> <span class="pre">0</span> <span class="pre">or</span> <span class="pre">B.collision.from_mask</span> <span class="pre">&amp;</span> <span class="pre">A.collision.into_mask</span> <span class="pre">!=</span> <span class="pre">0</span></tt>.</dd>
 </dl>
 <p>Let&#8217;s take a closer look at how the collision system is configured above:</p>
+<div class="highlight-python"><div class="highlight"><pre>        <span class="bp">self</span><span class="o">.</span><span class="n">systems</span><span class="o">.</span><span class="n">collision</span> <span class="o">=</span> <span class="n">collision</span><span class="o">.</span><span class="n">Circular</span><span class="p">(</span>
+            <span class="n">handlers</span><span class="o">=</span><span class="p">[</span><span class="n">collision</span><span class="o">.</span><span class="n">dispatch_events</span><span class="p">])</span>
+</pre></div>
+</div>
 <p>There are two major steps to collision handling in Grease: <em>collision detection</em> and <em>collision response</em>. The detection step happens within the collision system. A set of pairs of the currently colliding entities can be found in the <tt class="xref py py-attr docutils literal"><span class="pre">collision_pairs</span></tt> attribute of the collision system. Applications are free to use <tt class="xref py py-attr docutils literal"><span class="pre">collision_pairs</span></tt> directly, but they can also register one or more handlers for more automated collision response. Collision handlers are simply functions that accept the collision system they are configured for as an argument. The handler functions are called each time step to deal with collision response.</p>
 <p>Above we have configured <a class="reference internal" href="../mod/collision.html#bGrease.collision.dispatch_events" title="bGrease.collision.dispatch_events"><tt class="xref py py-func docutils literal"><span class="pre">dispatch_events()</span></tt></a> as the collision handler. This function calls <tt class="xref py py-meth docutils literal"><span class="pre">on_collide()</span></tt> on all entities that are colliding. The entities&#8217; <tt class="xref py py-meth docutils literal"><span class="pre">on_collide()</span></tt> handler methods can contain whatever logic desired to handle the collision. This method accepts three arguments: <tt class="xref py py-attr docutils literal"><span class="pre">other_entity</span></tt>, <tt class="xref py py-attr docutils literal"><span class="pre">collision_point</span></tt>, and <tt class="xref py py-attr docutils literal"><span class="pre">collision_normal</span></tt>. These arguments are the other entity collided with, the point where the collision occurred and the normal vector at the point of collision respectively. It is up to the handler method to decide how these values are used. Note that when two entities collide, both of their <tt class="xref py py-meth docutils literal"><span class="pre">on_collide()</span></tt> handler methods will be called, if defined.</p>
 <p>In our game we will leverage the collision masks to make it so that the player&#8217;s ship collides with asteroids, but the asteroids do not collide with each other. To do that we need to modify the <tt class="xref py py-class docutils literal"><span class="pre">Asteroid</span></tt> and <tt class="xref py py-class docutils literal"><span class="pre">PlayerShip</span></tt> constructors to set the collision component fields.</p>
+<div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">class</span> <span class="nc">PlayerShip</span><span class="p">(</span><span class="n">BlasteroidsEntity</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Thrust ship piloted by the player&quot;&quot;&quot;</span>
+
+    <span class="n">THRUST_ACCEL</span> <span class="o">=</span> <span class="mi">75</span>
+    <span class="n">TURN_RATE</span> <span class="o">=</span> <span class="mi">240</span>
+    <span class="n">SHAPE_VERTS</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="p">(</span><span class="o">-</span><span class="mi">8</span><span class="p">,</span> <span class="o">-</span><span class="mi">12</span><span class="p">),</span> <span class="p">(</span><span class="o">-</span><span class="mi">4</span><span class="p">,</span> <span class="o">-</span><span class="mi">10</span><span class="p">),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">8</span><span class="p">),</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="o">-</span><span class="mi">10</span><span class="p">),</span> <span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="o">-</span><span class="mi">12</span><span class="p">),</span> <span class="c"># flame</span>
+        <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">12</span><span class="p">),</span> <span class="p">(</span><span class="o">-</span><span class="mi">8</span><span class="p">,</span> <span class="o">-</span><span class="mi">12</span><span class="p">),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">8</span><span class="p">),</span> <span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="o">-</span><span class="mi">12</span><span class="p">)]</span>
+    <span class="n">COLOR</span> <span class="o">=</span> <span class="s">&quot;#7f7&quot;</span>
+    <span class="n">COLLISION_RADIUS</span> <span class="o">=</span> <span class="mf">7.5</span>
+    <span class="n">COLLIDE_INTO_MASK</span> <span class="o">=</span> <span class="mh">0x1</span>
+    <span class="n">GUN_COOL_DOWN</span> <span class="o">=</span> <span class="mf">0.5</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">world</span><span class="p">,</span> <span class="n">invincible</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">position</span><span class="o">.</span><span class="n">position</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">position</span><span class="o">.</span><span class="n">angle</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">movement</span><span class="o">.</span><span class="n">velocity</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">movement</span><span class="o">.</span><span class="n">rotation</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="o">.</span><span class="n">verts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">SHAPE_VERTS</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="o">.</span><span class="n">closed</span> <span class="o">=</span> <span class="bp">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">renderable</span><span class="o">.</span><span class="n">color</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">COLOR</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">collision</span><span class="o">.</span><span class="n">into_mask</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">COLLIDE_INTO_MASK</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">collision</span><span class="o">.</span><span class="n">radius</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">COLLISION_RADIUS</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gun</span><span class="o">.</span><span class="n">cool_down</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">GUN_COOL_DOWN</span>
+</pre></div>
+</td></tr></table></div>
 <p>Lines 21-22 above initialize the collision settings for the player ship. Note that the radius is set slightly smaller than the farthest vertex in the shape (by 0.5 units). This is common when using circular collision shapes, it prevents the appearance of false positive collisions that can make the game feel unfair.</p>
+<div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">class</span> <span class="nc">Asteroid</span><span class="p">(</span><span class="n">BlasteroidsEntity</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Big floating space rock&quot;&quot;&quot;</span>
+
+    <span class="n">COLLIDE_INTO_MASK</span> <span class="o">=</span> <span class="mh">0x2</span>
+    <span class="n">UNIT_CIRCLE</span> <span class="o">=</span> <span class="p">[(</span><span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">a</span><span class="p">)),</span> <span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">a</span><span class="p">)))</span> 
+        <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">360</span><span class="p">,</span> <span class="mi">18</span><span class="p">)]</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">world</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="mi">45</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">position</span><span class="o">.</span><span class="n">position</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">([</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span> <span class="o">*</span> <span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">50</span><span class="p">,</span> <span class="n">window</span><span class="o">.</span><span class="n">width</span> <span class="o">/</span> <span class="mi">2</span><span class="p">),</span> 
+            <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">([</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span> <span class="o">*</span> <span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">50</span><span class="p">,</span> <span class="n">window</span><span class="o">.</span><span class="n">height</span> <span class="o">/</span> <span class="mi">2</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">movement</span><span class="o">.</span><span class="n">velocity</span> <span class="o">=</span> <span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">gauss</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">700</span> <span class="o">/</span> <span class="n">radius</span><span class="p">),</span> <span class="n">random</span><span class="o">.</span><span class="n">gauss</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">700</span> <span class="o">/</span> <span class="n">radius</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">movement</span><span class="o">.</span><span class="n">rotation</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">gauss</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">15</span><span class="p">)</span>
+        <span class="n">verts</span> <span class="o">=</span> <span class="p">[(</span><span class="n">random</span><span class="o">.</span><span class="n">gauss</span><span class="p">(</span><span class="n">x</span> <span class="o">*</span> <span class="n">radius</span><span class="p">,</span> <span class="n">radius</span> <span class="o">/</span> <span class="mi">7</span><span class="p">),</span> <span class="n">random</span><span class="o">.</span><span class="n">gauss</span><span class="p">(</span><span class="n">y</span> <span class="o">*</span> <span class="n">radius</span><span class="p">,</span> <span class="n">radius</span> <span class="o">/</span> <span class="mi">7</span><span class="p">))</span>
+            <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">UNIT_CIRCLE</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="o">.</span><span class="n">verts</span> <span class="o">=</span> <span class="n">verts</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">renderable</span><span class="o">.</span><span class="n">color</span> <span class="o">=</span> <span class="s">&quot;#aaa&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">collision</span><span class="o">.</span><span class="n">radius</span> <span class="o">=</span> <span class="n">radius</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">collision</span><span class="o">.</span><span class="n">from_mask</span> <span class="o">=</span> <span class="n">PlayerShip</span><span class="o">.</span><span class="n">COLLIDE_INTO_MASK</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">collision</span><span class="o">.</span><span class="n">into_mask</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">COLLIDE_INTO_MASK</span>
+</pre></div>
+</td></tr></table></div>
 <p>Lines 18-20 above setup collision for the asteroids. The radius is simply set to the asteroid&#8217;s radius. The collision masks are configured so that the asteroids will collide with the player&#8217;s ship, but not with each other.</p>
 <p>To start with, will add a simple <tt class="xref py py-meth docutils literal"><span class="pre">on_collide()</span></tt> method to both the <tt class="xref py py-class docutils literal"><span class="pre">Asteroid</span></tt> and <tt class="xref py py-class docutils literal"><span class="pre">PlayerShip</span></tt> classes that simply delete the entities when they collide:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">on_collide</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">,</span> <span class="n">point</span><span class="p">,</span> <span class="n">normal</span><span class="p">):</span>
@@ -185,8 +523,47 @@
 time.</li>
 </ul>
 <p>Let&#8217;s start with the <tt class="xref py py-meth docutils literal"><span class="pre">explode()</span></tt> method. Since asteroids and the player ship are basically the same except for their shape, they can share the method code. The most straightforward way to do this, is to create a common base class for both entities:</p>
+<div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">class</span> <span class="nc">BlasteroidsEntity</span><span class="p">(</span><span class="n">bGrease</span><span class="o">.</span><span class="n">Entity</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Entity base class&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">explode</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Segment the entity shape into itty bits&quot;&quot;&quot;</span>
+        <span class="n">shape</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="o">.</span><span class="n">verts</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">angle</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">position</span><span class="o">.</span><span class="n">angle</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">segment</span> <span class="ow">in</span> <span class="n">shape</span><span class="o">.</span><span class="n">segments</span><span class="p">():</span>
+            <span class="n">debris</span> <span class="o">=</span> <span class="n">Debris</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">world</span><span class="p">)</span>
+            <span class="n">debris</span><span class="o">.</span><span class="n">shape</span><span class="o">.</span><span class="n">verts</span> <span class="o">=</span> <span class="n">segment</span>
+            <span class="n">debris</span><span class="o">.</span><span class="n">position</span><span class="o">.</span><span class="n">position</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">position</span><span class="o">.</span><span class="n">position</span>
+            <span class="n">debris</span><span class="o">.</span><span class="n">movement</span><span class="o">.</span><span class="n">velocity</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">movement</span><span class="o">.</span><span class="n">velocity</span>
+            <span class="n">debris</span><span class="o">.</span><span class="n">movement</span><span class="o">.</span><span class="n">velocity</span> <span class="o">+=</span> <span class="n">segment</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">normalized</span><span class="p">()</span> <span class="o">*</span> <span class="n">random</span><span class="o">.</span><span class="n">gauss</span><span class="p">(</span><span class="mi">50</span><span class="p">,</span> <span class="mi">20</span><span class="p">)</span>
+            <span class="n">debris</span><span class="o">.</span><span class="n">movement</span><span class="o">.</span><span class="n">rotation</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">gauss</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">45</span><span class="p">)</span>
+            <span class="n">debris</span><span class="o">.</span><span class="n">renderable</span><span class="o">.</span><span class="n">color</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">renderable</span><span class="o">.</span><span class="n">color</span>
+</pre></div>
+</td></tr></table></div>
 <p>We also define an entity class for the debris. This class defines no behavior of its own, it just serves to tag the debris entities so that we can easily manage them in the system we will be creating later:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">Debris</span><span class="p">(</span><span class="n">bGrease</span><span class="o">.</span><span class="n">Entity</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Floating space junk&quot;&quot;&quot;</span>
+</pre></div>
+</div>
 <p>Let&#8217;s take apart the <tt class="xref py py-class docutils literal"><span class="pre">BlasteroidsEntity</span></tt> class and see how it works. In line 6 above, we take the base shape of the entity and transform it into a new shape, rotating it to the current angle of the entity that is exploding:</p>
+<div class="highlight-python"><pre>
+    def explode(self):
+        """Segment the entity shape into itty bits"""
+        shape = self.shape.verts.transform(angle=self.position.angle)
+</pre>
+</div>
 <p>Next we create the debris. This is aided by the <tt class="xref py py-meth docutils literal"><span class="pre">shape.segments()</span></tt> method (line 7). This method returns an iterator of all of the individual line segments of the original shape as separate shapes. This effectively fragments our original entity shape.</p>
 <p>We loop over these fragment segments creating debris entities for each. The shape of each debris fragment is a single segment of the original entity&#8217;s shape. We also set the initial position and velocity of the debris entity to that of the exploding entity (line 10-11). Next we add some random velocity outward from the exploding entity&#8217;s position to make it &#8220;explode&#8221; (line 12). Because the base shapes are centered around the origin, we can just use one of the vertex positions to determine the approximate outward direction from the center. Normalizing the first vertex vector &#8211; giving it a length of 1 &#8211; and multiplying it by a random value gives us the desired outward push. A bit of random rotation adds a little spice to the effect (line 13). Last, we set the color of the debris to the same as the original entity so they appear to be pieces of the original.</p>
 <p>To trigger the explosions, we simply need to change the base class of our <tt class="xref py py-class docutils literal"><span class="pre">PlayerShip</span></tt> and <tt class="xref py py-class docutils literal"><span class="pre">Asteroid</span></tt> classes to <tt class="xref py py-class docutils literal"><span class="pre">BlasteroidsEntity</span></tt> and add a call to <tt class="xref py py-meth docutils literal"><span class="pre">explode()</span></tt> in their <tt class="xref py py-meth docutils literal"><span class="pre">on_collide()</span></tt> methods:</p>
@@ -199,16 +576,49 @@ time.</li>
 <div class="section" id="cleaning-up-the-mess">
 <span id="index-4"></span><h3>Cleaning Up the Mess<a class="headerlink" href="#cleaning-up-the-mess" title="Permalink to this headline">¶</a></h3>
 <p>Blowing stuff up is great fun, of course, but at some point we need to clean up the debris. We&#8217;ll accomplish this by adding a custom <tt class="xref py py-class docutils literal"><span class="pre">Sweeper</span></tt> system:</p>
+<div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">class</span> <span class="nc">Sweeper</span><span class="p">(</span><span class="n">bGrease</span><span class="o">.</span><span class="n">System</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Clears out space debris&quot;&quot;&quot;</span>
+
+    <span class="n">SWEEP_TIME</span> <span class="o">=</span> <span class="mf">2.0</span>
+
+    <span class="k">def</span> <span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dt</span><span class="p">):</span>
+        <span class="n">fade</span> <span class="o">=</span> <span class="n">dt</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">SWEEP_TIME</span>
+        <span class="k">for</span> <span class="n">entity</span> <span class="ow">in</span> <span class="nb">tuple</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">world</span><span class="p">[</span><span class="n">Debris</span><span class="p">]</span><span class="o">.</span><span class="n">entities</span><span class="p">):</span>
+            <span class="n">color</span> <span class="o">=</span> <span class="n">entity</span><span class="o">.</span><span class="n">renderable</span><span class="o">.</span><span class="n">color</span>
+            <span class="k">if</span> <span class="n">color</span><span class="o">.</span><span class="n">a</span> <span class="o">&gt;</span> <span class="mf">0.2</span><span class="p">:</span>
+                <span class="n">color</span><span class="o">.</span><span class="n">a</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">color</span><span class="o">.</span><span class="n">a</span> <span class="o">-</span> <span class="n">fade</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">entity</span><span class="o">.</span><span class="n">delete</span><span class="p">()</span>
+</pre></div>
+</td></tr></table></div>
 <p>This is first system we&#8217;ve created from scratch, so let&#8217;s look a little deeper at what a system actually is. You&#8217;ll notice we are subclassing <a class="reference internal" href="../mod/grease.html#bGrease.System" title="bGrease.System"><tt class="xref py py-class docutils literal"><span class="pre">System</span></tt></a> an abstract base class defined by the framework. Subclassing <a class="reference internal" href="../mod/grease.html#bGrease.System" title="bGrease.System"><tt class="xref py py-class docutils literal"><span class="pre">System</span></tt></a> is optional, though it helps make it clear what type of part the class defines.</p>
 <p>The only method that a system must implement is <tt class="xref py py-meth docutils literal"><span class="pre">step()</span></tt>. The <tt class="xref py py-meth docutils literal"><span class="pre">step()</span></tt> method is called by the world every time step, passing in the time delta since the last time step as a float. This is where the system implements its business logic.</p>
-<p>Optionally a system can implement a <tt class="xref py py-meth docutils literal"><span class="pre">set_world()</span></tt> method. If defined, this method is called when the system is added to a world, passing the <a href="#id1"><span class="problematic" id="id2">|World|</span></a> instance as its argument. This can be a good place to do system initialization where you need a world object, such as we did with the <tt class="xref py py-class docutils literal"><span class="pre">GameWorld</span></tt> system implementation earlier. The <a class="reference internal" href="../mod/grease.html#bGrease.System" title="bGrease.System"><tt class="xref py py-class docutils literal"><span class="pre">System</span></tt></a> base class defines a simple implementation of <tt class="xref py py-meth docutils literal"><span class="pre">set_world()</span></tt> that stores a reference to the system&#8217;s world for convenient access to its entities, components or even other systems.</p>
+<p>Optionally a system can implement a <tt class="xref py py-meth docutils literal"><span class="pre">set_world()</span></tt> method. If defined, this method is called when the system is added to a world, passing the <a class="reference internal" href="../mod/grease_pyglet.html#bGrease.grease_pyglet.World" title="bGrease.grease_pyglet.World"><tt class="xref py py-class docutils literal"><span class="pre">World</span></tt></a> instance as its argument. This can be a good place to do system initialization where you need a world object, such as we did with the <tt class="xref py py-class docutils literal"><span class="pre">GameWorld</span></tt> system implementation earlier. The <a class="reference internal" href="../mod/grease.html#bGrease.System" title="bGrease.System"><tt class="xref py py-class docutils literal"><span class="pre">System</span></tt></a> base class defines a simple implementation of <tt class="xref py py-meth docutils literal"><span class="pre">set_world()</span></tt> that stores a reference to the system&#8217;s world for convenient access to its entities, components or even other systems.</p>
 <p>The <tt class="xref py py-attr docutils literal"><span class="pre">SWEEP_TIME</span></tt> value defined on our class specifies the time debris will live before it is &#8220;swept up&#8221; by the system and deleted. As this time elapses, the alpha value of each debris entity&#8217;s color is slowly reduced, fading the debris away.</p>
 <p>We determine the amount to fade the debris for each time step by dividing the time delta <tt class="docutils literal"><span class="pre">dt</span></tt> by the <tt class="xref py py-attr docutils literal"><span class="pre">SWEEP_TIME</span></tt> (line 7 above). This works because the color component values are floating point numbers between 0 and 1.0:</p>
+<div class="highlight-python"><div class="highlight"><pre>        <span class="n">fade</span> <span class="o">=</span> <span class="n">dt</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">SWEEP_TIME</span>
+</pre></div>
+</div>
 <p>Next we loop iterating through the <tt class="xref py py-class docutils literal"><span class="pre">Debris</span></tt> entities. We do this by accessing the <em>entity extent</em> for <tt class="xref py py-class docutils literal"><span class="pre">Debris</span></tt>. This extent is accessed by using the <tt class="xref py py-class docutils literal"><span class="pre">Debris</span></tt> class as a key to the world:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="bp">self</span><span class="o">.</span><span class="n">world</span><span class="p">[</span><span class="n">Debris</span><span class="p">]</span><span class="o">.</span><span class="n">entities</span>
 </pre></div>
 </div>
 <p>The entity extent object returned by <tt class="docutils literal"><span class="pre">self.world[Debris]</span></tt> has an attribute <tt class="xref py py-attr docutils literal"><span class="pre">entities</span></tt> which is the set of all entities for that extent in the world. This conveniently gives us all of the debris entities in existence. You&#8217;ll notice that in the for loop on line 7, we turn this set of entities into a tuple:</p>
+<div class="highlight-python"><pre>        for entity in tuple(self.world[Debris].entities):
+</pre>
+</div>
 <p>This makes a copy of the set to iterate over, so we can safely remove debris entities from the world inside the loop. Without making a copy, we might actually change the members of the <tt class="xref py py-attr docutils literal"><span class="pre">entities</span></tt> while iterating it, which at best would cause an exception, and at worst would result in some entities being skipped over. Any time you iterate over a mutable sequence, such as a list, set or dict, you need to be careful about changes to that sequence while iterating it. This tends to be a common gotcha in Python game development.</p>
 <p>Inside the loop things are pretty straightforward. For each debris entity, we get the color from the renderable component (line 9). Color objects have the attributes <tt class="xref py py-attr docutils literal"><span class="pre">r</span></tt>, <tt class="xref py py-attr docutils literal"><span class="pre">g</span></tt>, <tt class="xref py py-attr docutils literal"><span class="pre">b</span></tt>, and <tt class="xref py py-attr docutils literal"><span class="pre">a</span></tt> for their red, green, blue, and alpha values. We only care about the alpha in this system. For alpha values greater than 0.2, we fade it a bit to a minimum value of zero. If the alpha value is not greater than 0.2, we delete the debris entity entirely (lines 10-13).</p>
 <p>Now that the <tt class="xref py py-class docutils literal"><span class="pre">Sweeper</span></tt> class is implemented, the last thing we need to do is add it to our game world. We just need to add this line to the <tt class="xref py py-meth docutils literal"><span class="pre">configure()</span></tt> method of the <tt class="xref py py-class docutils literal"><span class="pre">GameoWorld</span></tt> class:</p>
@@ -256,20 +666,132 @@ for each field.</li>
 <p class="last">The only difference between custom and built-in components is that the fields for the former are already specified for convenience. Using custom components has no drawbacks other than the additional configuration required.</p>
 </div>
 <p>With the <tt class="xref py py-obj docutils literal"><span class="pre">gun</span></tt> component in place, lets modify the <tt class="xref py py-class docutils literal"><span class="pre">PlayerShip</span></tt> class to initialize the gun data:</p>
+<div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">class</span> <span class="nc">PlayerShip</span><span class="p">(</span><span class="n">BlasteroidsEntity</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Thrust ship piloted by the player&quot;&quot;&quot;</span>
+
+    <span class="n">THRUST_ACCEL</span> <span class="o">=</span> <span class="mi">75</span>
+    <span class="n">TURN_RATE</span> <span class="o">=</span> <span class="mi">240</span>
+    <span class="n">SHAPE_VERTS</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="p">(</span><span class="o">-</span><span class="mi">8</span><span class="p">,</span> <span class="o">-</span><span class="mi">12</span><span class="p">),</span> <span class="p">(</span><span class="o">-</span><span class="mi">4</span><span class="p">,</span> <span class="o">-</span><span class="mi">10</span><span class="p">),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">8</span><span class="p">),</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="o">-</span><span class="mi">10</span><span class="p">),</span> <span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="o">-</span><span class="mi">12</span><span class="p">),</span> <span class="c"># flame</span>
+        <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">12</span><span class="p">),</span> <span class="p">(</span><span class="o">-</span><span class="mi">8</span><span class="p">,</span> <span class="o">-</span><span class="mi">12</span><span class="p">),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">8</span><span class="p">),</span> <span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="o">-</span><span class="mi">12</span><span class="p">)]</span>
+    <span class="n">COLOR</span> <span class="o">=</span> <span class="s">&quot;#7f7&quot;</span>
+    <span class="n">COLLISION_RADIUS</span> <span class="o">=</span> <span class="mf">7.5</span>
+    <span class="n">COLLIDE_INTO_MASK</span> <span class="o">=</span> <span class="mh">0x1</span>
+    <span class="n">GUN_COOL_DOWN</span> <span class="o">=</span> <span class="mf">0.5</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">world</span><span class="p">,</span> <span class="n">invincible</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">position</span><span class="o">.</span><span class="n">position</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">position</span><span class="o">.</span><span class="n">angle</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">movement</span><span class="o">.</span><span class="n">velocity</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">movement</span><span class="o">.</span><span class="n">rotation</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="o">.</span><span class="n">verts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">SHAPE_VERTS</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="o">.</span><span class="n">closed</span> <span class="o">=</span> <span class="bp">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">renderable</span><span class="o">.</span><span class="n">color</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">COLOR</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">collision</span><span class="o">.</span><span class="n">into_mask</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">COLLIDE_INTO_MASK</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">collision</span><span class="o">.</span><span class="n">radius</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">COLLISION_RADIUS</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gun</span><span class="o">.</span><span class="n">cool_down</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">GUN_COOL_DOWN</span>
+</pre></div>
+</td></tr></table></div>
 <p>We add a class attribute on line 12 to specify a one half second cooldown for the gun. On line 24 we set this value in the <tt class="xref py py-obj docutils literal"><span class="pre">gun</span></tt> component. We do not have to explicitly set the <tt class="xref py py-attr docutils literal"><span class="pre">firing</span></tt> and <tt class="xref py py-attr docutils literal"><span class="pre">last_fire_time</span></tt> fields. They will automatically default to <tt class="docutils literal"><span class="pre">False</span></tt> and <tt class="docutils literal"><span class="pre">0</span></tt> respectively.</p>
 <div class="section" id="shot-class">
 <span id="index-6"></span><h3>Shot Class<a class="headerlink" href="#shot-class" title="Permalink to this headline">¶</a></h3>
 <p>Now let&#8217;s implement the <tt class="xref py py-class docutils literal"><span class="pre">Shot</span></tt> entity class for our bullets:</p>
+<div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">class</span> <span class="nc">Shot</span><span class="p">(</span><span class="n">bGrease</span><span class="o">.</span><span class="n">Entity</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Pew Pew!&quot;&quot;&quot;</span>
+
+    <span class="n">SPEED</span> <span class="o">=</span> <span class="mi">300</span>
+    <span class="n">TIME_TO_LIVE</span> <span class="o">=</span> <span class="mf">0.75</span> <span class="c"># seconds</span>
+    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">world</span><span class="p">,</span> <span class="n">shooter</span><span class="p">,</span> <span class="n">angle</span><span class="p">):</span>
+        <span class="n">offset</span> <span class="o">=</span> <span class="n">geometry</span><span class="o">.</span><span class="n">Vec2d</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">shooter</span><span class="o">.</span><span class="n">collision</span><span class="o">.</span><span class="n">radius</span><span class="p">)</span>
+        <span class="n">offset</span><span class="o">.</span><span class="n">rotate</span><span class="p">(</span><span class="n">angle</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">position</span><span class="o">.</span><span class="n">position</span> <span class="o">=</span> <span class="n">shooter</span><span class="o">.</span><span class="n">position</span><span class="o">.</span><span class="n">position</span> <span class="o">+</span> <span class="n">offset</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">movement</span><span class="o">.</span><span class="n">velocity</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">offset</span><span class="o">.</span><span class="n">normalized</span><span class="p">()</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">SPEED</span> <span class="o">+</span> <span class="n">shooter</span><span class="o">.</span><span class="n">movement</span><span class="o">.</span><span class="n">velocity</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="o">.</span><span class="n">verts</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">),</span> <span class="p">(</span><span class="mf">1.5</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.5</span><span class="p">),</span> <span class="p">(</span><span class="o">-</span><span class="mf">1.5</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.5</span><span class="p">)]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">collision</span><span class="o">.</span><span class="n">radius</span> <span class="o">=</span> <span class="mf">2.0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">collision</span><span class="o">.</span><span class="n">from_mask</span> <span class="o">=</span> <span class="o">~</span><span class="n">shooter</span><span class="o">.</span><span class="n">collision</span><span class="o">.</span><span class="n">into_mask</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">renderable</span><span class="o">.</span><span class="n">color</span> <span class="o">=</span> <span class="s">&quot;#ffc&quot;</span>
+        <span class="n">world</span><span class="o">.</span><span class="n">clock</span><span class="o">.</span><span class="n">schedule_once</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">expire</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">TIME_TO_LIVE</span><span class="p">)</span>
+</pre></div>
+</td></tr></table></div>
 <p>We start with some class attributes (line 4-5) to specify the shot&#8217;s speed and time-to-live. The latter is an indirect way to specify the range for the shot.</p>
 <p>Next we define the constructor, which in addition to the required <tt class="xref py py-obj docutils literal"><span class="pre">world</span></tt> argument, takes a <tt class="xref py py-obj docutils literal"><span class="pre">shooter</span></tt> entity and <tt class="xref py py-obj docutils literal"><span class="pre">angle</span></tt> value. The shooter is the entity that the shot is being fired from. The angle determines the direction of the shot.</p>
 <p>Inside the constructor, we first determine the initial position of the shot (lines 8-10). This is done by computing an offset based on the shooter&#8217;s collision radius and the input angle. This way the shot appears to come from the surface of the shooter, rather than the center. The velocity is calculated by multiplying the angle&#8217;s unit vector by the shot&#8217;s speed, plus the shooter&#8217;s velocity. Without including the shooter&#8217;s velocity, the shooter could actually outrun his own shots, and strafing would feel very unnatural. Would-be skeptics out there should try it with and without adding the shooter&#8217;s velocity to see what I mean.</p>
 <p>The shape of the shot is set to a small triangle (line 13). This is small enough so that it will appear to be a small dot when rendered.  Collision is setup with a small radius and a mask specifically designed to collide with everything except for the shooter (<tt class="docutils literal"><span class="pre">~</span></tt> is Python&#8217;s bit-invert operator). Setting the color ensures the shot is rendered.</p>
 <p>On line 17 we schedule the shot to expire at the proper time. The world&#8217;s clock will call the expire method (defined below) when the time-to-live elapses, deleting the entity automatically. This means that we do not need to keep track of when each shot will expire ourselves, which is convenient.</p>
 <p>We have two more methods to implement for <tt class="xref py py-class docutils literal"><span class="pre">Shot</span></tt>: an <tt class="xref py py-meth docutils literal"><span class="pre">on_collide()</span></tt> handler for collision and an <tt class="xref py py-meth docutils literal"><span class="pre">expire()</span></tt> method for handling the shot expiration. Both will simply delete the entity:</p>
+<div class="highlight-python"><div class="highlight"><pre>    <span class="k">def</span> <span class="nf">on_collide</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">,</span> <span class="n">point</span><span class="p">,</span> <span class="n">normal</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">delete</span><span class="p">()</span>
+    
+</pre></div>
+</div>
+<div class="highlight-python"><pre>    def expire(self, dt):
+        self.delete()
+
+
+</pre>
+</div>
 </div>
 <div class="section" id="gun-system">
 <span id="index-7"></span><h3>Gun System<a class="headerlink" href="#gun-system" title="Permalink to this headline">¶</a></h3>
 <p>With the <tt class="xref py py-obj docutils literal"><span class="pre">gun</span></tt> component and <tt class="xref py py-class docutils literal"><span class="pre">Shot</span></tt> class implemented, we can finally finish things off by implementing the <tt class="xref py py-class docutils literal"><span class="pre">Gun</span></tt> system:</p>
+<div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5
+6
+7
+8</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">class</span> <span class="nc">Gun</span><span class="p">(</span><span class="n">bGrease</span><span class="o">.</span><span class="n">System</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Fires Shot entities&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dt</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">entity</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">world</span><span class="p">[</span><span class="o">...</span><span class="p">]</span><span class="o">.</span><span class="n">gun</span><span class="o">.</span><span class="n">firing</span> <span class="o">==</span> <span class="bp">True</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">world</span><span class="o">.</span><span class="n">time</span> <span class="o">&gt;=</span> <span class="n">entity</span><span class="o">.</span><span class="n">gun</span><span class="o">.</span><span class="n">last_fire_time</span> <span class="o">+</span> <span class="n">entity</span><span class="o">.</span><span class="n">gun</span><span class="o">.</span><span class="n">cool_down</span><span class="p">:</span>
+                <span class="n">Shot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">world</span><span class="p">,</span> <span class="n">entity</span><span class="p">,</span> <span class="n">entity</span><span class="o">.</span><span class="n">position</span><span class="o">.</span><span class="n">angle</span><span class="p">)</span>
+                <span class="n">entity</span><span class="o">.</span><span class="n">gun</span><span class="o">.</span><span class="n">last_fire_time</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">world</span><span class="o">.</span><span class="n">time</span>
+</pre></div>
+</td></tr></table></div>
 <p>This is even shorter than the <tt class="xref py py-class docutils literal"><span class="pre">Sweeper</span></tt> system that we implemented previously, but there are some new things here that bear explanation, in particular on line 5. In the <tt class="xref py py-class docutils literal"><span class="pre">Sweeper</span></tt> implementation, we discussed how to use entity classes as keys on the world to retrieve entity extents. In many cases though, you want to get the extent containing all entities instead of just one particular type. To do this you use the special Python ellipsis symbol (<tt class="docutils literal"><span class="pre">...</span></tt>) as a key:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">world</span><span class="p">[</span><span class="o">...</span><span class="p">]</span>
 </pre></div>
@@ -291,6 +813,20 @@ for each field.</li>
 </pre></div>
 </div>
 <p>In addition, we need to add some methods to the <tt class="xref py py-class docutils literal"><span class="pre">GameSystem</span></tt> class to fire the player ship&#8217;s gun when the space bar is pressed:</p>
+<div class="highlight-python"><pre>            
+    @KeyControls.key_press(key.SPACE)
+    def start_firing(self):
+        if self.player_ship.exists:
+            self.player_ship.gun.firing = True
+
+    @KeyControls.key_release(key.SPACE)
+    def stop_firing(self):
+        if self.player_ship.exists:
+            self.player_ship.gun.firing = False
+
+
+</pre>
+</div>
 <p>These methods simply set the <tt class="xref py py-attr docutils literal"><span class="pre">gun.ship</span></tt> flag when space is pressed, and reset it when space is released.</p>
 <p>With all of this in place we can finally blast those asteroids to smithereens!</p>
 <img alt="../_images/blast_em.png" src="../_images/blast_em.png" />
@@ -300,6 +836,39 @@ for each field.</li>
 <span id="index-8"></span><h2>Wrapping Things Up<a class="headerlink" href="#wrapping-things-up" title="Permalink to this headline">¶</a></h2>
 <p>We&#8217;ve now implemented all of the major game mechanics, save one. You&#8217;ll notice if you fly around for a few seconds, all of the asteroids fly off the screen and disappear. And so will the player&#8217;s ship if you accelerate it in one direction. We forgot to implement the all-important toroidal spatial topology! That&#8217;s fancy-talk for making objects wrap around when they fly off the edge of the screen.</p>
 <p>So, how do you suppose we&#8217;re gonna fix this? Surprise! Another system! This is a textbook example of a behavioral aspect of the application:</p>
+<div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">class</span> <span class="nc">PositionWrapper</span><span class="p">(</span><span class="n">bGrease</span><span class="o">.</span><span class="n">System</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Wrap positions around when they go off the edge of the window&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">half_width</span> <span class="o">=</span> <span class="n">window</span><span class="o">.</span><span class="n">width</span> <span class="o">/</span> <span class="mi">2</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">half_height</span> <span class="o">=</span> <span class="n">window</span><span class="o">.</span><span class="n">height</span> <span class="o">/</span> <span class="mi">2</span>
+
+    <span class="k">def</span> <span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dt</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">entity</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">world</span><span class="p">[</span><span class="o">...</span><span class="p">]</span><span class="o">.</span><span class="n">collision</span><span class="o">.</span><span class="n">aabb</span><span class="o">.</span><span class="n">right</span> <span class="o">&lt;</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">half_width</span><span class="p">:</span>
+            <span class="n">entity</span><span class="o">.</span><span class="n">position</span><span class="o">.</span><span class="n">position</span><span class="o">.</span><span class="n">x</span> <span class="o">+=</span> <span class="n">window</span><span class="o">.</span><span class="n">width</span> <span class="o">+</span> <span class="n">entity</span><span class="o">.</span><span class="n">collision</span><span class="o">.</span><span class="n">aabb</span><span class="o">.</span><span class="n">width</span>
+        <span class="k">for</span> <span class="n">entity</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">world</span><span class="p">[</span><span class="o">...</span><span class="p">]</span><span class="o">.</span><span class="n">collision</span><span class="o">.</span><span class="n">aabb</span><span class="o">.</span><span class="n">left</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">half_width</span><span class="p">:</span>
+            <span class="n">entity</span><span class="o">.</span><span class="n">position</span><span class="o">.</span><span class="n">position</span><span class="o">.</span><span class="n">x</span> <span class="o">-=</span> <span class="n">window</span><span class="o">.</span><span class="n">width</span> <span class="o">+</span> <span class="n">entity</span><span class="o">.</span><span class="n">collision</span><span class="o">.</span><span class="n">aabb</span><span class="o">.</span><span class="n">width</span>
+        <span class="k">for</span> <span class="n">entity</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">world</span><span class="p">[</span><span class="o">...</span><span class="p">]</span><span class="o">.</span><span class="n">collision</span><span class="o">.</span><span class="n">aabb</span><span class="o">.</span><span class="n">top</span> <span class="o">&lt;</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">half_height</span><span class="p">:</span>
+            <span class="n">entity</span><span class="o">.</span><span class="n">position</span><span class="o">.</span><span class="n">position</span><span class="o">.</span><span class="n">y</span> <span class="o">+=</span> <span class="n">window</span><span class="o">.</span><span class="n">height</span> <span class="o">+</span> <span class="n">entity</span><span class="o">.</span><span class="n">collision</span><span class="o">.</span><span class="n">aabb</span><span class="o">.</span><span class="n">height</span> 
+        <span class="k">for</span> <span class="n">entity</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">world</span><span class="p">[</span><span class="o">...</span><span class="p">]</span><span class="o">.</span><span class="n">collision</span><span class="o">.</span><span class="n">aabb</span><span class="o">.</span><span class="n">bottom</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">half_height</span><span class="p">:</span>
+            <span class="n">entity</span><span class="o">.</span><span class="n">position</span><span class="o">.</span><span class="n">position</span><span class="o">.</span><span class="n">y</span> <span class="o">-=</span> <span class="n">window</span><span class="o">.</span><span class="n">height</span> <span class="o">+</span> <span class="n">entity</span><span class="o">.</span><span class="n">collision</span><span class="o">.</span><span class="n">aabb</span><span class="o">.</span><span class="n">height</span>
+</pre></div>
+</td></tr></table></div>
 <p>The constructor (lines 4-6) pre-calculates the half width and height of the window for convenience later. Remember that the origin is in centered in the window, so these values are handy for finding the edges.</p>
 <p>The <tt class="xref py py-meth docutils literal"><span class="pre">step()</span></tt> method performs four entity extent queries, in the same spirit as in the <tt class="xref py py-class docutils literal"><span class="pre">Gun</span></tt> system. Here we are querying the edges of the entities using their collision bounding boxes, comparing them to the window edges. In the first loop (line 9-10) we iterate over all entities whose right edge has moved left beyond the left edge of the window. This extent query does the job:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="bp">self</span><span class="o">.</span><span class="n">world</span><span class="p">[</span><span class="o">...</span><span class="p">]</span><span class="o">.</span><span class="n">collision</span><span class="o">.</span><span class="n">aabb</span><span class="o">.</span><span class="n">right</span> <span class="o">&lt;</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">half_width</span>
@@ -312,7 +881,7 @@ for each field.</li>
 </pre></div>
 </div>
 <p>With this now in place, all of the entities in the collision component (asteroids, the player ship, shots) will automatically wrap around when they fly offscreen.</p>
-<p><tt class="xref download docutils literal"><span class="pre">blasteroids2.py</span></tt> contains the full source of the second revision of the game.</p>
+<p><a class="reference download internal" href="../_downloads/blasteroids2.py"><tt class="xref download docutils literal"><span class="pre">blasteroids2.py</span></tt></a> contains the full source of the second revision of the game.</p>
 <p><strong>Next:</strong> <a class="reference internal" href="tutorial3.html#tut-chapter-3"><em>Grease Tutorial Part III: Spit and Polish</em></a></p>
 </div>
 </div>

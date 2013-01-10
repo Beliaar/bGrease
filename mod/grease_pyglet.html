@@ -1,0 +1,283 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>bGrease.grease_pyglet – Pyglet specific classes &mdash; Grease 0.3 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="Grease 0.3 documentation" href="../index.html" />
+    <link rel="next" title="bGrease.mode – Modal Framework" href="mode.html" />
+    <link rel="prev" title="bGrease.grease_fife – FIFE specific classes" href="grease_fife.html" />
+        <link rel="stylesheet" href="../_static/grease.css" type="text/css" />
+
+  </head>
+  <body>
+<div style="background-color: white; text-align: left; padding: 10px 10px 15px 15px">
+<img src="../_static/grease.png" alt="Grease logo" />
+</div>
+
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="mode.html" title="bGrease.mode – Modal Framework"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="grease_fife.html" title="bGrease.grease_fife – FIFE specific classes"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">Grease 0.3 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="grease_fife.html"
+                        title="previous chapter"><tt class="docutils literal docutils literal docutils literal"><span class="pre">bGrease.grease_fife</span></tt> &#8211; FIFE specific classes</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="mode.html"
+                        title="next chapter"><tt class="docutils literal"><span class="pre">bGrease.mode</span></tt> &#8211; Modal Framework</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/mod/grease_pyglet.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="module-bGrease.grease_pyglet">
+<span id="bgrease-grease-pyglet-pyglet-specific-classes"></span><h1><a class="reference internal" href="#module-bGrease.grease_pyglet" title="bGrease.grease_pyglet: Pyglet specific classes"><tt class="xref py py-mod docutils literal"><span class="pre">bGrease.grease_pyglet</span></tt></a> &#8211; Pyglet specific classes<a class="headerlink" href="#module-bGrease.grease_pyglet" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="bGrease.grease_pyglet.Mode">
+<em class="property">class </em><tt class="descclassname">bGrease.grease_pyglet.</tt><tt class="descname">Mode</tt><big>(</big><em>step_rate=60</em>, <em>master_clock=&lt;pyglet._ModuleProxy object at 0x01EFC3D0&gt;</em>, <em>clock_factory=&lt;class 'pyglet.clock.Clock'&gt;</em><big>)</big><a class="headerlink" href="#bGrease.grease_pyglet.Mode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Application mode abstract base class using pyglet</p>
+<p>Subclasses must implement the <a class="reference internal" href="#bGrease.grease_pyglet.Mode.step" title="bGrease.grease_pyglet.Mode.step"><tt class="xref py py-meth docutils literal"><span class="pre">step()</span></tt></a> method</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>step_rate</strong> &#8211; The rate of <a class="reference internal" href="#bGrease.grease_pyglet.Mode.step" title="bGrease.grease_pyglet.Mode.step"><tt class="xref py py-meth docutils literal"><span class="pre">step()</span></tt></a> calls per second.</li>
+<li><strong>master_clock</strong> &#8211; The <tt class="xref py py-class docutils literal"><span class="pre">pyglet.clock.Clock</span></tt> interface used
+as the master clock that ticks the world&#8217;s clock. This 
+defaults to the main pyglet clock.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="bGrease.grease_pyglet.Mode.on_activate">
+<tt class="descname">on_activate</tt><big>(</big><big>)</big><a class="headerlink" href="#bGrease.grease_pyglet.Mode.on_activate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Being called when the Mode is activated</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="bGrease.grease_pyglet.Mode.on_deactivate">
+<tt class="descname">on_deactivate</tt><big>(</big><big>)</big><a class="headerlink" href="#bGrease.grease_pyglet.Mode.on_deactivate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Being called when the Mode is deactivated</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="bGrease.grease_pyglet.Mode.step">
+<tt class="descname">step</tt><big>(</big><em>dt</em><big>)</big><a class="headerlink" href="#bGrease.grease_pyglet.Mode.step" title="Permalink to this definition">¶</a></dt>
+<dd><p>Execute a timestep for this mode. Must be defined by subclasses.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>dt</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; The time delta since the last time step</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="bGrease.grease_pyglet.Mode.tick">
+<tt class="descname">tick</tt><big>(</big><em>dt</em><big>)</big><a class="headerlink" href="#bGrease.grease_pyglet.Mode.tick" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tick the mode&#8217;s clock.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>dt</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; The time delta since the last tick</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="bGrease.grease_pyglet.World">
+<em class="property">class </em><tt class="descclassname">bGrease.grease_pyglet.</tt><tt class="descname">World</tt><big>(</big><em>step_rate=60</em>, <em>master_clock=&lt;module 'pyglet.clock' from 'E:Python27libsite-packagespygletclock.pyc'&gt;</em>, <em>clock_factory=&lt;class 'pyglet.clock.Clock'&gt;</em><big>)</big><a class="headerlink" href="#bGrease.grease_pyglet.World" title="Permalink to this definition">¶</a></dt>
+<dd><p>A coordinated collection of components, systems and entities</p>
+<p>A world is also a mode that may be pushed onto a 
+<tt class="xref py py-class docutils literal"><span class="pre">bGrease.mode.Manager</span></tt></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>step_rate</strong> &#8211; The rate of <a class="reference internal" href="#bGrease.grease_pyglet.World.step" title="bGrease.grease_pyglet.World.step"><tt class="xref py py-meth docutils literal"><span class="pre">step()</span></tt></a> calls per second.</li>
+<li><strong>master_clock</strong> &#8211; The <tt class="xref py py-class docutils literal"><span class="pre">pyglet.clock.Clock</span></tt> interface used
+as the master clock that ticks the world&#8217;s clock. This 
+defaults to the main pyglet clock.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="bGrease.grease_pyglet.World.activate">
+<tt class="descname">activate</tt><big>(</big><em>manager</em><big>)</big><a class="headerlink" href="#bGrease.grease_pyglet.World.activate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Activate the world/mode for the given manager, if the world is already active, 
+do nothing. This method is typically not used directly, it is called
+automatically by the mode manager when the world becomes active.</p>
+<p>The systems of the world are pushed onto <cite>manager.event_dispatcher</cite>
+so they can receive system events.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>manager</strong> &#8211; <tt class="xref py py-class docutils literal"><span class="pre">mode.BaseManager</span></tt> instance</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="bGrease.grease_pyglet.World.deactivate">
+<tt class="descname">deactivate</tt><big>(</big><em>manager</em><big>)</big><a class="headerlink" href="#bGrease.grease_pyglet.World.deactivate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Deactivate the world/mode, if the world is not active, do nothing.
+This method is typically not used directly, it is called
+automatically by the mode manager when the world becomes active.</p>
+<p>Removes the system handlers from the <cite>manager.event_dispatcher</cite></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>manager</strong> &#8211; <tt class="xref py py-class docutils literal"><span class="pre">mode.BaseManager</span></tt> instance</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="bGrease.grease_pyglet.World.on_draw">
+<tt class="descname">on_draw</tt><big>(</big><em>gl=&lt;module 'pyglet.gl' from 'E:Python27libsite-packagespygletgl__init__.pyc'&gt;</em><big>)</big><a class="headerlink" href="#bGrease.grease_pyglet.World.on_draw" title="Permalink to this definition">¶</a></dt>
+<dd><p>Clear the current OpenGL context, reset the model/view matrix and
+invoke the <cite>draw()</cite> methods of the renderers in order</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="bGrease.grease_pyglet.World.step">
+<tt class="descname">step</tt><big>(</big><em>dt</em><big>)</big><a class="headerlink" href="#bGrease.grease_pyglet.World.step" title="Permalink to this definition">¶</a></dt>
+<dd><p>Execute a time step for the world. Updates the world <cite>time</cite>
+and invokes the world&#8217;s systems.</p>
+<p>Note that the specified time delta will be pinned to 10x the
+configured step rate. For example if the step rate is 60,
+then dt will be pinned at a maximum of 0.1666. This avoids 
+pathological behavior when the time between steps goes
+much longer than expected.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>dt</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; The time delta since the last time step</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="bGrease.grease_pyglet.World.tick">
+<tt class="descname">tick</tt><big>(</big><em>dt</em><big>)</big><a class="headerlink" href="#bGrease.grease_pyglet.World.tick" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tick the mode&#8217;s clock, but only if the world is currently running</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>dt</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; The time delta since the last tick</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="mode.html" title="bGrease.mode – Modal Framework"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="grease_fife.html" title="bGrease.grease_fife – FIFE specific classes"
+             >previous</a> |</li>
+        <li><a href="../index.html">Grease 0.3 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2010, Casey Duncan.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

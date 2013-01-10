@@ -1,5 +1,5 @@
 :mod:`bGrease.entity` -- Entity Classes
-======================================
+=======================================
 
 .. automodule:: bGrease.entity
    :synopsis: Actionable game objects

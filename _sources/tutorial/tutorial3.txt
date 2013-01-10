@@ -1,4 +1,4 @@
-.. include:: ../include.rst 
+.. include:: ../include.inc 
 .. _tut-chapter-3:
 
 ########################
@@ -121,7 +121,7 @@ There's also some changes to :meth:`on_collide` above. On line 35, we check the 
 Scoring and Levels
 ------------------
 
-We now know how many points the asteroids are worth, but we still need to keep track of the game score for the player. Since the score goes with the game, we can add store it in the :class:`GameSystem` where we bind the keyboard controls. If we had a game with multiple simultaneous players all with separate scores, we might choose to store the scores in a component instead. 
+We now know how many points the asteroids are worth, but we still need to keep track of the game score for the player. Since the score goes with the game, we can add store it in the :class:`GameSystem` where we bind the keyboard controls. If we had a game with multiple simultaneous players all with separate scores, we might choose to store the scores in a component instead.
 
 We refactor :class:`GameSystem` adding some attributes and methods:
 
@@ -138,7 +138,7 @@ In the :meth:`set_world` method (line 15), we add attributes for :attr:`level` n
 
 Next we define a :meth:`chime` method to sound the chimes (line 32). This method plays the next chime sound, slightly reduces the chime interval, and schedules the next chime sound. We also opportunistically check if all of the asteroids have been destroyed. If so, we start a new level. The reason to do that here is to provide a small time between when the last asteroid is destroyed and when the next level begins. Alternately, we could override the :meth:`step` method and put this logic there, but this is a bit simpler, if a little less tidy.
 
-The last new method we add here is :meth:`award_points` (line 41). This simply accepts an entity, checks if it provides any points, and adds it to the total score if so. The check on line 43 is a simple way to see if an entity has a particular component value. If the entity is not a member of the :obj:`award` component, this will return ``False``. 
+The last new method we add here is :meth:`award_points` (line 41). This simply accepts an entity, checks if it provides any points, and adds it to the total score if so. The check on line 43 is a simple way to see if an entity has a particular component value. If the entity is not a member of the :obj:`award` component, this will return ``False``.
 
 We want to get points when the player shoots things. This means we need to call the :meth:`award_points` when a shot collides with something. Adding the call to the :class:`Shot` class' :meth:`on_collide` method does the trick::
 
@@ -189,7 +189,7 @@ Now let's define the :meth:`blink` callback method:
 .. literalinclude:: blasteroids3.py
    :pyobject: PlayerShip.blink
 
-This method hides the ship by removing it from the renderable component if it is visible, or makes it visible by setting the ``renderable.color`` if its currently invisible. Calling this repeatedly will alternately hide and show the ship. This is a visual indication to the player that the ship is invulnerable. 
+This method hides the ship by removing it from the renderable component if it is visible, or makes it visible by setting the ``renderable.color`` if its currently invisible. Calling this repeatedly will alternately hide and show the ship. This is a visual indication to the player that the ship is invulnerable.
 
 To complete the circuit, we need to add a call to the :meth:`player_died` method we defined above when the ship collides with something and explodes:
 
@@ -258,9 +258,9 @@ The basic utility of a mode stack is that the user can start in one mode, enter 
 Windows, Managers, Worlds, and Modes
 ------------------------------------
 
-Although it is possible to create custom modes and managers in your application, there are two concrete implementations provided by Grease that should prove convenient. One, we are already familiar with: |World|. Worlds implement the mode interface so that they can be used directly as game modes. When a world is active in a mode manager, its clock receives ticks, its systems receive events, and it will invoke its renderers when the display needs to be redrawn. When a world is deactivated, it is "frozen". Its clock no longer runs, its systems no longer receive events and its renderers are no longer invoked. When the world is later reactivated, it resumes right where it left off.
+Although it is possible to create custom modes and managers in your application, there are two concrete implementations provided by Grease that should prove convenient. One, we are already familiar with: |PygletWorld|. Worlds implement the mode interface so that they can be used directly as game modes. When a world is active in a mode manager, its clock receives ticks, its systems receive events, and it will invoke its renderers when the display needs to be redrawn. When a world is deactivated, it is "frozen". Its clock no longer runs, its systems no longer receive events and its renderers are no longer invoked. When the world is later reactivated, it resumes right where it left off.
 
-Grease also provides a special mode manager, :class:`~bGrease.mode.ManagerWindow`. This class is a Pyglet window subclass that implements the mode manager interface. This allows you to push and pop modes, such as |World| objects, directly onto an application window. All of the OS events the window receives will go directly to the active mode. This makes implementing a user interface flow with push and pop semantics a breeze.
+Grease also provides a special mode manager, :class:`~bGrease.mode.ManagerWindow`. This class is a Pyglet window subclass that implements the mode manager interface. This allows you to push and pop modes, such as |PygletWorld| objects, directly onto an application window. All of the OS events the window receives will go directly to the active mode. This makes implementing a user interface flow with push and pop semantics a breeze.
 
 :class:`~bGrease.mode.ManagerWindow` objects also include some default behavior:
 
@@ -285,7 +285,7 @@ The :meth:`configure` methods sets up the parts common to both the :class:`Game`
                 self.systems.game = GameSystem()
                 self.renderers.hud = Hud()
 
-This only adds a :class:`GameSystem` system and :class:`Hud` renderer to the base world. 
+This only adds a :class:`GameSystem` system and :class:`Hud` renderer to the base world.
 
 Now let's define the :class:`TitleScreen` world and mode::
 
@@ -366,7 +366,7 @@ Notice that we pass some label strings into the :class:`Game` class constructor 
    :pyobject: Game
    :linenos:
 
-Games are only provided a label in multiplayer, so we use that fact to set an :attr:`is_multiplayer` flag when a label is provided. 
+Games are only provided a label in multiplayer, so we use that fact to set an :attr:`is_multiplayer` flag when a label is provided.
 
 We also override the mode's :class:`activate` method, starting the mode paused in multiplayer sessions by setting the world's :attr:`running` flag to false. Grease will not tick the world's clock until the flag is set to true. This gives the next player time to get situated before their turn begins.
 
@@ -404,7 +404,7 @@ We also need to add some methods here to pause and resume the game::
                 self.world.running = True
             KeyControls.on_key_press(self, key, modifiers)
 
-The :meth:`pause` method simply toggles the :attr:`world.running` flag when the ``P`` key is pressed. 
+The :meth:`pause` method simply toggles the :attr:`world.running` flag when the ``P`` key is pressed.
 
 The :meth:`on_key_press` method implemented above overrides the method in the base class. It simply resumes the world if it isn't running on any key press event. It doesn't consume the key event, so it will also be passed along to any downstream handlers. This makes the game immediate responsive when it resumes.
 

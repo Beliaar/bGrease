@@ -1,4 +1,4 @@
-.. include:: ../include.rst 
+.. include:: ../include.inc 
 .. _tut-chapter-2:
 
 #######################
@@ -44,7 +44,7 @@ Let's move on to the thrust method:
 .. literalinclude:: blasteroids2.py
    :pyobject: PlayerShip.thrust_on
 
-This method accelerates the ship in the direction it is facing. We start by defining an upward-facing vector with a magnitude set to the class's :attr:`THRUST_ACCEL` value. This vector is then rotated in-place to face the direction of the ship using :meth:`Vec2d.rotate()`. The :attr:`accel` field of the entity's movment component is then set to the rotated thrust vector. The :class:`~bGrease.controller.EulerMovement` system, already in the world takes care of calculating the ship's velocity and position over time based on the acceleration. 
+This method accelerates the ship in the direction it is facing. We start by defining an upward-facing vector with a magnitude set to the class's :attr:`THRUST_ACCEL` value. This vector is then rotated in-place to face the direction of the ship using :meth:`Vec2d.rotate()`. The :attr:`accel` field of the entity's movment component is then set to the rotated thrust vector. The :class:`~bGrease.controller.EulerMovement` system, already in the world takes care of calculating the ship's velocity and position over time based on the acceleration.
 
 The last line changes one of the shape vertices, moving it to a random position behind the ship. This will create a simple flickering flame animation that will act as an import cue to the player that the thrust is active. Notice that the vertex is simply moved to a random position vertically relative to the origin, the renderer will automatically take care of translating and rotating the vertex to the proper window coordinates according to the ship's current position and rotation, as well as the current camera settings.
 
@@ -133,7 +133,7 @@ Now we can control the ship and fly it around the screen.
 Running Into Stuff
 ==================
 
-Flying around is way too safe at the moment, since you can't actually run into anything! Let's see what we can do about that. Implementing collision requires that we add a component and a system to the :class:`GameWorld`: 
+Flying around is way too safe at the moment, since you can't actually run into anything! Let's see what we can do about that. Implementing collision requires that we add a component and a system to the :class:`GameWorld`:
 
 .. literalinclude:: blasteroids2.py
    :pyobject: GameWorld
@@ -189,7 +189,7 @@ To start with, will add a simple :meth:`on_collide` method to both the :class:`A
 Blowing Stuff Up
 ================
 
-When you run the game now, you'll notice that asteroids pass right through each other, but if you hit one with the ship, both the ship and asteroid disappear. This proves that the collision is working as expected, but it's not very interesting yet. What would really spice things up are some simple explosion effects when entities are destroyed. 
+When you run the game now, you'll notice that asteroids pass right through each other, but if you hit one with the ship, both the ship and asteroid disappear. This proves that the collision is working as expected, but it's not very interesting yet. What would really spice things up are some simple explosion effects when entities are destroyed.
 
 Here's what we need to implement to make stuff explode:
 
@@ -216,7 +216,7 @@ Let's take apart the :class:`BlasteroidsEntity` class and see how it works. In l
    :start-after: """
    :end-before: for segment
 
-Next we create the debris. This is aided by the :meth:`shape.segments` method (line 7). This method returns an iterator of all of the individual line segments of the original shape as separate shapes. This effectively fragments our original entity shape. 
+Next we create the debris. This is aided by the :meth:`shape.segments` method (line 7). This method returns an iterator of all of the individual line segments of the original shape as separate shapes. This effectively fragments our original entity shape.
 
 We loop over these fragment segments creating debris entities for each. The shape of each debris fragment is a single segment of the original entity's shape. We also set the initial position and velocity of the debris entity to that of the exploding entity (line 10-11). Next we add some random velocity outward from the exploding entity's position to make it "explode" (line 12). Because the base shapes are centered around the origin, we can just use one of the vertex positions to determine the approximate outward direction from the center. Normalizing the first vertex vector -- giving it a length of 1 -- and multiplying it by a random value gives us the desired outward push. A bit of random rotation adds a little spice to the effect (line 13). Last, we set the color of the debris to the same as the original entity so they appear to be pieces of the original.
 
@@ -243,11 +243,11 @@ This is first system we've created from scratch, so let's look a little deeper a
 
 The only method that a system must implement is :meth:`step`. The :meth:`step` method is called by the world every time step, passing in the time delta since the last time step as a float. This is where the system implements its business logic.
 
-Optionally a system can implement a :meth:`set_world` method. If defined, this method is called when the system is added to a world, passing the |World| instance as its argument. This can be a good place to do system initialization where you need a world object, such as we did with the :class:`GameWorld` system implementation earlier. The |System| base class defines a simple implementation of :meth:`set_world` that stores a reference to the system's world for convenient access to its entities, components or even other systems.
+Optionally a system can implement a :meth:`set_world` method. If defined, this method is called when the system is added to a world, passing the |PygletWorld| instance as its argument. This can be a good place to do system initialization where you need a world object, such as we did with the :class:`GameWorld` system implementation earlier. The |System| base class defines a simple implementation of :meth:`set_world` that stores a reference to the system's world for convenient access to its entities, components or even other systems.
 
 The :attr:`SWEEP_TIME` value defined on our class specifies the time debris will live before it is "swept up" by the system and deleted. As this time elapses, the alpha value of each debris entity's color is slowly reduced, fading the debris away.
 
-We determine the amount to fade the debris for each time step by dividing the time delta ``dt`` by the :attr:`SWEEP_TIME` (line 7 above). This works because the color component values are floating point numbers between 0 and 1.0: 
+We determine the amount to fade the debris for each time step by dividing the time delta ``dt`` by the :attr:`SWEEP_TIME` (line 7 above). This works because the color component values are floating point numbers between 0 and 1.0:
 
 .. literalinclude:: blasteroids2.py
    :pyobject: Sweeper
@@ -285,7 +285,7 @@ Shoot Me Now
 
 Alright, so now we have collisions and explosions working, what more could we want in a game? Well, there's a big problem: The only way to blow things up is to use the ship as a battering ram. We need a way to destroy things without also committing suicide. If only there was a game mechanic we could use....hmmm.
 
-Ok, enough fooling around, we need to be able to shoot stuff! To do that we need some sort of gun. For our purposes, a gun is a device that can shoot out :class:`Shot` entities. Since such a "device" might be useful for other entities besides the :class:`PlayerShip`, it would be useful to implement as a behavioral aspect of the game. 
+Ok, enough fooling around, we need to be able to shoot stuff! To do that we need some sort of gun. For our purposes, a gun is a device that can shoot out :class:`Shot` entities. Since such a "device" might be useful for other entities besides the :class:`PlayerShip`, it would be useful to implement as a behavioral aspect of the game.
 
 The best way to implement such aspects, as we've seen, is to use a system. It might not seem obvious when a feature should be implemented using a system, versus just a method on the entity class, like :meth:`explode` above. Of course, these things are not cut and dried and there is no right or wrong way, but systems offer some advantages in certain situations:
 
@@ -312,12 +312,12 @@ The |Component| class lets us create custom components with user-defined fields.
 #. Component values can be stored in compact data structures using native data types where possible (int, float, Vec2d, etc).
 #. Component data can be stored in contiguous data blocks for much faster batch operations.
 #. Fields have sensible default values.
-#. Input values can be automatically cast to the proper field type 
+#. Input values can be automatically cast to the proper field type
    (e.g., 2-tuples to |Vec2d|, hex strings to |RGBA|)
 #. Systems and other users of component data know exactly what type of data to expect
    for each field.
 
-An important drawback to this arrangement is that fields must always have a value of the proper type. So it is not possible to assign a value of ``None`` to a float field, for instance. 
+An important drawback to this arrangement is that fields must always have a value of the proper type. So it is not possible to assign a value of ``None`` to a float field, for instance.
 
 .. Note::
    The only difference between custom and built-in components is that the fields for the former are already specified for convenience. Using custom components has no drawbacks other than the additional configuration required.

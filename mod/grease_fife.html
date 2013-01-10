@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>bGrease.controller – General Behavioral Aspects &mdash; Grease 0.3 documentation</title>
+    <title>bGrease.grease_fife – FIFE specific classes &mdash; Grease 0.3 documentation</title>
     
     <link rel="stylesheet" href="../_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -26,8 +26,8 @@
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <link rel="top" title="Grease 0.3 documentation" href="../index.html" />
-    <link rel="next" title="bGrease.controls – Game Controls" href="controls.html" />
-    <link rel="prev" title="bGrease.component – Entity Data Containers" href="component.html" />
+    <link rel="next" title="bGrease.grease_pyglet – Pyglet specific classes" href="grease_pyglet.html" />
+    <link rel="prev" title="bGrease – Base Classes" href="grease.html" />
         <link rel="stylesheet" href="../_static/grease.css" type="text/css" />
 
   </head>
@@ -46,10 +46,10 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="controls.html" title="bGrease.controls – Game Controls"
+          <a href="grease_pyglet.html" title="bGrease.grease_pyglet – Pyglet specific classes"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="component.html" title="bGrease.component – Entity Data Containers"
+          <a href="grease.html" title="bGrease – Base Classes"
              accesskey="P">previous</a> |</li>
         <li><a href="../index.html">Grease 0.3 documentation</a> &raquo;</li> 
       </ul>
@@ -57,14 +57,14 @@
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
   <h4>Previous topic</h4>
-  <p class="topless"><a href="component.html"
-                        title="previous chapter"><tt class="docutils literal docutils literal docutils literal"><span class="pre">bGrease.component</span></tt> &#8211; Entity Data Containers</a></p>
+  <p class="topless"><a href="grease.html"
+                        title="previous chapter"><tt class="docutils literal docutils literal docutils literal"><span class="pre">bGrease</span></tt> &#8211; Base Classes</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="controls.html"
-                        title="next chapter"><tt class="docutils literal"><span class="pre">bGrease.controls</span></tt> &#8211; Game Controls</a></p>
+  <p class="topless"><a href="grease_pyglet.html"
+                        title="next chapter"><tt class="docutils literal"><span class="pre">bGrease.grease_pyglet</span></tt> &#8211; Pyglet specific classes</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
-    <li><a href="../_sources/mod/controller.txt"
+    <li><a href="../_sources/mod/grease_fife.txt"
            rel="nofollow">Show Source</a></li>
   </ul>
 <div id="searchbox" style="display: none">
@@ -88,38 +88,43 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="module-bGrease.controller">
-<span id="bgrease-controller-general-behavioral-aspects"></span><h1><a class="reference internal" href="#module-bGrease.controller" title="bGrease.controller: General Behavioral Aspects"><tt class="xref py py-mod docutils literal"><span class="pre">bGrease.controller</span></tt></a> &#8211; General Behavioral Aspects<a class="headerlink" href="#module-bGrease.controller" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="module-bGrease.grease_fife">
+<span id="bgrease-grease-fife-fife-specific-classes"></span><h1><a class="reference internal" href="#module-bGrease.grease_fife" title="bGrease.grease_fife: FIFE specific classes"><tt class="xref py py-mod docutils literal"><span class="pre">bGrease.grease_fife</span></tt></a> &#8211; FIFE specific classes<a class="headerlink" href="#module-bGrease.grease_fife" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
-<dt id="bGrease.controller.EulerMovement">
-<em class="property">class </em><tt class="descclassname">bGrease.controller.</tt><tt class="descname">EulerMovement</tt><big>(</big><em>position_component='position'</em>, <em>movement_component='movement'</em><big>)</big><a class="headerlink" href="#bGrease.controller.EulerMovement" title="Permalink to this definition">¶</a></dt>
-<dd><p>System that applies entity movement to position using Euler&#8217;s method</p>
+<dt id="bGrease.grease_fife.Mode">
+<em class="property">class </em><tt class="descclassname">bGrease.grease_fife.</tt><tt class="descname">Mode</tt><big>(</big><em>engine</em><big>)</big><a class="headerlink" href="#bGrease.grease_fife.Mode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Application mode abstract base class using FIFE</p>
+<p>Subclasses must implement the <a class="reference internal" href="#bGrease.grease_fife.Mode.pump" title="bGrease.grease_fife.Mode.pump"><tt class="xref py py-meth docutils literal"><span class="pre">pump()</span></tt></a> method</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>position_component</strong> &#8211; Name of <a class="reference internal" href="component.html#bGrease.component.Position" title="bGrease.component.Position"><tt class="xref py py-class docutils literal"><span class="pre">bGrease.component.Position</span></tt></a> 
-component to update.</li>
-<li><strong>movement_component</strong> &#8211; Name of <a class="reference internal" href="component.html#bGrease.component.Movement" title="bGrease.component.Movement"><tt class="xref py py-class docutils literal"><span class="pre">bGrease.component.Movement</span></tt></a> 
-component used to update position.</li>
-</ul>
-</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>engine</strong> &#8211; A fife.engine instance</td>
 </tr>
 </tbody>
 </table>
 <dl class="method">
-<dt id="bGrease.controller.EulerMovement.set_world">
-<tt class="descname">set_world</tt><big>(</big><em>world</em><big>)</big><a class="headerlink" href="#bGrease.controller.EulerMovement.set_world" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bind the system to a world</p>
+<dt id="bGrease.grease_fife.Mode.pump">
+<tt class="descname">pump</tt><big>(</big><em>dt</em><big>)</big><a class="headerlink" href="#bGrease.grease_fife.Mode.pump" title="Permalink to this definition">¶</a></dt>
+<dd><p>Performs actions every frame</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="bGrease.controller.EulerMovement.step">
-<tt class="descname">step</tt><big>(</big><em>dt</em><big>)</big><a class="headerlink" href="#bGrease.controller.EulerMovement.step" title="Permalink to this definition">¶</a></dt>
-<dd><p>Apply movement to position</p>
 </dd></dl>
 
+<dl class="class">
+<dt id="bGrease.grease_fife.World">
+<em class="property">class </em><tt class="descclassname">bGrease.grease_fife.</tt><tt class="descname">World</tt><big>(</big><em>engine</em><big>)</big><a class="headerlink" href="#bGrease.grease_fife.World" title="Permalink to this definition">¶</a></dt>
+<dd><p>A coordinated collection of components, systems and entities</p>
+<p>A world is also a mode that may be pushed onto a 
+<tt class="xref py py-class docutils literal"><span class="pre">bGrease.mode.Manager</span></tt></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>engine</strong> &#8211; A fife.engine instance</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 </div>
@@ -140,10 +145,10 @@ component used to update position.</li>
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="controls.html" title="bGrease.controls – Game Controls"
+          <a href="grease_pyglet.html" title="bGrease.grease_pyglet – Pyglet specific classes"
              >next</a> |</li>
         <li class="right" >
-          <a href="component.html" title="bGrease.component – Entity Data Containers"
+          <a href="grease.html" title="bGrease – Base Classes"
              >previous</a> |</li>
         <li><a href="../index.html">Grease 0.3 documentation</a> &raquo;</li> 
       </ul>
