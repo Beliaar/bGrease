@@ -10,7 +10,7 @@
 # FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
 #
 #############################################################################
-"""Components store all entity data in a given |World|. You can
+"""Components store all entity data in a given |BaseWorld|. You can
 think of components as tables with entities as their primary keys. Like
 database tables, components are defined with a "schema" that specifies
 the data fields. Each field in a component has a name and a type.

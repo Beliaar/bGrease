@@ -1,6 +1,7 @@
 .. Global includes
 
 .. |BaseWorld| replace:: :class:`~bGrease.world.BaseWorld`
+.. |PygletWorld| replace:: :class:`~bGrease.grease_pyglet.World`
 .. |System| replace:: :class:`~bGrease.System`
 .. |Component| replace:: :class:`~bGrease.component.Component`
 .. |Renderer| replace:: :class:`~bGrease.Renderer`

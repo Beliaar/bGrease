@@ -1,5 +1,5 @@
 bGrease Overview
-===============
+================
 
 bGrease is a fork of Grease that makes it possible to use grease with other modules than pyglet and a few other modifications.
 Note that this will NOT add any other new functionality to Grease.
@@ -63,7 +63,7 @@ If using the pyglet modules:
 * Pyglet 1.1 (http://www.pyglet.org/) 
 
 Downloading bGrease
-------------------
+-------------------
 
 You can clone the github repository to get the very latest code:
 

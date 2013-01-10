@@ -26,7 +26,7 @@ import abc
 
 class System(object):
 	"""Grease system abstract base class. Systems define behaviorial aspects
-	of a |World|. All systems must define a :meth:`step`
+	of a |BaseWorld|. All systems must define a :meth:`step`
 	method that is invoked by the world each timestep.  User-defined systems
 	are not required to subclass this class.
 	
@@ -35,7 +35,7 @@ class System(object):
 	__metaclass__ = abc.ABCMeta
 
 	world = None
-	"""The |World| this system belongs to"""
+	"""The |BaseWorld| this system belongs to"""
 
 	def set_world(self, world):
 		"""Bind the system to a world"""
@@ -52,7 +52,7 @@ class System(object):
 
 class Renderer(object):
 	"""Grease renderer abstract base class. Renderers define the presentation
-	of a |World|. All renderers must define a :meth:`draw`
+	of a |BaseWorld|. All renderers must define a :meth:`draw`
 	method that is invoked by the world when the display needs to be redrawn.
 	User-defined renderers are not required to subclass this class.
 
@@ -61,7 +61,7 @@ class Renderer(object):
 	__metaclass__ = abc.ABCMeta
 
 	world = None
-	"""The |World| this renderer belongs to"""
+	"""The |BaseWorld| this renderer belongs to"""
 
 	def set_world(self, world):
 		"""Bind the system to a world"""

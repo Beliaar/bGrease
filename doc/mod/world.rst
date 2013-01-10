@@ -1,5 +1,5 @@
 :mod:`bGrease.world` -- Entity Environment
-=========================================
+==========================================
 
 .. automodule:: bGrease.world
    :synopsis: Container and environment for entities, component, systems and renderers

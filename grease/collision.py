@@ -101,7 +101,7 @@ class BroadSweepAndPrune(object):
 	:type collision_component: str
 	"""
 	world = None
-	"""|World| object this system belongs to"""
+	"""|BaseWorld| object this system belongs to"""
 
 	collision_component = None
 	"""Name of world's collision component used by this system"""
@@ -361,7 +361,7 @@ class Circular(object):
 		system will be created automatically.
 	"""
 	world = None
-	"""|World| object this system belongs to"""
+	"""|BaseWorld| object this system belongs to"""
 
 	position_component = None
 	"""Name of world's position component used by this system"""

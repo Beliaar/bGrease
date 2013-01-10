@@ -1,4 +1,4 @@
-.. include:: ../include.rst
+.. include:: ../include.inc
 
 :mod:`bGrease.collision` -- Collision Detection
 ===============================================

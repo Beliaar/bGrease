@@ -31,6 +31,9 @@ class Component(dict):
 	- :class:`bool`
 	- :class:`str`
 	- :class:`object`
+	- :class:`list`
+	- :class:`dict`
+	- :class:`set`
 	- |Vec2d|
 	- |Vec2dArray|
 	- |RGBA|
