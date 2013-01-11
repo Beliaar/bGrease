@@ -13,3 +13,4 @@
 .. |Mode| replace:: :class:`~bGrease.mode.Mode`
 .. |Manager| replace:: :class:`~bGrease.mode.Manager`
 .. |Multi| replace:: :class:`~bGrease.mode.Multi`
+.. |set| replace:: :class:`set`

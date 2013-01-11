@@ -33,7 +33,7 @@ class Component(dict):
 	- :class:`object`
 	- :class:`list`
 	- :class:`dict`
-	- :class:`set`
+	- |set|
 	- |Vec2d|
 	- |Vec2dArray|
 	- |RGBA|
