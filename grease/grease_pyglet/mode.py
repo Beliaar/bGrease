@@ -152,14 +152,7 @@ class Mode(BaseMode):
 		"""
 		self.time += dt
 		self.clock.tick(poll=False)
-	
-	@abc.abstractmethod
-	def step(self, dt):
-		"""Execute a timestep for this mode. Must be defined by subclasses.
-		
-		:param dt: The time delta since the last time step
-		:type dt: float
-		"""
+
 
 class Multi(BaseMulti, Mode):
 	"""A mode with multiple submodes. One submode is active at one time.

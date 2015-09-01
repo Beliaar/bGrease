@@ -167,6 +167,14 @@ class BaseMode(object):
 		"""Being called when the Mode is deactivated"""
 		pass
 
+	@abc.abstractmethod
+	def step(self, dt):
+		"""Execute a timestep for this mode. Must be defined by subclasses.
+
+		:param dt: The time delta since the last time step
+		:type dt: float
+		"""
+
 	def deactivate(self, mode_manager):
 		"""Deactivate the mode, if the mode is not active, do nothing
 

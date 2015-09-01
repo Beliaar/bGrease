@@ -51,12 +51,12 @@ class FifeManager(BaseManager):
             if self.current_mode:
                 delta_time = (self.current_mode.engine.getTimeManager().
                                 getTimeDelta() / 1000.0)
-                self.pump(delta_time)
+                self.step(delta_time)
                 
-        def pump(self, dt):
+        def step(self, dt):
             """Performs actions every frame"""
             if self.current_mode:
-                self.current_mode.pump(dt)
+                self.current_mode.step(dt)
 
 class Mode(BaseMode):
         """Application mode abstract base class using FIFE
@@ -69,7 +69,3 @@ class Mode(BaseMode):
         def __init__(self, engine):
             BaseMode.__init__(self)
             self.engine = engine
-
-        @abc.abstractmethod
-        def pump(self, dt):
-                """Performs actions every frame"""

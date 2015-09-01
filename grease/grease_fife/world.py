@@ -38,7 +38,7 @@ class World(Mode, BaseWorld):
         Mode.__init__(self, engine)
         BaseWorld.__init__(self)
             
-    def pump(self, dt):
+    def step(self, dt):
         for component in self.components:
             if hasattr(component, "step"):
                 component.step(dt)
