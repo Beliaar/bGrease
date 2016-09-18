@@ -28,8 +28,6 @@ You might use entities to represent:
 See :ref:`an example entity class in the tutorial <tut-entity-example>`.
 """
 
-from __future__ import absolute_import
-import six
 __version__ = '$Id$'
 
 __all__ = ('Entity', 'EntityComponentAccessor', 'ComponentEntitySet')
@@ -57,10 +55,10 @@ class EntityMeta(type):
 		return type.__new__(cls, name, bases, clsdict)
 
 
-class Entity(six.with_metaclass(EntityMeta, object)):
+class Entity(object, metaclass=EntityMeta):
 	"""Base class for grease entities.
 	
-	Entity objects themselves are merely identifiers within a :class:`bGrease.world.BaseWorld`.
+	Entity objects themselves are merely identifiers within a :class:`grease.world.World`.
 	They also provide a facade for convenient entity-wise access of component
 	data. However, they do not contain any data themselves other than an
 	entity id.
@@ -124,10 +122,7 @@ class Entity(six.with_metaclass(EntityMeta, object)):
 		return self.entity_id
 	
 	def __eq__(self, other):
-		if isinstance(other, Entity):
-			return self.world is other.world and self.entity_id == other.entity_id
-		else:
-			return False
+		return self.world is other.world and self.entity_id == other.entity_id
 
 	def __repr__(self):
 		return "<%s id: %s of %s %x>" % (
@@ -154,7 +149,7 @@ class EntityComponentAccessor(object):
 	entity is not yet a member of, it is automatically added to the
 	component first.
 
-	:param component: The :class:`bGrease.Component` being accessed
+	:param component: The :class:`grease.Component` being accessed
 	:param entity: The :class:`Entity` being accessed
 	"""
 	
@@ -167,7 +162,7 @@ class EntityComponentAccessor(object):
 		self.__dict__['_%s__component' % clsname] = component
 		self.__dict__['_%s__entity' % clsname] = entity
 	
-	def __nonzero__(self):
+	def __bool__(self):
 		"""The accessor is True if the entity is in the component,
 		False if not, for convenient membership tests
 		"""
