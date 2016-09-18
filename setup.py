@@ -2,10 +2,12 @@
 
 # $Id$
 
+from __future__ import absolute_import
 import os
 import sys
 import shutil
 from distutils.core import setup, Extension
+from six.moves import range
 
 srcdir = os.path.dirname(__file__)
 

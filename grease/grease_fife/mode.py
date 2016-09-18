@@ -32,6 +32,7 @@ of modes in sequence, or some combination of all.
 For example usage see: :ref:`the mode section of the tutorial <tut-mode-section>`.
 """
 
+from __future__ import absolute_import
 from bGrease.mode import *
 import abc
 

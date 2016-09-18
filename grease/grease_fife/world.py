@@ -21,6 +21,7 @@ over time and react to internal and external interaction.
 See :ref:`an example of world configuration in the tutorial <tut-world-example>`.
 """
 
+from __future__ import absolute_import
 from bGrease.world import *
 from bGrease.component import Component
 from bGrease.grease_fife.mode import Mode

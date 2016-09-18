@@ -21,6 +21,7 @@ over time and react to internal and external interaction.
 See :ref:`an example of world configuration in the tutorial <tut-world-example>`.
 """
 
+from __future__ import absolute_import
 __version__ = '$Id$'
 
 import itertools

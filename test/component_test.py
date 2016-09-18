@@ -1,4 +1,7 @@
+from __future__ import absolute_import
 import unittest
+import six
+from six.moves import range
 
 world = object()
 
@@ -175,7 +178,7 @@ class GeneralTestCase(unittest.TestCase):
 		c.set_world(world)
 		self.assertEqual(list(c), [])
 		ed = [c.set(TestEntity()), c.set(TestEntity()), c.set(TestEntity())]
-		self.assertEqual(sorted(c.itervalues()), sorted(ed))
+		self.assertEqual(sorted(six.itervalues(c)), sorted(ed))
 	
 	def test_set_world(self):
 		from bGrease.component import Component

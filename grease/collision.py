@@ -37,6 +37,8 @@ never return false negatives. Do not assume that all pairs returned by a
 broad-phase system are actually in collision.
 """
 
+from __future__ import absolute_import
+import six
 __version__ = '$Id$'
 
 from bGrease.geometry import Vec2d
@@ -140,7 +142,7 @@ class BroadSweepAndPrune(object):
 			append_x = by_x.append
 			by_y = self._by_y = []
 			append_y = by_y.append
-			for data in component.itervalues():
+			for data in six.itervalues(component):
 				append_x([data.aabb.left, LEFT, data])
 				append_x([data.aabb.right, RIGHT, data])
 				append_y([data.aabb.bottom, BOTTOM, data])
@@ -206,7 +208,7 @@ class BroadSweepAndPrune(object):
 			open = {}
 			for _, side, data in self._by_x:
 				if side is LEFT:
-					for open_entity, (from_mask, into_mask) in open.iteritems():
+					for open_entity, (from_mask, into_mask) in six.iteritems(open):
 						if data.from_mask & into_mask or from_mask & data.into_mask:
 							add_xoverlap(Pair(data.entity, open_entity))
 					open[data.entity] = (data.from_mask, data.into_mask)

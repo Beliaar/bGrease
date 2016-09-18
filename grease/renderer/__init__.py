@@ -19,6 +19,7 @@ See also:
 - :ref:`Example renderer class in the tutorial <tut-renderer-example>`
 """
 
+from __future__ import absolute_import
 __all__ = ('Vector', 'Camera')
 
 from bGrease.renderer.vector import Vector

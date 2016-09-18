@@ -11,6 +11,7 @@
 #
 #############################################################################
 
+from __future__ import absolute_import
 __version__ = '$Id$'
 
 from bGrease.component import base
@@ -119,7 +120,7 @@ class Singleton(Component):
 	def entity(self):
 		"""Return the entity in the component, or None if empty"""
 		if self._data:
-			return self.manager[self._data.keys()[0]]
+			return self.manager[list(self._data.keys())[0]]
 	
 
 class Data(object):

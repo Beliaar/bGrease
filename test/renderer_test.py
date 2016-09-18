@@ -1,6 +1,8 @@
+from __future__ import absolute_import
 import itertools
 import unittest
 import math
+from six.moves import zip
 
 sqrt2 = math.sqrt(2)
 

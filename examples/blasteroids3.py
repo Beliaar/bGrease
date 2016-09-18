@@ -12,6 +12,7 @@
 #############################################################################
 """Grease tutorial game revision 3"""
 
+from __future__ import absolute_import
 import os
 import math
 import random
@@ -23,6 +24,7 @@ from bGrease import component, controller, geometry, collision, renderer
 import bGrease.grease_pyglet
 from bGrease.grease_pyglet import mode
 from bGrease.grease_pyglet.controls import KeyControls
+from six.moves import range
 
 ## Utility functions ##
 

@@ -27,6 +27,7 @@ by joining them. For more information see:
 See also :ref:`defining custom components in the tutorial <custom-component-example>`.
 """
 
+from __future__ import absolute_import
 __version__ = '$Id$'
 
 __all__ = ('Component', 'ComponentError', 'Position', 'Transform', 'Movement', 

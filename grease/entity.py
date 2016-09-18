@@ -28,6 +28,8 @@ You might use entities to represent:
 See :ref:`an example entity class in the tutorial <tut-entity-example>`.
 """
 
+from __future__ import absolute_import
+import six
 __version__ = '$Id$'
 
 __all__ = ('Entity', 'EntityComponentAccessor', 'ComponentEntitySet')
@@ -55,7 +57,7 @@ class EntityMeta(type):
 		return type.__new__(cls, name, bases, clsdict)
 
 
-class Entity(object):
+class Entity(six.with_metaclass(EntityMeta, object)):
 	"""Base class for grease entities.
 	
 	Entity objects themselves are merely identifiers within a :class:`bGrease.world.BaseWorld`.
@@ -69,7 +71,6 @@ class Entity(object):
 	as their first argument (after ``self``). Other constructor arguments can be
 	specified arbitarily by the subclass.
 	"""
-	__metaclass__ = EntityMeta
 
 	def __new__(cls, world, *args, **kw):
 		"""Create a new entity and add it to the world"""

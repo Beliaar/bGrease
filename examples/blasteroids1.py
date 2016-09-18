@@ -12,12 +12,14 @@
 #############################################################################
 """Grease tutorial game revision 1"""
 
+from __future__ import absolute_import
 import math
 import random
 import pyglet
 import bGrease
 from bGrease import component, controller, renderer
 import bGrease.grease_pyglet
+from six.moves import range
 
 
 class Asteroid(bGrease.Entity):

@@ -12,6 +12,7 @@
 #############################################################################
 """Grease tutorial game revision 2"""
 
+from __future__ import absolute_import
 import math
 import random
 import pyglet
@@ -20,6 +21,7 @@ from bGrease import component, controller, renderer, geometry, collision
 import bGrease.grease_pyglet
 from pyglet.window import key
 from bGrease.grease_pyglet.controls import KeyControls
+from six.moves import range
 
 
 class BlasteroidsEntity(bGrease.Entity):

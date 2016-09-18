@@ -11,12 +11,13 @@
 #
 #############################################################################
 
+from __future__ import absolute_import
 __versioninfo__ = (0, 3, 0)
 __version__ = '.'.join(str(n) for n in __versioninfo__)
 
 __all__ = ('Mode', 'World')
 
-from mode import Mode
-from world import World
+from .mode import Mode
+from .world import World
 
 

@@ -32,6 +32,8 @@ of modes in sequence, or some combination of all.
 For example usage see: :ref:`the mode section of the tutorial <tut-mode-section>`.
 """
 
+from __future__ import absolute_import
+import six
 __version__ = '$Id$'
 
 import abc
@@ -136,10 +138,9 @@ class BaseManager(object):
 			except ValueError:
 				pass
 
-class BaseMode(object):
+class BaseMode(six.with_metaclass(abc.ABCMeta, object)):
 	"""Application mode very abstract base class
 	"""
-	__metaclass__ = abc.ABCMeta
 
 	manager = None
 	"""The :class:`BaseManager` that manages this mode"""
