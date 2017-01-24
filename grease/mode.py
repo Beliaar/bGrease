@@ -147,7 +147,7 @@ class BaseMode(object):
 	def __init__(self):
 		self.active = False
 		
-	def on_activate(self):
+	def _on_activate(self):
 		"""Being called when the Mode is activated"""
 		pass
 	
@@ -159,11 +159,11 @@ class BaseMode(object):
 		second, sets the :attr:`manager` and sets the :attr:`active` flag to True.
 		"""
 		if not self.active:
-			self.on_activate()
+			self._on_activate()
 			self.manager = mode_manager
 			self.active = True
 
-	def on_deactivate(self):
+	def _on_deactivate(self):
 		"""Being called when the Mode is deactivated"""
 		pass
 
@@ -181,7 +181,7 @@ class BaseMode(object):
 		The default implementation unschedules time steps for the mode and
 		sets the :attr:`active` flag to False.
 		"""
-		self.on_deactivate()
+		self._on_deactivate()
 		self.active = False
 
 
@@ -396,4 +396,5 @@ class BaseMulti(BaseMode):
 		"""
 		self._deactivate_submode(clear_subnode=False)
 		super(BaseMulti, self).deactivate(mode_manager)
-
+	def step(self, dt):
+		"""No-op, only the active submode is actually stepped"""

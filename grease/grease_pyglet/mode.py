@@ -136,11 +136,11 @@ class Mode(BaseMode):
 		self.clock = clock_factory(time_function=lambda: self.time)
 		self.clock.schedule_interval(self.step, 1.0 / step_rate)
 	
-	def on_activate(self):
+	def _on_activate(self):
 		"""Being called when the Mode is activated"""
 		self.master_clock.schedule(self.tick)
 	
-	def on_deactivate(self):
+	def _on_deactivate(self):
 		"""Being called when the Mode is deactivated"""
 		self.master_clock.unschedule(self.tick)
 		
@@ -168,8 +168,8 @@ class Multi(BaseMulti, Mode):
 	instead.
 	"""
 	
-	def __init__(self, submodes):
-		BaseMulti.__init__(self, submodes)
+	def __init__(self, *submodes):
+		BaseMulti.__init__(self, *submodes)
 		self.time = 0.0
 
 	
