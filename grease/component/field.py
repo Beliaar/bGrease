@@ -11,6 +11,8 @@
 #
 #############################################################################
 
+old_object = object
+from builtins import object
 __version__ = '$Id$'
 
 import operator
@@ -22,7 +24,7 @@ types = {int:lambda: 0,
          float:lambda: 0.0, 
          bool:lambda: False,
          str:lambda: "", 
-         object:lambda: None,
+         old_object:lambda: None,
          Vec2d:lambda: Vec2d(0,0), 
          Vec2dArray: lambda: Vec2dArray(),
          color.RGBA: lambda: color.RGBA(0.0, 0.0, 0.0, 0.0),
@@ -36,7 +38,7 @@ class Schema(dict):
         """Field schema definition for custom components"""
 
         def __init__(self, **fields):
-                for ftype in fields.values():
+                for ftype in list(fields.values()):
                         assert ftype in types, fname + " has an illegal field type"
                 self.update(fields)
 
@@ -139,7 +141,7 @@ class FieldAccessor(object):
                         self.__class__.__name__, 
                         '.'.join((self.__field.name,) + self.__attrs), id(self))
 
-        def __nonzero__(self):
+        def __bool__(self):
                 return bool(self.__entities)
 
         def __iter__(self):
@@ -288,7 +290,7 @@ class Field(object):
 
         def cast(self, value):
                 """Cast value to the appropriate type for thi field"""
-                if self.type is not object:
+                if self.type is not old_object:
                         return self.type(value)
                 else:
                         return value

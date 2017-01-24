@@ -1,3 +1,7 @@
+from __future__ import division
+from builtins import range
+from past.utils import old_div
+from builtins import object
 import unittest
 
 class TestComponent(dict):
@@ -113,13 +117,13 @@ class WorldTestCase(unittest.TestCase):
 		self.assertFalse(world.active)
 		self.assertTrue(world.running)
 		self.assertEqual(world.time, 0)
-		self.assertTrue((world.step, 1.0/60) in world.clock.scheduled)
+		self.assertTrue((world.step, old_div(1.0,60)) in world.clock.scheduled)
 	
 	def test_overrides(self):
 		from bGrease import World
 		world = World(step_rate=30, clock_factory=TestClock)
 		self.assertEqual(world.step_rate, 30)
-		self.assertTrue((world.step, 1.0/30) in world.clock.scheduled)
+		self.assertTrue((world.step, old_div(1.0,30)) in world.clock.scheduled)
 
 	def test_create_entities_in_world(self):
 		from bGrease import World, Entity
@@ -531,7 +535,7 @@ class WorldTestCase(unittest.TestCase):
 		self.assertEqual(world.time, 0)
 		self.assertEqual(world.clock.ticks, 0)
 		self.assertEqual(world.clock.time_func(), world.time)
-		dt = 1.0/30.0
+		dt = old_div(1.0,30.0)
 		world.tick(dt)
 		self.assertAlmostEqual(world.time, dt)
 		self.assertEqual(world.clock.time_func(), world.time)
@@ -546,7 +550,7 @@ class WorldTestCase(unittest.TestCase):
 		world = World()
 		self.assertTrue(world.running)
 		self.assertEqual(world.time, 0)
-		dt = 1.0/30.0
+		dt = old_div(1.0,30.0)
 		world.tick(dt)
 		self.assertAlmostEqual(world.time, dt)
 		world.running = False
@@ -563,8 +567,8 @@ class WorldTestCase(unittest.TestCase):
 		sys1 = world.systems.sys = TestSystem()
 		comp1 = world.components.foo = TestComponent()
 		world.step(10000)
-		self.assertEqual(comp1.runtime, 10.0 / world.step_rate)
-		self.assertEqual(sys1.runtime, 10.0 / world.step_rate)
+		self.assertEqual(comp1.runtime, old_div(10.0, world.step_rate))
+		self.assertEqual(sys1.runtime, old_div(10.0, world.step_rate))
 	
 	def test_set_renderers(self):
 		from bGrease import World

@@ -31,7 +31,9 @@ of modes in sequence, or some combination of all.
 
 For example usage see: :ref:`the mode section of the tutorial <tut-mode-section>`.
 """
+from __future__ import division
 
+from past.utils import old_div
 __version__ = '$Id$'
 
 import abc
@@ -134,7 +136,7 @@ class Mode(BaseMode):
 		self.time = 0.0
 		self.master_clock = master_clock
 		self.clock = clock_factory(time_function=lambda: self.time)
-		self.clock.schedule_interval(self.step, 1.0 / step_rate)
+		self.clock.schedule_interval(self.step, old_div(1.0, step_rate))
 	
 	def _on_activate(self):
 		"""Being called when the Mode is activated"""

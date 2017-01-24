@@ -12,6 +12,7 @@ from __future__ import absolute_import
 #
 #############################################################################
 
+from builtins import str
 __versioninfo__ = (0, 3, 0)
 __version__ = '.'.join(str(n) for n in __versioninfo__)
 

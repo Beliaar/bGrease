@@ -1,3 +1,7 @@
+from __future__ import division
+from builtins import range
+from past.utils import old_div
+from builtins import object
 import unittest
 
 
@@ -274,20 +278,20 @@ class FieldAccessorTestCase(unittest.TestCase):
 		comp2 = TestComponent()
 		for i in range(9):
 			comp1[i] = TestData(foo=i)
-			comp2[i] = TestData(bar=i/2 + 1)
+			comp2[i] = TestData(bar=old_div(i,2) + 1)
 		foo_accessor = FieldAccessor(TestField(comp1, 'foo'), entities1)
 		bar_accessor = FieldAccessor(TestField(comp2, 'bar'), entities2)
 		foo_accessor += bar_accessor
 		for i in range(9):
 			if i in entities1 & entities2:
-				self.assertEqual(comp1[i].foo, i + i/2 + 1)
+				self.assertEqual(comp1[i].foo, i + old_div(i,2) + 1)
 			else:
 				self.assertEqual(comp1[i].foo, i)
-			self.assertEqual(comp2[i].bar, i/2 + 1)
+			self.assertEqual(comp2[i].bar, old_div(i,2) + 1)
 		foo_accessor -= bar_accessor
 		for i in range(9):
 			self.assertEqual(comp1[i].foo, i)
-			self.assertEqual(comp2[i].bar, i/2 + 1)
+			self.assertEqual(comp2[i].bar, old_div(i,2) + 1)
 
 
 if __name__ == '__main__':

@@ -1,3 +1,5 @@
+from builtins import zip
+from builtins import object
 import itertools
 import unittest
 import math
@@ -11,7 +13,7 @@ class TestWorld(object):
 
 	def join(self, *components):
 		assert components == ('shape', 'position', 'renderable')
-		return itertools.izip(self.shapes, self.positions, self.renderable)
+		return zip(self.shapes, self.positions, self.renderable)
 
 class Data(object):
 

@@ -1,3 +1,4 @@
+from builtins import object
 class ComponentBase(object):
 	"""Component abstract base class
 

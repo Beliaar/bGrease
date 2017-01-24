@@ -11,7 +11,11 @@
 #
 #############################################################################
 """Grease tutorial game revision 3"""
+from __future__ import division
 
+from builtins import str
+from builtins import range
+from past.utils import old_div
 import os
 import math
 import random
@@ -156,15 +160,15 @@ class Asteroid(BlasteroidsEntity):
     def __init__(self, world, radius=45, position=None, parent_velocity=None, points=25):
         if position is None:
             self.position.position = (
-                random.choice([-1, 1]) * random.randint(50, window.width / 2), 
-                random.choice([-1, 1]) * random.randint(50, window.height / 2))
+                random.choice([-1, 1]) * random.randint(50, old_div(window.width, 2)), 
+                random.choice([-1, 1]) * random.randint(50, old_div(window.height, 2)))
         else:
             self.position.position = position
-        self.movement.velocity = (random.gauss(0, 700 / radius), random.gauss(0, 700 / radius))
+        self.movement.velocity = (random.gauss(0, old_div(700, radius)), random.gauss(0, old_div(700, radius)))
         if parent_velocity is not None:
             self.movement.velocity += parent_velocity
         self.movement.rotation = random.gauss(0, 15)
-        verts = [(random.gauss(x*radius, radius / 7), random.gauss(y*radius, radius / 7))
+        verts = [(random.gauss(x*radius, old_div(radius, 7)), random.gauss(y*radius, old_div(radius, 7)))
             for x, y in self.UNIT_CIRCLE]
         self.shape.verts = verts
         self.renderable.color = "#aaa"
@@ -175,7 +179,7 @@ class Asteroid(BlasteroidsEntity):
 
     def on_collide(self, other, point, normal):
         if self.collision.radius > 15:
-            chunk_size = self.collision.radius / 2.0
+            chunk_size = old_div(self.collision.radius, 2.0)
             for i in range(2):
                 Asteroid(self.world, chunk_size, self.position.position, 
                     self.movement.velocity, self.award.points * 2)
@@ -223,8 +227,8 @@ class PositionWrapper(bGrease.System):
     """Wrap positions around when they go off the edge of the window"""
 
     def __init__(self):
-        self.half_width = window.width / 2
-        self.half_height = window.height / 2
+        self.half_width = old_div(window.width, 2)
+        self.half_height = old_div(window.height, 2)
 
     def step(self, dt):
         for entity in self.world[...].collision.aabb.right < -self.half_width:
@@ -255,7 +259,7 @@ class Sweeper(bGrease.System):
     SWEEP_TIME = 2.0
 
     def step(self, dt):
-        fade = dt / self.SWEEP_TIME
+        fade = old_div(dt, self.SWEEP_TIME)
         for entity in tuple(self.world[Debris].entities):
             color = entity.renderable.color
             if color.a > 0.2:
@@ -298,7 +302,7 @@ class GameSystem(KeyControls):
     def chime(self, dt=0):
         """Play tension building chime sounds"""
         if self.lives:
-            self.chimes.next().play()
+            next(self.chimes).play()
             self.chime_time = max(self.chime_time - dt * 0.01, self.MIN_CHIME_TIME)
             if not self.world[Asteroid].entities:
                 self.start_level()
@@ -486,7 +490,7 @@ class BaseWorld(bGrease.grease_pyglet.World):
         self.systems.wrapper = PositionWrapper()
 
         self.renderers.camera = renderer.Camera(
-            position=(window.width / 2, window.height / 2))
+            position=(old_div(window.width, 2), old_div(window.height, 2)))
         self.renderers.vector = renderer.Vector(line_width=1.5)
 
 

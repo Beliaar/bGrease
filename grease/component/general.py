@@ -11,6 +11,7 @@
 #
 #############################################################################
 
+from builtins import object
 __version__ = '$Id$'
 
 from bGrease.component import base
@@ -48,7 +49,7 @@ class Component(dict):
 
 	def __init__(self, **fields):
 		self.fields = {}
-		for fname, ftype in fields.items():
+		for fname, ftype in list(fields.items()):
 			assert ftype in field.types, fname + " has an illegal field type"
 			self.fields[fname] = field.Field(self, fname, ftype)
 		self.entities = ComponentEntitySet(self)
@@ -79,7 +80,7 @@ class Component(dict):
 		a single field, the keyword arg is used.
 		"""
 		if data is not None:
-			for fname, field in self.fields.items():
+			for fname, field in list(self.fields.items()):
 				if fname not in data_kw and hasattr(data, fname):
 					data_kw[fname] = getattr(data, fname)
 		data = self[entity] = Data(self.fields, entity, **data_kw)
@@ -119,7 +120,7 @@ class Singleton(Component):
 	def entity(self):
 		"""Return the entity in the component, or None if empty"""
 		if self._data:
-			return self.manager[self._data.keys()[0]]
+			return self.manager[list(self._data.keys())[0]]
 	
 
 class Data(object):
@@ -127,7 +128,7 @@ class Data(object):
 	def __init__(self, fields, entity, **data):
 		self.__dict__['_Data__fields'] = fields
 		self.__dict__['entity'] = entity
-		for field in fields.values():
+		for field in list(fields.values()):
 			if field.name in data:
 				setattr(self, field.name, data[field.name])
 			else:

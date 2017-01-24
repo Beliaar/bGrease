@@ -1,3 +1,5 @@
+from builtins import range
+from builtins import object
 import unittest
 
 world = object()
@@ -55,7 +57,7 @@ class GeneralTestCase(unittest.TestCase):
 		from bGrease.component import Component
 		c = Component(sweat=int, odor=str)
 		c.set_world(world)
-		class Data: pass
+		class Data(object): pass
 		d = Data()
 		d.sweat = 100
 		d.odor = "rank"
@@ -69,7 +71,7 @@ class GeneralTestCase(unittest.TestCase):
 		from bGrease.component import Component
 		c = Component(state=str, time=float)
 		c.set_world(world)
-		class Data: pass
+		class Data(object): pass
 		d = Data()
 		d.state = "grimey"
 		d.time = 12.5
@@ -175,7 +177,7 @@ class GeneralTestCase(unittest.TestCase):
 		c.set_world(world)
 		self.assertEqual(list(c), [])
 		ed = [c.set(TestEntity()), c.set(TestEntity()), c.set(TestEntity())]
-		self.assertEqual(sorted(c.itervalues()), sorted(ed))
+		self.assertEqual(sorted(c.values()), sorted(ed))
 	
 	def test_set_world(self):
 		from bGrease.component import Component

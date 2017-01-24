@@ -11,7 +11,10 @@
 #
 #############################################################################
 """Grease tutorial game revision 2"""
+from __future__ import division
 
+from builtins import range
+from past.utils import old_div
 import math
 import random
 import pyglet
@@ -96,11 +99,11 @@ class Asteroid(BlasteroidsEntity):
 
     def __init__(self, world, radius=45):
         self.position.position = (
-            random.choice([-1, 1]) * random.randint(50, window.width / 2), 
-            random.choice([-1, 1]) * random.randint(50, window.height / 2))
-        self.movement.velocity = (random.gauss(0, 700 / radius), random.gauss(0, 700 / radius))
+            random.choice([-1, 1]) * random.randint(50, old_div(window.width, 2)), 
+            random.choice([-1, 1]) * random.randint(50, old_div(window.height, 2)))
+        self.movement.velocity = (random.gauss(0, old_div(700, radius)), random.gauss(0, old_div(700, radius)))
         self.movement.rotation = random.gauss(0, 15)
-        verts = [(random.gauss(x * radius, radius / 7), random.gauss(y * radius, radius / 7))
+        verts = [(random.gauss(x * radius, old_div(radius, 7)), random.gauss(y * radius, old_div(radius, 7)))
             for x, y in self.UNIT_CIRCLE]
         self.shape.verts = verts
         self.renderable.color = "#aaa"
@@ -143,8 +146,8 @@ class PositionWrapper(bGrease.System):
     """Wrap positions around when they go off the edge of the window"""
 
     def __init__(self):
-        self.half_width = window.width / 2
-        self.half_height = window.height / 2
+        self.half_width = old_div(window.width, 2)
+        self.half_height = old_div(window.height, 2)
 
     def step(self, dt):
         for entity in self.world[...].collision.aabb.right < -self.half_width:
@@ -174,7 +177,7 @@ class Sweeper(bGrease.System):
     SWEEP_TIME = 2.0
 
     def step(self, dt):
-        fade = dt / self.SWEEP_TIME
+        fade = old_div(dt, self.SWEEP_TIME)
         for entity in tuple(self.world[Debris].entities):
             color = entity.renderable.color
             if color.a > 0.2:
@@ -264,7 +267,7 @@ class GameWorld(bGrease.grease_pyglet.World):
         self.systems.wrapper = PositionWrapper()
 
         self.renderers.camera = renderer.Camera(
-            position=(window.width / 2, window.height / 2))
+            position=(old_div(window.width, 2), old_div(window.height, 2)))
         self.renderers.vector = renderer.Vector(line_width=1.5)
 
 

@@ -1,3 +1,4 @@
+from builtins import object
 import unittest
 import itertools
 
@@ -8,9 +9,9 @@ class TestWorld(object):
 		self.__dict__.update(kw)
 		self.components = self
 		self.entities = set()
-		self.new_entity_id = itertools.count().next
+		self.new_entity_id = itertools.count().__next__
 		self.new_entity_id() # skip id 0
-		for comp in kw.values():
+		for comp in list(kw.values()):
 			comp.world = self
 
 

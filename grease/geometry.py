@@ -1,3 +1,6 @@
+from __future__ import division
+from builtins import str
+from past.utils import old_div
 __version__ = "$Id$"
 __docformat__ = "reStructuredText"
 
@@ -60,7 +63,7 @@ class Vec2d(ctypes.Structure):
         else:
             return True
  
-    def __nonzero__(self):
+    def __bool__(self):
         return self.x or self.y
  
     # Generic operator handlers
@@ -259,8 +262,8 @@ class Vec2d(ctypes.Structure):
         return math.sqrt(self.x**2 + self.y**2)    
     def __setlength(self, value):
         length = self.get_length()
-        self.x *= value/length
-        self.y *= value/length
+        self.x *= old_div(value,length)
+        self.y *= old_div(value,length)
     length = property(get_length, __setlength, doc = """Gets or sets the magnitude of the vector""")
        
     def rotate(self, angle_degrees):
@@ -312,7 +315,7 @@ class Vec2d(ctypes.Structure):
         """
         length = self.length
         if length != 0:
-            return self/length
+            return old_div(self,length)
         return Vec2d(self)
  
     def normalize_return_length(self):
@@ -332,7 +335,7 @@ class Vec2d(ctypes.Structure):
     def perpendicular_normal(self):
         length = self.length
         if length != 0:
-            return Vec2d(-self.y/length, self.x/length)
+            return Vec2d(old_div(-self.y,length), old_div(self.x,length))
         return Vec2d(self)
         
     def dot(self, other):
@@ -362,7 +365,7 @@ class Vec2d(ctypes.Structure):
     def projection(self, other):
         other_length_sqrd = other[0]*other[0] + other[1]*other[1]
         projected_length_times_other_length = self.dot(other)
-        return other*(projected_length_times_other_length/other_length_sqrd)
+        return other*(old_div(projected_length_times_other_length,other_length_sqrd))
     
     def cross(self, other):
         """The cross product between the vector and other vector
@@ -376,7 +379,7 @@ class Vec2d(ctypes.Structure):
         return Vec2d(self.x + (other[0] - self.x)*range, self.y + (other[1] - self.y)*range)
     
     def convert_to_basis(self, x_vector, y_vector):
-        return Vec2d(self.dot(x_vector)/x_vector.get_length_sqrd(), self.dot(y_vector)/y_vector.get_length_sqrd())
+        return Vec2d(old_div(self.dot(x_vector),x_vector.get_length_sqrd()), old_div(self.dot(y_vector),y_vector.get_length_sqrd()))
  
     # Extra functions, mainly for chipmunk
     def cpvrotate(self, other):
@@ -499,7 +502,7 @@ if __name__ == "__main__":
             self.assertEqual(v + 1, Vec2d(112, 223))
             self.assert_(v - 2 == [109, 220])
             self.assert_(v * 3 == (333, 666))
-            self.assert_(v / 2.0 == Vec2d(55.5, 111))
+            self.assert_(old_div(v, 2.0) == Vec2d(55.5, 111))
             #self.assert_(v / 2 == (55, 111)) # Not supported since this is a c_float structure in the bottom
             self.assert_(v ** Vec2d(2, 3) == [12321, 10941048])
             self.assert_(v + [-11, 78] == Vec2d(100, 300))
@@ -584,7 +587,7 @@ if __name__ == "__main__":
             inplace_vec += .5
             inplace_vec /= (3, 6)
             inplace_vec += Vec2d(-1, -1)
-            alternate = (inplace_src*.5 + .5)/Vec2d(3, 6) + [-1, -1]
+            alternate = old_div((inplace_src*.5 + .5),Vec2d(3, 6)) + [-1, -1]
             self.assertEquals(inplace_vec, inplace_ref)
             self.assertEquals(inplace_vec, alternate)
         

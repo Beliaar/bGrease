@@ -20,7 +20,9 @@ over time and react to internal and external interaction.
 
 See :ref:`an example of world configuration in the tutorial <tut-world-example>`.
 """
+from __future__ import division
 
+from past.utils import old_div
 __version__ = '$Id$'
 
 import itertools
@@ -112,7 +114,7 @@ class World(Mode, BaseWorld):
 		:param dt: The time delta since the last time step
 		:type dt: float
 		"""
-		dt = min(dt, 10.0 / self.step_rate)
+		dt = min(dt, old_div(10.0, self.step_rate))
 		for component in self.components:
 			if hasattr(component, "step"):
 				component.step(dt)

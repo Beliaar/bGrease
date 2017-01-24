@@ -12,6 +12,9 @@ from __future__ import absolute_import
 #
 #############################################################################
 
+from builtins import str
+from builtins import object
+from future.utils import with_metaclass
 __versioninfo__ = (0, 3, 0)
 __version__ = '.'.join(str(n) for n in __versioninfo__)
 
@@ -25,7 +28,7 @@ from .world import BaseWorld
 
 import abc
 
-class System(object):
+class System(with_metaclass(abc.ABCMeta, object)):
 	"""Grease system abstract base class. Systems define behaviorial aspects
 	of a |BaseWorld|. All systems must define a :meth:`step`
 	method that is invoked by the world each timestep.  User-defined systems
@@ -33,7 +36,6 @@ class System(object):
 	
 	See :ref:`an example system from the tutorial <tut-system-example>`.
 	"""
-	__metaclass__ = abc.ABCMeta
 
 	world = None
 	"""The |BaseWorld| this system belongs to"""
@@ -51,7 +53,7 @@ class System(object):
 		:type dt: float
 		"""
 
-class Renderer(object):
+class Renderer(with_metaclass(abc.ABCMeta, object)):
 	"""Grease renderer abstract base class. Renderers define the presentation
 	of a |BaseWorld|. All renderers must define a :meth:`draw`
 	method that is invoked by the world when the display needs to be redrawn.
@@ -59,7 +61,6 @@ class Renderer(object):
 
 	See :ref:`an example renderer from the tutorial <tut-renderer-example>`.
 	"""
-	__metaclass__ = abc.ABCMeta
 
 	world = None
 	"""The |BaseWorld| this renderer belongs to"""

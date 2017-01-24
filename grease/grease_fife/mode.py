@@ -31,7 +31,9 @@ of modes in sequence, or some combination of all.
 
 For example usage see: :ref:`the mode section of the tutorial <tut-mode-section>`.
 """
+from __future__ import division
 
+from past.utils import old_div
 from bGrease.mode import *
 import abc
 
@@ -49,8 +51,8 @@ class FifeManager(BaseManager):
 
         def _pump(self):
             if self.current_mode:
-                delta_time = (self.current_mode.engine.getTimeManager().
-                                getTimeDelta() / 1000.0)
+                delta_time = (old_div(self.current_mode.engine.getTimeManager().
+                                getTimeDelta(), 1000.0))
                 self.step(delta_time)
                 
         def step(self, dt):

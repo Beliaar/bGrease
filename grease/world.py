@@ -21,6 +21,7 @@ over time and react to internal and external interaction.
 See :ref:`an example of world configuration in the tutorial <tut-world-example>`.
 """
 
+from builtins import object
 __version__ = '$Id$'
 
 import itertools
@@ -58,7 +59,7 @@ class BaseWorld(object):
 		self.components = ComponentParts(self)
 		self.systems = Parts(self)
 		self.renderers = Parts(self)
-		self.new_entity_id = itertools.count().next
+		self.new_entity_id = lambda x=itertools.count(): next(x)
 		self.new_entity_id() # skip id 0
 		self.entities = WorldEntitySet(self)
 		self._full_extent = EntityExtent(self, self.entities)

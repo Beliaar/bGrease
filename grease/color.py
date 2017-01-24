@@ -1,4 +1,8 @@
+from __future__ import division
 
+from builtins import range
+from builtins import object
+from past.utils import old_div
 class RGBA(object):
 	"""Four channel color representation.
 
@@ -38,9 +42,9 @@ class RGBA(object):
 		if not colorstr.startswith("#") or length not in (4, 5, 7, 9):
 			raise ValueError("Invalid color string: " + colorstr)
 		if length <= 5:
-			parsed = [int(c*2, 16) / 255.0 for c in colorstr[1:]]
+			parsed = [old_div(int(c*2, 16), 255.0) for c in colorstr[1:]]
 		else:
-			parsed = [int(colorstr[i:i+2], 16) / 255.0 for i in range(1, length, 2)]
+			parsed = [old_div(int(colorstr[i:i+2], 16), 255.0) for i in range(1, length, 2)]
 		if len(parsed) == 3:
 			parsed.append(1.0)
 		return parsed
