@@ -99,7 +99,7 @@ class BaseManager(object):
 		:param mode: The :class:`Mode` object popped from the stack
 		"""
 		mode = self.modes.pop()
-		mode.deactivate(self)
+		self.deactivate_mode(mode)
 		current = self.current_mode
 		if current is not None:
 			self.activate_mode(current)
