@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 #############################################################################
 #
 # Copyright (c) 2010 by Casey Duncan and contributors
@@ -16,7 +17,7 @@ __version__ = '.'.join(str(n) for n in __versioninfo__)
 
 __all__ = ('Mode', 'World')
 
-from mode import Mode
-from world import World
+from .mode import Mode
+from .world import World
 
 

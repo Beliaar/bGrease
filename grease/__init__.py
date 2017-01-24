@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 #############################################################################
 #
 # Copyright (c) 2010 by Casey Duncan and contributors
@@ -16,11 +17,11 @@ __version__ = '.'.join(str(n) for n in __versioninfo__)
 
 __all__ = ('BaseWorld', 'Entity', 'System', 'Renderer')
 
-import component
-import geometry
-import collision
-from entity import Entity
-from world import BaseWorld
+from . import component
+from . import geometry
+from . import collision
+from .entity import Entity
+from .world import BaseWorld
 
 import abc
 
